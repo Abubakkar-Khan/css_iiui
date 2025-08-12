@@ -4,22 +4,28 @@ const posts = [
     title: 'Bitcoin is innovative payment network and a new kind of money',
     img: 'https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?q=80&w=1600&auto=format&fit=crop',
     tag: 'Bitcoin',
-    author: 'Abdullah Haron',
-    date: '13-Dec-2023',
+    author: 'Abubakkar Khan',
+    date: '12-dec-2025',
+    excerpt:
+      "I wasn't able to generate the updated diagram due to an error. Please try again or let me know if you'd like me to ...",
   },
   {
-    title: 'Workshop recap: Intro to Web3 wallets',
-    img: 'https://images.unsplash.com/photo-1552083375-1447ce886485?q=80&w=1200&auto=format&fit=crop',
-    tag: 'Workshop',
-    author: 'Team CSS',
-    date: '10-Dec-2023',
+    title: 'Bitcoin is innovative payment network and a new kind of money',
+    img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1600&auto=format&fit=crop',
+    tag: 'Bitcoin',
+    author: 'Abubakkar Khan',
+    date: '12-dec-2025',
+    excerpt:
+      "I wasn't able to generate the updated diagram due to an error. Please try again or let me know if you'd like me to ...",
   },
   {
-    title: 'Guest talk: Scaling Layer-2 Rollups',
-    img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop',
-    tag: 'Talk',
-    author: 'Dept. of CS',
-    date: '07-Dec-2023',
+    title: 'Bitcoin is innovative payment network and a new kind of money',
+    img: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=1600&auto=format&fit=crop',
+    tag: 'Bitcoin',
+    author: 'Abubakkar Khan',
+    date: '12-dec-2025',
+    excerpt:
+      "I wasn't able to generate the updated diagram due to an error. Please try again or let me know if you'd like me to ...",
   },
 ]
 
@@ -30,51 +36,74 @@ export default function BlogSection() {
     <section id="compulink" className="section py-12 md:py-16">
       <h2 className="section-title text-center">CompuLink</h2>
 
-      {/* Set a shared height for md+ so left == (right top + right bottom) */}
+      {/* On md+, 50/50 columns. Adjust --blogH to match the mock height */}
       <div
-        className="mt-8 grid gap-6 md:grid-cols-[2fr_1fr] items-stretch"
-        style={{ '--blogH': '460px' }} // tweak this to match your design
+        className="mt-8 grid gap-6 md:grid-cols-2 items-stretch"
+        style={{ '--blogH': '520px' }}
       >
-        {/* FEATURED (large, text overlay below image) */}
-        <article className="card p-0 overflow-hidden md:h-[var(--blogH)]">
-          <div className="relative h-full">
+        {/* LEFT: Large vertical card (takes full column height) */}
+        <article className="card p-0 overflow-hidden md:h-[var(--blogH)] flex flex-col">
+          {/* Image with tag badge on bottom-left */}
+          <div className="relative w-full h-64 md:h-[60%]">
             <img
               src={featured.img}
               alt={featured.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            <div className="absolute left-4 right-4 bottom-4">
-              <div className="text-xs uppercase text-white/80 flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-white text-black">{featured.tag}</span>
-                {featured.date} · {featured.author}
-              </div>
-              <h3 className="mt-2 text-lg md:text-2xl font-bold max-w-3xl">
-                {featured.title}
-              </h3>
-              <a className="btn mt-3" href="/compulink">Read More</a>
+            <span className="absolute left-3 bottom-3 bg-white text-black text-sm px-2 py-1 rounded">
+              {featured.tag}
+            </span>
+          </div>
+
+          {/* Text content under the image */}
+          <div className="p-4 md:p-5 flex-1 flex flex-col">
+            <div className="text-xs uppercase text-white/70 flex items-center gap-4">
+              <span>{featured.date}</span>
+              <span>{featured.author}</span>
+            </div>
+            <h3 className="mt-2 text-2xl font-extrabold leading-tight">
+              {featured.title}
+            </h3>
+            <p className="mt-3 text-white/80">
+              {featured.excerpt}
+            </p>
+            <div className="mt-auto pt-4">
+              <a className="btn" href="/compulink">Read More</a>
             </div>
           </div>
         </article>
 
-        {/* SIDEBAR (two small, horizontal layout) */}
-        <div className="grid gap-6 md:grid-rows-2">
+        {/* RIGHT: Two horizontal cards stacked; together match left height */}
+        <div className="grid gap-6 md:grid-rows-2 md:h-[var(--blogH)]">
           {side.map((p, idx) => (
             <article
               key={idx}
-              className="card p-0 overflow-hidden flex md:h-[calc(var(--blogH)/2)]"
+              className="card p-0 overflow-hidden flex items-stretch md:h-full"
             >
-              <img
-                src={p.img}
-                alt={p.title}
-                className="w-40 md:w-44 lg:w-48 h-full object-cover"
-              />
-              <div className="p-4 flex-1 flex flex-col">
-                <div className="text-[11px] uppercase text-white/70 flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-white text-black">{p.tag}</span>
-                  {p.date} · {p.author}
+              {/* Thumb left */}
+              <div className="relative shrink-0 w-40 md:w-48 lg:w-56 h-full">
+                <img
+                  src={p.img}
+                  alt={p.title}
+                  className="w-full h-full object-cover"
+                />
+                <span className="absolute left-2 bottom-2 bg-white text-black text-xs px-2 py-0.5 rounded">
+                  {p.tag}
+                </span>
+              </div>
+
+              {/* Text right */}
+              <div className="p-4 md:p-5 flex-1 flex flex-col">
+                <div className="text-[11px] uppercase text-white/70 flex items-center gap-4">
+                  <span>{p.date}</span>
+                  <span>{p.author}</span>
                 </div>
-                <h3 className="mt-1 font-semibold leading-snug">{p.title}</h3>
+                <h3 className="mt-1 text-xl font-extrabold leading-snug">
+                  {p.title}
+                </h3>
+                <p className="mt-2 text-white/80 hidden sm:block">
+                  {p.excerpt}
+                </p>
                 <div className="mt-auto pt-3">
                   <a className="btn-ghost" href="/compulink">Read More</a>
                 </div>
