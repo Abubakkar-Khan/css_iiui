@@ -24,12 +24,12 @@ export default function TimelineSection({
   const [index, setIndex] = useState(0);
   const maxIndex = useMemo(() => Math.max(0, items.length - 1), [items.length]);
 
-  /* ===== Layout (more height & margins) ===== */
-  const AXIS_TOP = 120;       // px: Y of main line (raised for more breathing room)
-  const DATE_GAP = 24;        // px: gap between date pill and the line
-  const DIAMOND = 14;         // px: diamond size
-  const LINE_CARD_GAP = 36;   // px: gap between bottom of diamond and top of card
-  const CARD_H = 320;         // px: taller equal-height cards
+  /* Match CompuLink “background shows through” feel */
+  const AXIS_TOP = 120;       // line Y
+  const DATE_GAP = 24;        // date ↕ line
+  const DIAMOND = 14;         // marker size
+  const LINE_CARD_GAP = 36;   // line/diamond ↕ card
+  const CARD_H = 320;         // equal-height cards (adjust if needed)
   const CARD_W = 'w-[15.5rem] sm:w-[16.5rem] md:w-[17rem] lg:w-[18rem]';
 
   const scrollToCard = (i) => {
@@ -38,7 +38,7 @@ export default function TimelineSection({
     track.scrollTo({ left: el.offsetLeft - 16, behavior: 'smooth' });
   };
 
-  // Arrows jump by visible page (not per-item)
+  // Arrows jump by visible page
   const getPageStep = () => {
     const track = trackRef.current;
     if (!track || !track.children.length) return 1;
@@ -83,12 +83,12 @@ export default function TimelineSection({
   useEffect(() => { scrollToCard(index); }, [index]);
 
   return (
-    <section className="relative mx-auto max-w-6xl px-4 py-24" style={{ overflow: 'visible' }}>
-      <h2 className="text-center text-3xl font-bold tracking-tight">{title}</h2>
+    <section id="timeline" className="section py-12 md:py-16 relative mx-auto max-w-6xl px-4" style={{ overflow: 'visible' }}>
+      <h2 className="section-title text-center">{title}</h2>
       <p className="mt-2 text-center text-sm opacity-80">{subtitle}</p>
 
       <div className="relative z-10 mt-8" style={{ overflow: 'visible' }}>
-        {/* Main horizontal line */}
+        {/* Main horizontal line (transparent around, so page BG shows) */}
         <div
           className="pointer-events-none absolute left-1/2 z-0 hidden -translate-x-1/2 md:block"
           style={{
@@ -102,13 +102,13 @@ export default function TimelineSection({
         {/* Circular arrows on the line (page jump) */}
         <button
           onClick={() => goPage(-1)}
-          className="absolute -left-2 hidden -translate-y-1/2 md:flex h-10 w-10 items-center justify-center rounded-full backdrop-blur transition md:block"
+          className="absolute -left-2 hidden -translate-y-1/2 md:flex h-10 w-10 items-center justify-center rounded-full transition md:block"
           style={{ top: AXIS_TOP, background:'rgba(0,0,0,0.50)', border:'1px solid rgba(255,255,255,0.22)' }}
           aria-label="Previous"
         >‹</button>
         <button
           onClick={() => goPage(1)}
-          className="absolute -right-2 hidden -translate-y-1/2 md:flex h-10 w-10 items-center justify-center rounded-full backdrop-blur transition md:block"
+          className="absolute -right-2 hidden -translate-y-1/2 md:flex h-10 w-10 items-center justify-center rounded-full transition md:block"
           style={{ top: AXIS_TOP, background:'rgba(0,0,0,0.50)', border:'1px solid rgba(255,255,255,0.22)' }}
           aria-label="Next"
         >›</button>
@@ -122,10 +122,10 @@ export default function TimelineSection({
             <li
               key={it.id}
               className="relative snap-start"
-              /* DATE (above) → LINE+DIAMOND → GAP → CARD */
+              /* DATE → LINE+DIAMOND → GAP → CARD */
               style={{ scrollMarginLeft: '16px', paddingTop: AXIS_TOP + DIAMOND / 2 + LINE_CARD_GAP }}
             >
-              {/* DATE above the line with explicit gap */}
+              {/* DATE above the line */}
               <div
                 className="absolute left-1/2 text-center"
                 style={{
@@ -138,7 +138,7 @@ export default function TimelineSection({
                 </span>
               </div>
 
-              {/* Diamond centered on the line */}
+              {/* Diamond centered on the line (true 45°) */}
               <span
                 className="absolute block"
                 style={{
@@ -151,32 +151,30 @@ export default function TimelineSection({
                 }}
               />
 
-              {/* CARD — equal height, bg-black/40, subtle border */}
+              {/* CARD — same feel as BlogSection cards */}
               <article
-                className={`${CARD_W} bg-black/40 border border-white/10 rounded-lg p-2 text-center shadow-sm backdrop-blur transition flex flex-col`}
+                className={`card bg-black/40 border border-white/10 rounded-lg p-2 text-center transition flex flex-col
+                            hover:-translate-y-0.5`}
                 style={{ height: `${CARD_H}px` }}
               >
                 <div className="overflow-hidden rounded-md">
                   <img
                     src={it.image}
                     alt=""
-                    className="h-44 w-full object-cover"
+                    className="h-44 w-full object-cover transition-transform duration-200 ease-out hover:scale-[1.02]"
                     draggable={false}
                   />
                 </div>
 
-                <h3 className="mt-3 text-base font-semibold">{it.title}</h3>
+                <h3 className="mt-3 text-base font-extrabold leading-snug">{it.title}</h3>
                 <p
-                  className="mt-1 text-sm opacity-85"
-                  style={{
-                    display:'-webkit-box', WebkitLineClamp:4, WebkitBoxOrient:'vertical', overflow:'hidden'
-                  }}
+                  className="mt-1 text-sm text-white/80"
+                  style={{ display:'-webkit-box', WebkitLineClamp:4, WebkitBoxOrient:'vertical', overflow:'hidden' }}
                 >
                   {it.text}
                 </p>
 
-                {/* tiny footer text */}
-                <div className="mt-auto pt-2 text-xs opacity-70">Tap for details</div>
+                <div className="mt-auto pt-2 text-xs text-white/70">Tap for details</div>
               </article>
             </li>
           ))}
