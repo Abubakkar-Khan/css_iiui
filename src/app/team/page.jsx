@@ -1,237 +1,187 @@
 // src/app/team/page.jsx
 'use client'
-import { useMemo, useRef, useState, useEffect } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export default function TeamPage() {
-  // ✅ JS-friendly state (no TS generics)
-  const [mode, setMode] = useState('grid') // 'grid' | 'canvas'
+  const [mode, setMode] = useState('grid') // 'grid' | 'tree'
+  const [isMobile, setIsMobile] = useState(false)
 
-  // --- Sample data (replace with real) ---
-  const leads = [
-    { id: 'p1', name: 'Abdullah Haroon', role: 'President', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop' },
-    { id: 'p2', name: 'Junaid Khan', role: 'Vice President', img: 'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=800&auto=format&fit=crop' },
-    { id: 'p3', name: 'Ayesha Tariq', role: 'General Secretary', img: 'https://images.unsplash.com/photo-1544006659-f0b21884ce1d?q=80&w=800&auto=format&fit=crop' },
-  ]
-  const members = Array.from({ length: 12 }).map((_, i) => ({
-    id: `m${i + 1}`,
-    name: `Member ${i + 1}`,
-    role: ['Ops', 'Tech', 'Design', 'PR'][i % 4],
-    img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=800&auto=format&fit=crop',
-  }))
+  // Disable tree on mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
-  // Tree levels for Canvas mode (top -> bottom)
-  const treeLevels = useMemo(() => {
-    return [
-      leads.map(x => ({ ...x, level: 0 })),
-      members.map(x => ({ ...x, level: 1 })),
-    ]
-  }, [leads, members])
+  // ----- Sample hierarchical data (replace with real team) -----
+  const data = useMemo(() => ({
+    id: 'root',
+    name: 'Abdullah Haroon',
+    role: 'President',
+    img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop',
+    children: [
+      {
+        id: 'vpres',
+        name: 'Junaid Khan',
+        role: 'Vice President',
+        img: 'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?q=80&w=800&auto=format&fit=crop',
+        children: [
+          { id: 'ops1', name: 'Member 1', role: 'Ops', img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=800&auto=format&fit=crop', children: [] },
+          { id: 'ops2', name: 'Member 2', role: 'Ops', img: 'https://images.unsplash.com/photo-1544006659-f0b21884ce1d?q=80&w=800&auto=format&fit=crop', children: [] },
+          { id: 'ops3', name: 'Member 3', role: 'Ops', img: 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=800&auto=format&fit=crop', children: [] },
+        ],
+      },
+      {
+        id: 'gensec',
+        name: 'Ayesha Tariq',
+        role: 'General Secretary',
+        img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop',
+        children: [
+          { id: 'des1', name: 'Member 4', role: 'Design', img: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=800&auto=format&fit=crop', children: [] },
+          { id: 'des2', name: 'Member 5', role: 'Design', img: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=800&auto=format&fit=crop', children: [] },
+        ],
+      },
+      {
+        id: 'techlead',
+        name: 'Hamza Ali',
+        role: 'Tech Lead',
+        img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=800&auto=format&fit=crop',
+        children: [
+          { id: 'tech1', name: 'Member 6', role: 'Tech', img: 'https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?q=80&w=800&auto=format&fit=crop', children: [] },
+          { id: 'tech2', name: 'Member 7', role: 'Tech', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop', children: [] },
+          { id: 'tech3', name: 'Member 8', role: 'Tech', img: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=800&auto=format&fit=crop', children: [] },
+          { id: 'tech4', name: 'Member 9', role: 'Tech', img: 'https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=800&auto=format&fit=crop', children: [] },
+        ],
+      },
+    ],
+  }), [])
+
+  const showTree = !isMobile && mode === 'tree'
 
   return (
-    <div className="section py-12 md:py-16">
-      {/* Centered & larger title */}
-      <h1 className="text-center text-4xl md:text-6xl font-extrabold tracking-tight">Team</h1>
+    <div className="section pt-8 md:pt-10 pb-12 w-full relative">
+      {/* Title a bit smaller & higher */}
+      <h1 className="text-center text-3xl md:text-5xl font-extrabold tracking-tight">Team</h1>
 
-      {/* Toggle buttons */}
-      <div className="mt-6 flex items-center justify-center gap-2">
-        <button
-          className={`px-4 py-2 rounded-lg border border-white/15 ${mode === 'grid' ? 'bg-white text-black' : 'bg-black/40 text-white'} transition`}
-          onClick={() => setMode('grid')}
-          aria-pressed={mode === 'grid'}
-        >
-          Grid View
-        </button>
-        <button
-          className={`px-4 py-2 rounded-lg border border-white/15 ${mode === 'canvas' ? 'bg-white text-black' : 'bg-black/40 text-white'} transition`}
-          onClick={() => setMode('canvas')}
-          aria-pressed={mode === 'canvas'}
-        >
-          Canvas (Figma-style)
-        </button>
-      </div>
+      {showTree ? <TreeCanvas root={data} /> : <GridFromTree root={data} />}
 
-      {mode === 'grid' ? (
-        <BalenciagaGrid leads={leads} members={members} />
-      ) : (
-        <FigmaCanvas levels={treeLevels} />
-      )}
+      {/* Floating bottom-right toggle (desktop only) */}
+      <button
+        onClick={() => setMode(m => (m === 'tree' ? 'grid' : 'tree'))}
+        className="hidden md:inline-flex fixed bottom-6 right-6 z-[9999] bg-black/70 border border-white/15 text-white px-4 py-2 rounded-full shadow-xl backdrop-blur hover:bg-white/10 transition"
+        title="Change Team View"
+      >
+        {showTree ? 'Grid View' : 'Tree View'}
+      </button>
     </div>
   )
 }
 
-/* =========================
-   Balenciaga-style Grid
-   ========================= */
-function BalenciagaGrid({ leads, members }) {
-  return (
-    <>
-      {/* Leads: tall, minimal cards */}
-      <section className="mt-12">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {leads.map((p) => (
-            <article
-              key={p.id}
-              className="group relative overflow-hidden rounded-none bg-black text-white border border-white/10 transition-transform duration-300 hover:-translate-y-1"
-            >
-              <div className="overflow-hidden">
-                <img
-                  src={p.img}
-                  alt={p.name}
-                  className="h-[480px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                />
-              </div>
-              <div className="p-6">
-                <div className="text-xs uppercase tracking-widest text-white/50">{p.role}</div>
-                <h3 className="mt-2 text-2xl font-light">{p.name}</h3>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+/* ------------------------------ GRID VIEW ------------------------------ */
+function GridFromTree({ root }) {
+  const list = []
+  ;(function walk(n){ list.push(n); (n.children||[]).forEach(walk) })(root)
 
-      {/* Members: tight, clean grid */}
-      <section className="mt-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {members.map((m) => (
-            <article
-              key={m.id}
-              className="group relative overflow-hidden bg-black text-white border border-white/10 transition-transform duration-300 hover:-translate-y-1"
-            >
-              <div className="overflow-hidden">
-                <img
-                  src={m.img}
-                  alt={m.name}
-                  className="aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                />
-              </div>
-              <div className="p-4">
-                <h4 className="text-lg font-light">{m.name}</h4>
-                <div className="text-xs uppercase tracking-widest text-white/50">{m.role}</div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    </>
+  return (
+    <section className="mt-8">
+      <div className="grid gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {list.map(p => (
+          <article key={p.id} className="bg-black text-white border border-white/10">
+            <div className="overflow-hidden">
+              <img src={p.img} alt={p.name} className="w-full aspect-[3/4] object-cover" />
+            </div>
+            <div className="p-3">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">{p.role}</div>
+              <h3 className="mt-1 text-base font-light">{p.name}</h3>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   )
 }
 
-/* ======================================
-   Figma-style Pan/Zoom Tree Canvas
-   ====================================== */
-function FigmaCanvas({ levels }) {
-  // layout config
-  const colGap = 280   // horizontal spacing
-  const rowGap = 260   // vertical spacing
-  const nodeW = 220
-  const nodeH = 300
+/* --------------------------- TREE VIEW (PAN/ZOOM) --------------------------- */
+function TreeCanvas({ root }) {
+  // Equal card size
+  const NODE_W = 220
+  const NODE_H = 260
+  const X_GAP  = 80
+  const Y_GAP  = 160
 
-  // compute positions for each level (center rows)
-  const nodes = useMemo(() => {
-    const out = []
-    levels.forEach((levelNodes, levelIdx) => {
-      const totalW = (levelNodes.length - 1) * colGap
-      const startX = -totalW / 2
-      const y = levelIdx * rowGap
-      levelNodes.forEach((n, i) => {
-        out.push({ ...n, x: startX + i * colGap, y })
-      })
-    })
-    return out
-  }, [levels, colGap, rowGap])
-
-  const byId = useMemo(() => {
-    const map = new Map()
-    nodes.forEach(n => map.set(n.id, n))
-    return map
-  }, [nodes])
-
-  // demo edges: every top (level 0) -> every next (level 1)
-  const edges = useMemo(() => {
-    if (levels.length < 2) return []
-    const top = levels[0].map(n => byId.get(n.id)).filter(Boolean)
-    const bottom = levels[1].map(n => byId.get(n.id)).filter(Boolean)
-    const e = []
-    for (const a of top) for (const b of bottom) e.push({ from: a, to: b })
-    return e
-  }, [levels, byId])
+  // Layout (centered around x=0)
+  const { nodes, edges } = useTreeLayout(root, NODE_W, NODE_H, X_GAP, Y_GAP)
 
   return (
-    <div className="mt-8 relative h-[70vh] w-full rounded-xl border border-white/10 overflow-hidden bg-black/50">
-      <PanZoom>
-        {/* edges */}
-        <svg className="absolute inset-0" width="4000" height="4000" style={{ pointerEvents: 'none' }}>
-          <g transform="translate(2000, 2000)">
-            {edges.map((e, i) => (
-              <path
-                key={i}
-                d={bezierPath(e.from.x, e.from.y + nodeH / 2, e.to.x, e.to.y - nodeH / 2)}
-                fill="none"
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="2"
-              />
-            ))}
+    <div className="mt-6 relative w-full h-[80vh] rounded-xl border border-white/10 overflow-hidden bg-black/50">
+      <PanZoom initial={{ scale: 0.9 }}>
+        {/* Connectors */}
+        <svg width="4000" height="3000" className="absolute inset-0 pointer-events-none" style={{ left: 0, top: 0 }}>
+          <g transform="translate(2000, 80)">
+            {edges.map((e, i) => {
+              const a = nodes.find(n => n.id === e.from)
+              const b = nodes.find(n => n.id === e.to)
+              const x1 = a.x + NODE_W / 2, y1 = a.y + NODE_H
+              const x2 = b.x + NODE_W / 2, y2 = b.y
+              const midY = (y1 + y2) / 2
+              return (
+                <path
+                  key={i}
+                  d={`M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.28)"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  vectorEffect="non-scaling-stroke"
+                  shapeRendering="crispEdges"
+                />
+              )
+            })}
           </g>
         </svg>
 
-        {/* nodes */}
-        <div className="absolute inset-0" style={{ width: 4000, height: 4000 }}>
-          <div className="absolute" style={{ left: 2000, top: 2000 }}>
-            {nodes.map(n => (
-              <CardNode key={n.id} node={n} w={nodeW} h={nodeH} />
-            ))}
-          </div>
+        {/* Nodes */}
+        <div className="absolute" style={{ left: 2000, top: 80, width: 1, height: 1 }}>
+          {nodes.map(n => (
+            <div
+              key={n.id}
+              className="absolute border border-white/10 bg-black/60 text-white shadow"
+              style={{ left: n.x, top: n.y, width: NODE_W, height: NODE_H }}
+            >
+              <img src={n.img} alt={n.name} className="w-full h-[70%] object-cover" />
+              <div className="p-3">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">{n.role}</div>
+                <div className="text-lg font-light">{n.name}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </PanZoom>
+
+      {/* subtle grid backdrop */}
+      <div className="pointer-events-none absolute inset-0" style={{
+        backgroundImage: 'radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }} />
     </div>
   )
 }
 
-function CardNode({ node, w, h }) {
-  return (
-    <div
-      className="group absolute border border-white/10 bg-black/60 text-white"
-      style={{
-        left: node.x - w / 2,
-        top: node.y - h / 2,
-        width: w,
-        height: h,
-        boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
-      }}
-    >
-      <div className="overflow-hidden">
-        <img
-          src={node.img}
-          alt={node.name}
-          className="w-full h-[70%] object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-        />
-      </div>
-      <div className="p-3">
-        <div className="text-[10px] uppercase tracking-[0.2em] text-white/60">{node.role}</div>
-        <div className="text-lg font-light">{node.name}</div>
-      </div>
-    </div>
-  )
-}
-
-/* ==========================
-   Pan & Zoom (Figma-like)
-   ========================== */
-function PanZoom({ children }) {
+/* --------------------------- PAN & ZOOM WRAPPER --------------------------- */
+function PanZoom({ initial = { scale: 1 }, children }) {
   const wrapRef = useRef(null)
-  const [scale, setScale] = useState(1)
+  const [scale, setScale] = useState(initial.scale || 1)
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const isPanning = useRef(false)
   const last = useRef({ x: 0, y: 0 })
 
-  // Center initial view once mounted
+  // Center initial content
   useEffect(() => {
     const wrap = wrapRef.current
     if (!wrap) return
-    setPos({
-      x: -2000 + wrap.clientWidth / 2,
-      y: -2000 + wrap.clientHeight / 2,
-    })
+    setPos({ x: wrap.clientWidth / 2 - 2000 * scale, y: 40 }) // centers the 2000 offset
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onWheel = (e) => {
@@ -240,6 +190,7 @@ function PanZoom({ children }) {
     const zoomIntensity = 0.0015
     const newScale = clamp(0.4, 2.2, scale * (1 + delta * zoomIntensity))
 
+    // Zoom towards cursor
     const rect = wrapRef.current.getBoundingClientRect()
     const cx = e.clientX - rect.left
     const cy = e.clientY - rect.top
@@ -256,7 +207,6 @@ function PanZoom({ children }) {
   const onPointerDown = (e) => {
     isPanning.current = true
     last.current = { x: e.clientX, y: e.clientY }
-    // pointer capture is optional; guard it
     try { e.currentTarget.setPointerCapture?.(e.pointerId) } catch {}
   }
   const onPointerMove = (e) => {
@@ -274,7 +224,7 @@ function PanZoom({ children }) {
   return (
     <div
       ref={wrapRef}
-      className="relative h-full w-full cursor-grab active:cursor-grabbing"
+      className="absolute inset-0 cursor-grab active:cursor-grabbing"
       onWheel={onWheel}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -286,28 +236,54 @@ function PanZoom({ children }) {
           transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
           transformOrigin: '0 0',
           width: 4000,
-          height: 4000,
+          height: 3000,
         }}
       >
         {children}
       </div>
-      {/* subtle grid */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-        }}
-      />
     </div>
   )
 }
 
-/* ==============
-   Utils
-   ============== */
-function clamp(min, max, v) { return Math.max(min, Math.min(max, v)) }
-function bezierPath(x1, y1, x2, y2) {
-  const midY = (y1 + y2) / 2
-  return `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`
+/* ----------------------------- TREE LAYOUT ----------------------------- */
+function useTreeLayout(root, NODE_W, NODE_H, X_GAP, Y_GAP) {
+  return useMemo(() => {
+    function measure(n) {
+      if (!n.children || n.children.length === 0) { n._leaves = 1; return 1 }
+      let sum = 0
+      for (const c of n.children) sum += measure(c)
+      n._leaves = sum
+      return sum
+    }
+    const copy = structuredClone(root)
+    measure(copy)
+
+    const nodes = []
+    const edges = []
+    function assign(n, depth, startX) {
+      const subtreeWidth = n._leaves * (NODE_W + X_GAP)
+      const xCenter = startX + subtreeWidth / 2 - (NODE_W + X_GAP)/2
+      const y = depth * (NODE_H + Y_GAP)
+      nodes.push({ id: n.id, name: n.name, role: n.role, img: n.img, x: xCenter, y })
+      let run = startX
+      for (const c of n.children || []) {
+        const cw = c._leaves * (NODE_W + X_GAP)
+        assign(c, depth + 1, run)
+        edges.push({ from: n.id, to: c.id })
+        run += cw
+      }
+    }
+
+    const width = copy._leaves * (NODE_W + X_GAP)
+    assign(copy, 0, 0)
+
+    // center around x=0
+    const xOffset = -width / 2 + (NODE_W + X_GAP) / 2
+    nodes.forEach(n => { n.x += xOffset })
+
+    return { nodes, edges }
+  }, [root, NODE_W, NODE_H, X_GAP, Y_GAP])
 }
+
+/* ------------------------------- Utils ------------------------------- */
+function clamp(min, max, v) { return Math.max(min, Math.min(max, v)) }
