@@ -153,9 +153,8 @@ export default function TimelineSection({
 
               {/* CARD — same feel as BlogSection cards */}
               <article
-                className={`card bg-black/40 border border-white/10 rounded-lg p-2 text-center transition flex flex-col
-                            hover:-translate-y-0.5`}
-                style={{ height: `${CARD_H}px` }}
+                className="card bg-black/40 rounded-lg p-2 text-center transition flex flex-col hover:-translate-y-0.5"
+                style={{ height: `${CARD_H}px`, border: 0 }} // inline ensures no border even if .card adds one
               >
                 <div className="overflow-hidden rounded-md">
                   <img
