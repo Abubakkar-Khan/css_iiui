@@ -14,20 +14,21 @@ export default function InteractiveGrid(){
     const c = ref.current
     const ctx = c.getContext('2d')
 
-    // --- tuning for "techy, not jelly" ---
+    // dots shift
+    const offsetY = 5   // move dots down by 5px
+
+    // --- tuning ---
     const baseR = 1.05
     const magR = 140
     const magS = 14
-    const smoothing = 0.22               // snappy but not twitchy
-    const rippleSpeed = 240              // px/s
-    const rippleWidthFactor = 0.45       // thin ring
-    const sizeBoost = 1.2                // restrained bloom (was 2.6 originally)
-    const lightBoost = 20                // restrained brightness boost
+    const smoothing = 0.22
+    const rippleSpeed = 240
+    const rippleWidthFactor = 0.45
+    const sizeBoost = 1.2
+    const lightBoost = 20
 
-    // responsive spacing
     const spacingFor = (w)=> w < 640 ? 22 : w < 1024 ? 28 : 32
 
-    // perf
     let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1))
     let dprUsed = dpr
     let spacing = spacingFor(innerWidth)
@@ -35,7 +36,6 @@ export default function InteractiveGrid(){
 
     const prefersReduce = matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // color via CSS variables (fallback to neutral blue-gray)
     const getTheme = () => {
       const cs = getComputedStyle(document.documentElement)
       const H = parseFloat(cs.getPropertyValue('--grid-h')) || 208
@@ -65,7 +65,6 @@ export default function InteractiveGrid(){
     const resize = ()=>{ build(); ({H,S} = getTheme()) }
     build(); addEventListener('resize', resize)
 
-    // input
     const move = e => {
       mouse.current = { x:e.clientX, y:e.clientY }
       if (smooth.current.x === -9999) smooth.current = { x:e.clientX, y:e.clientY }
@@ -78,15 +77,14 @@ export default function InteractiveGrid(){
     addEventListener('mouseleave', leave, { passive:true })
     addEventListener('click', click, { passive:true })
 
-    // reduced-motion: draw once, no animation
     if (prefersReduce) {
       const w = c.width / dprUsed, h = c.height / dprUsed
       ctx.clearRect(0,0,w,h)
       for (let i=0;i<points.current.length;i++){
         const p = points.current[i]
         ctx.beginPath()
-        ctx.arc(p.x, p.y, baseR, 0, Math.PI*2)
-        ctx.fillStyle = colorOf(78) // calm gray
+        ctx.arc(p.x, p.y + offsetY, baseR, 0, Math.PI*2) // shifted down
+        ctx.fillStyle = colorOf(78)
         ctx.fill()
       }
       return ()=>{ removeEventListener('resize', resize); removeEventListener('mousemove', move); removeEventListener('mouseleave', leave); removeEventListener('click', click) }
@@ -96,7 +94,6 @@ export default function InteractiveGrid(){
       const dt = Math.min(0.05, (now - (last.current || now)) / 1000) || 0.016
       last.current = now
 
-      // FPS guard: if consistently low, bump spacing / cap DPR a bit
       const fps = 1/dt
       if (fps < 45) fpsDebt = Math.min(90, fpsDebt + 1)
       else if (fps > 58) fpsDebt = Math.max(0, fpsDebt - 1)
@@ -106,7 +103,6 @@ export default function InteractiveGrid(){
         fpsDebt = 30
       }
 
-      // mild pointer smoothing
       smooth.current.x += (mouse.current.x - smooth.current.x) * smoothing
       smooth.current.y += (mouse.current.y - smooth.current.y) * smoothing
 
@@ -115,15 +111,16 @@ export default function InteractiveGrid(){
 
       const mx = smooth.current.x, my = smooth.current.y
 
-      // draw dots
       for (let i=0;i<points.current.length;i++){
-        const px = points.current[i].x, py = points.current[i].y
+        const px = points.current[i].x
+        const py = points.current[i].y + offsetY // dots moved down
+
         const dx = mx - px, dy = my - py
         const dist = Math.hypot(dx, dy)
 
         let ox = 0, oy = 0
         let r = baseR
-        let L = 78 // lightness 0..100
+        let L = 78
 
         if (dist < magR){
           const f = (magR - dist) / magR
@@ -131,10 +128,9 @@ export default function InteractiveGrid(){
           ox += dx * inv * f * magS
           oy += dy * inv * f * magS
           r = baseR + f * sizeBoost
-          L = 78 + f * lightBoost   // 78% → ~98% max
+          L = 78 + f * lightBoost
         }
 
-        // thin, crisp ripple band (only on interaction)
         for (let j=0;j<ripples.current.length;j++){
           const rp = ripples.current[j]
           const rx = px - rp.x, ry = py - rp.y
@@ -154,7 +150,6 @@ export default function InteractiveGrid(){
         ctx.fill()
       }
 
-      // ripple evolution
       for (let i=0;i<ripples.current.length;i++){
         const rp = ripples.current[i]
         rp.r += rippleSpeed * dt
@@ -179,7 +174,7 @@ export default function InteractiveGrid(){
   return (
     <canvas
       ref={ref}
-      className="fixed inset-x-0 top-10 bottom-0 z-0 pointer-events-none opacity-50"
+      className="fixed inset-x-0 top-[5px] bottom-0 z-0 pointer-events-none opacity-50"
       aria-hidden
     />
   )
