@@ -179,7 +179,7 @@ export default function InteractiveGrid(){
   return (
     <canvas
       ref={ref}
-      className="fixed inset-x-0 top-0 bottom-0 z-0 pointer-events-none opacity-50"
+      className="fixed inset-x-0 top-10 bottom-0 z-0 pointer-events-none opacity-50"
       aria-hidden
     />
   )

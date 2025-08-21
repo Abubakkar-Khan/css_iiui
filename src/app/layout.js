@@ -2,6 +2,8 @@ export const metadata = { title: 'Computer Science Society', description: 'CSS @
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import InteractiveGrid from '@/components/InteractiveGrid'
+import Footer from '@/components/Footer'
+
 
 export default function RootLayout({ children }) {
   return (
@@ -11,6 +13,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <InteractiveGrid  />
         <main className="relative pt-20">{children}</main>
+        <Footer/>
       </body>
     </html>
   )

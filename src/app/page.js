@@ -13,6 +13,5 @@ export default function Page(){
     <TimelineSection/>
     <BlogSection/>
     <FAQSection/>
-    <Footer/>
   </>)
 }
