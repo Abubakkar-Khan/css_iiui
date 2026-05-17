@@ -11,8 +11,8 @@ const faqs = [
 export default function FAQSection() {
   const [open, setOpen] = useState(0)
   return (
-    <section className="section py-16 md:py-32">
-      <div className="text-center mb-16">
+    <section className="section-pad section">
+      <div className="section-header text-center">
         <span className="label justify-center">Got Questions?</span>
         <h2 className="section-title mt-4">Questions & Answers</h2>
       </div>

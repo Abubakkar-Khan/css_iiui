@@ -3,7 +3,7 @@ export default function CoreTeamSection({ lead, members = [] }) {
     name: 'Abdullah Haroon',
     role: 'President',
     img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop',
-    bio: 'Commanding lead for society operations. Focused on technical infrastructure and community engineering.',
+    bio: 'Leading society operations, technical infrastructure, and building a world-class developer community at IIUI.',
   }
   const others = members.length
     ? members
@@ -17,51 +17,50 @@ export default function CoreTeamSection({ lead, members = [] }) {
       ]
 
   return (
-    <section id="team" className="section py-16 md:py-32">
-      <div className="text-center mb-16">
+    <section id="team" className="section pt-16 pb-16 md:pt-24 md:pb-24">
+      <div className="section-header text-center mb-12">
         <span className="label justify-center">Society Organizers</span>
         <h2 className="section-title mt-4">Team Members</h2>
       </div>
 
-      {/* Featured Leader */}
-      <div className="card overflow-hidden p-0 mb-8 border-white/10">
-        <div className="grid md:grid-cols-[320px_1fr]">
-          <div className="relative group overflow-hidden h-80 md:h-auto">
+      {/* 1. Leader (President) with Details on the Right */}
+      <div className="mb-16 flex justify-center">
+        <article className="card p-0 overflow-hidden max-w-2xl w-full bg-black border-white/10 hover:border-white/20 transition-all duration-300 flex flex-col md:flex-row">
+          {/* Picture on Left */}
+          <div className="w-full md:w-[220px] shrink-0 aspect-square md:aspect-auto border-b md:border-b-0 md:border-r border-border overflow-hidden">
             <img
-              src={leader.img}
+              src={leader.imageUrl || leader.img}
               alt={leader.name}
-              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover brightness-95"
             />
-            <div className="absolute inset-0 bg-black/40" />
           </div>
-          <div className="p-8 md:p-16 flex flex-col justify-center bg-surface">
-            <span className="label mb-2">{leader.role}</span>
-            <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-white">{leader.name}</h3>
-            <p className="mt-6 text-sm text-muted leading-relaxed max-w-lg font-medium">{leader.bio}</p>
-            <div className="mt-8 flex gap-8">
-              {['Instagram', 'LinkedIn'].map(p => (
-                <a key={p} href="#" className="font-mono text-[9px] font-bold text-muted hover:text-white transition-colors tracking-widest uppercase">{p}</a>
-              ))}
-            </div>
+          {/* Details on Right */}
+          <div className="p-6 md:p-8 flex flex-col justify-center text-left flex-1 bg-surface">
+            <span className="label text-[8px] mb-2">{leader.role || leader.designation}</span>
+            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-wider">{leader.name}</h3>
+            <p className="mt-4 text-xs text-muted leading-relaxed max-w-md">
+              {leader.bio || 'Leading society operations and technical community initiatives at IIUI.'}
+            </p>
           </div>
-        </div>
+        </article>
       </div>
 
-      {/* Members Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+      {/* 2. Tiny Team Cards Grid Below */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
         {others.map((m, idx) => (
-          <article key={idx} className="card p-0 overflow-hidden group/m border-white/5 hover:border-white/20">
-            <div className="overflow-hidden relative aspect-square">
-              <img
-                src={m.img}
-                alt={m.name}
-                className="w-full h-full object-cover brightness-90 transition-all duration-500 group-hover/m:brightness-100 group-hover/m:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/20" />
-            </div>
-            <div className="p-4 bg-surface">
-              <span className="label text-[8px] mb-1">{m.role}</span>
-              <div className="text-[11px] font-black text-white uppercase tracking-wider">{m.name}</div>
+          <article key={idx} className="card p-0 overflow-hidden group/m border-white/5 hover:border-white/20 bg-black flex flex-col justify-between transition-all duration-300">
+            <div>
+              <div className="overflow-hidden relative aspect-square border-b border-border">
+                <img
+                  src={m.imageUrl || m.img}
+                  alt={m.name}
+                  className="w-full h-full object-cover brightness-90 transition-all duration-500 group-hover/m:scale-105"
+                />
+              </div>
+              <div className="p-3 bg-surface text-center">
+                <span className="text-[7px] font-mono uppercase text-muted tracking-wider block mb-0.5">{m.role || m.designation}</span>
+                <div className="text-[9px] font-black text-white uppercase tracking-tight truncate">{m.name}</div>
+              </div>
             </div>
           </article>
         ))}

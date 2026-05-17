@@ -17,7 +17,7 @@ export default function EventsPage() {
   }, [])
 
   return (
-    <div className="section py-12 md:py-20">
+    <div className="section-pad section">
       <div className="max-w-2xl">
         <span className="label">Our Calendar</span>
         <h1 className="section-title mt-2">Events & Workshops</h1>
@@ -33,7 +33,7 @@ export default function EventsPage() {
       ) : (
         <div className="mt-16">
           <h2 className="text-xl font-bold uppercase tracking-tight mb-8">All Scheduled Events</h2>
-          <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {events.map((e) => (
               <EventCard key={e.id} event={e} />
             ))}
@@ -53,28 +53,32 @@ function EventCard({ event }) {
   const imageUrl = event.images?.[0]?.url || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop';
   
   return (
-    <article className="card p-0 flex flex-col group overflow-hidden h-full">
-      <div className="overflow-hidden aspect-video border-b border-border">
-        <img
-          src={imageUrl}
-          alt={event.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      </div>
-      <div className="p-6 flex-1 flex flex-col justify-between">
-        <div>
+    <article className="card p-0 flex flex-col group overflow-hidden bg-black border border-border h-full justify-between">
+      <div>
+        {/* Square Image */}
+        <div className="overflow-hidden aspect-square border-b border-border relative">
+          <img
+            src={imageUrl}
+            alt={event.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+        {/* Details */}
+        <div className="p-4 bg-surface">
           <div className="flex flex-wrap gap-2 mb-2">
-            <span className="label text-[9px]">{new Date(event.date).toLocaleDateString()}</span>
-            <span className="text-[8px] font-mono text-muted bg-border px-2 py-0.5 uppercase">{event.eventType || 'Workshop'}</span>
+            <span className="label text-[7px]">{new Date(event.date).toLocaleDateString()}</span>
+            <span className="text-[7px] font-mono text-muted bg-border px-1.5 py-0.5 uppercase">{event.eventType || 'Workshop'}</span>
           </div>
-          <h3 className="text-base font-bold text-white mb-3">
+          <h3 className="text-[11px] font-black text-white mb-2 uppercase tracking-tight leading-tight line-clamp-1">
             {event.title}
           </h3>
-          <div className="text-xs text-muted leading-relaxed line-clamp-3 mb-6" dangerouslySetInnerHTML={{ __html: event.description }} />
+          <div className="text-[10px] text-muted leading-relaxed line-clamp-2" dangerouslySetInnerHTML={{ __html: event.description }} />
         </div>
-        <div className="pt-4 border-t border-border/40">
-          <a href={`/events/${event.id}`} className="btn-ghost w-full text-[9px]">
-            View Event Details →
+      </div>
+      <div className="p-4 pt-2 bg-surface">
+        <div className="pt-2 border-t border-border/40">
+          <a href={`/events/${event.id}`} className="btn-ghost w-full text-[8px] text-center block">
+            Details →
           </a>
         </div>
       </div>

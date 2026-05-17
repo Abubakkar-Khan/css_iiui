@@ -18,8 +18,8 @@ export default function NewsSection() {
   if (loading || news.length === 0) return null
 
   return (
-    <section className="section py-16 md:py-32">
-      <div className="text-center mb-16">
+    <section className="section-pad section">
+      <div className="section-header text-center">
         <span className="label justify-center">Recent Updates</span>
         <h2 className="section-title mt-4">Society News</h2>
       </div>

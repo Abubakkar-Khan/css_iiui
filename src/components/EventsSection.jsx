@@ -30,19 +30,18 @@ export default function EventsSection({ items = [] }) {
   useEffect(() => { scrollToCard(index); }, [index]);
 
   return (
-    <section id="events" className="section py-16 md:py-24">
-      <div className="flex items-end justify-between mb-12">
+    <section id="events" className="section pt-16 pb-6 md:pt-24 md:pb-8">
+      <div className="section-header flex items-end justify-between">
         <div>
           <span className="label">Activity Log</span>
           <h2 className="section-title mt-2">Latest Events</h2>
         </div>
       </div>
 
-      <div className="relative group">
-        {/* Navigation Buttons - Left & Right */}
+      <div className="relative">
         <button 
           onClick={() => go(-1)}
-          className="slider-nav -left-4 md:-left-6 opacity-0 group-hover:opacity-100 disabled:opacity-0"
+          className="slider-nav -left-4 md:-left-6 z-20 hover:bg-white hover:text-black transition-colors"
           disabled={index === 0}
           aria-label="Prev"
         >
@@ -50,7 +49,7 @@ export default function EventsSection({ items = [] }) {
         </button>
         <button 
           onClick={() => go(1)}
-          className="slider-nav -right-4 md:-right-6 opacity-0 group-hover:opacity-100 disabled:opacity-0"
+          className="slider-nav -right-4 md:-right-6 z-20 hover:bg-white hover:text-black transition-colors"
           disabled={index === maxIndex}
           aria-label="Next"
         >
@@ -64,30 +63,30 @@ export default function EventsSection({ items = [] }) {
           {events.map((e, idx) => (
             <li 
               key={idx} 
-              className="snap-start shrink-0 w-[320px] md:w-[380px] transition-all duration-500 ease-out"
-              style={{
-                transform: idx === index ? 'scale(1)' : 'scale(0.95)',
-                opacity: idx === index ? 1 : 0.6,
-              }}
+              className="snap-start shrink-0 w-[220px] md:w-[250px] transition-all duration-300"
             >
-              <article className="card flex flex-col h-[450px] group/card overflow-hidden">
-                <div className="overflow-hidden h-52 relative">
+              <article className="card flex flex-col group/card overflow-hidden bg-black h-full border border-border">
+                {/* Square Image */}
+                <div className="overflow-hidden aspect-square border-b border-border relative">
                   <img
                     src={e.img}
                     alt={e.title}
-                    className="h-full w-full object-cover brightness-90 transition-all duration-700 group-hover/card:brightness-100 group-hover/card:scale-105"
+                    className="h-full w-full object-cover brightness-95 transition-all duration-500 group-hover/card:scale-105"
                     draggable={false}
                   />
-                  <div className="absolute top-4 left-4 font-mono text-[8px] bg-black/80 px-2 py-1 border border-white/10 opacity-60">
-                    LOG_ID: {idx.toString().padStart(4, '0')}
+                  <div className="absolute top-2 left-2 font-mono text-[6px] bg-black/85 px-1.5 py-0.5 border border-white/10 opacity-70">
+                    EV {idx + 1}
                   </div>
                 </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <span className="label text-[9px] mb-2">{e.date}</span>
-                  <h3 className="text-lg font-black uppercase tracking-tight leading-tight">{e.title}</h3>
-                  <p className="mt-4 text-xs text-muted leading-relaxed line-clamp-3 font-medium">{e.excerpt}</p>
-                  <div className="mt-auto pt-6">
-                    <a className="btn-ghost text-[9px] w-full py-2" href="/events">Initialize Protocol →</a>
+                {/* Details */}
+                <div className="p-4 flex-1 flex flex-col justify-between bg-surface">
+                  <div>
+                    <span className="text-[7px] font-mono text-muted uppercase tracking-wider block mb-1">{e.date}</span>
+                    <h3 className="text-[11px] font-black uppercase tracking-tight text-white line-clamp-1 group-hover/card:text-muted transition-colors leading-tight">{e.title}</h3>
+                    <p className="mt-1 text-[10px] text-muted leading-relaxed line-clamp-2">{e.excerpt}</p>
+                  </div>
+                  <div className="pt-2 mt-4 border-t border-border/40">
+                    <a className="text-[8px] font-mono uppercase text-white hover:text-muted transition-colors block text-right font-bold" href="/events">Details →</a>
                   </div>
                 </div>
               </article>

@@ -17,7 +17,7 @@ export default function TeamPage() {
   }, [])
 
   return (
-    <div className="section pt-12 pb-24">
+    <div className="section-pad section">
       <div className="max-w-xl mb-16">
         <span className="label">The Society</span>
         <h1 className="section-title mt-2">Team Members</h1>

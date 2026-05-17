@@ -33,6 +33,15 @@ body {
   @apply relative z-10 max-w-6xl mx-auto px-5 sm:px-8;
 }
 
+.section-pad {
+  padding-top: clamp(4rem, 8vw, 8rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+}
+
+.section-header {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
 /* ── Typography ── */
 .section-title {
   font-size: clamp(2rem, 5vw, 3rem);
