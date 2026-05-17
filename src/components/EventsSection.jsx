@@ -59,16 +59,23 @@ export default function EventsSection({ items = [] }) {
 
         <ul
           ref={trackRef}
-          className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth"
+          className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth py-4"
         >
           {events.map((e, idx) => (
-            <li key={idx} className="snap-start shrink-0 w-[320px] md:w-[380px]">
+            <li 
+              key={idx} 
+              className="snap-start shrink-0 w-[320px] md:w-[380px] transition-all duration-500 ease-out"
+              style={{
+                transform: idx === index ? 'scale(1)' : 'scale(0.95)',
+                opacity: idx === index ? 1 : 0.6,
+              }}
+            >
               <article className="card flex flex-col h-[450px] group/card overflow-hidden">
                 <div className="overflow-hidden h-52 relative">
                   <img
                     src={e.img}
                     alt={e.title}
-                    className="h-full w-full object-cover grayscale brightness-75 transition-all duration-700 group-hover/card:grayscale-0 group-hover/card:brightness-100 group-hover/card:scale-105"
+                    className="h-full w-full object-cover brightness-90 transition-all duration-700 group-hover/card:brightness-100 group-hover/card:scale-105"
                     draggable={false}
                   />
                   <div className="absolute top-4 left-4 font-mono text-[8px] bg-black/80 px-2 py-1 border border-white/10 opacity-60">

@@ -1,6 +1,8 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
+import logoImg from '@/assets/css.png'
 
 const nav = [
   { href: '/events', label: 'Events' },
@@ -36,9 +38,17 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <span className="text-sm font-bold tracking-tight">CS Society</span>
-          <span className="text-muted text-xs hidden sm:inline">IIUI</span>
+        <Link href="/" className="flex items-center group select-none">
+          <Image
+            src={logoImg}
+            alt="The Computer Science Society Logo"
+            width={200}
+            height={60}
+            priority
+            className={`object-contain transition-all duration-300 invert group-hover:scale-[1.03] ${
+              scrolled ? 'h-9 w-auto' : 'h-12 w-auto'
+            }`}
+          />
         </Link>
 
         {/* Desktop Nav */}

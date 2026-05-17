@@ -80,7 +80,10 @@ export default function Hero() {
 
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 pointer-events-none">
-          <div className="pointer-events-auto max-w-2xl">
+          <div 
+            key={idx}
+            className="pointer-events-auto max-w-2xl animate-fade-in-up"
+          >
             <span className="label">{s.tag}</span>
 
             <h1 className="mt-4 text-4xl md:text-7xl font-black leading-none tracking-tighter whitespace-pre-line uppercase">
@@ -95,21 +98,6 @@ export default function Hero() {
               <a href="/events" className="btn">Initialize</a>
               <a href="/about" className="btn-ghost">View Manifest</a>
             </div>
-          </div>
-
-          {/* Indicators */}
-          <div className="mt-12 flex gap-3 pointer-events-auto">
-            {slides.map((_, k) => (
-              <button
-                key={k}
-                onClick={() => setIdx(k)}
-                className="h-1 transition-all duration-500 bg-white"
-                style={{
-                  width: k === idx ? 40 : 8,
-                  opacity: k === idx ? 1 : 0.2,
-                }}
-              />
-            ))}
           </div>
         </div>
       </div>

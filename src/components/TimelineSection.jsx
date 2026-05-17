@@ -77,8 +77,13 @@ export default function TimelineSection({
           {items.map((it, idx) => (
             <li
               key={it.id}
-              className="relative snap-start shrink-0 group/card"
-              style={{ width: CARD_W, paddingTop: AXIS_Y + 60 }}
+              className="relative snap-start shrink-0 group/card transition-all duration-500 ease-out"
+              style={{ 
+                width: CARD_W, 
+                paddingTop: AXIS_Y + 60,
+                transform: index === idx ? 'scale(1)' : 'scale(0.95)',
+                opacity: index === idx ? 1 : 0.6
+              }}
             >
               {/* Metadata above axis */}
               <div
@@ -106,7 +111,7 @@ export default function TimelineSection({
                   <img
                     src={it.image}
                     alt=""
-                    className="h-full w-full object-cover grayscale brightness-75 transition-transform duration-700 group-hover/card:grayscale-0 group-hover/card:brightness-100 group-hover/card:scale-105"
+                    className="h-full w-full object-cover brightness-90 transition-transform duration-700 group-hover/card:brightness-100 group-hover/card:scale-105"
                     draggable={false}
                   />
                   <div className="absolute inset-0 bg-black/40" />

@@ -30,7 +30,7 @@ export default function CoreTeamSection({ lead, members = [] }) {
             <img
               src={leader.img}
               alt={leader.name}
-              className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105"
+              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/40" />
             <div className="absolute bottom-4 left-4 font-mono text-[8px] bg-black/80 px-2 py-1 border border-white/10 opacity-60">
@@ -58,7 +58,7 @@ export default function CoreTeamSection({ lead, members = [] }) {
               <img
                 src={m.img}
                 alt={m.name}
-                className="w-full h-full object-cover grayscale brightness-75 transition-all duration-500 group-hover/m:grayscale-0 group-hover/m:brightness-100 group-hover/m:scale-110"
+                className="w-full h-full object-cover brightness-90 transition-all duration-500 group-hover/m:brightness-100 group-hover/m:scale-110"
               />
               <div className="absolute inset-0 bg-black/20" />
             </div>
