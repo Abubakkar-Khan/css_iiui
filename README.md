@@ -13,6 +13,7 @@ The system uses **Prisma ORM** integrated with a **PostgreSQL** database. Below 
 ```mermaid
 erDiagram
     EVENT ||--o{ EVENT_IMAGE : "contains (1:N)"
+    EVENT ||--o{ EVENT_REGISTRATION : "has (1:N)"
     
     EVENT {
         int id PK
@@ -94,6 +95,50 @@ erDiagram
         string linkedin
         timestamp createdAt
         timestamp updatedAt
+    }
+
+    USER {
+        int id PK
+        string email
+        string name
+        string password
+        Role role "Enum"
+        timestamp createdAt
+        timestamp updatedAt
+    }
+
+    EVENT_REGISTRATION {
+        int id PK
+        int eventId FK
+        string studentName
+        string studentEmail
+        string rollNumber
+        string whatsapp
+        RegStatus status "Enum"
+        timestamp createdAt
+    }
+
+    MEMBERSHIP_APPLICATION {
+        int id PK
+        string name
+        string rollNumber
+        string email
+        string whatsapp
+        string department
+        text skills
+        text whyJoin
+        AppStatus status "Enum"
+        timestamp createdAt
+    }
+
+    INQUIRY {
+        int id PK
+        string name
+        string email
+        string subject
+        text message
+        boolean isRead
+        timestamp createdAt
     }
 ```
 
