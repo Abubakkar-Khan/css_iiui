@@ -18,14 +18,16 @@ export default function NewEventPage({ params }) {
   const handleSave = async (content) => {
     let imageUrl = '';
     if (image) {
-      // Upload to S3
+      // Upload to Cloudinary
+      const formData = new FormData();
+      formData.append('file', image);
+
       const res = await fetch('/api/upload-url', {
         method: 'POST',
-        body: JSON.stringify({ fileType: image.type }),
+        body: formData,
       });
-      const { uploadUrl, key } = await res.json();
-      await fetch(uploadUrl, { method: 'PUT', body: image, headers: { 'Content-Type': image.type } });
-      imageUrl = key; // save encryptedName
+      const data = await res.json();
+      imageUrl = data.url; // Cloudinary secure_url
     }
 
     await fetch('/api/events', {

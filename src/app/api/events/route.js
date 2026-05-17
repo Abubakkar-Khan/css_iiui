@@ -2,36 +2,25 @@ import prisma from '@/lib/prisma';
 
 export const runtime = 'nodejs';
 
-// GET: return events and images, attach public file URLs
+// GET: return events and their images directly
 export async function GET() {
   try {
     const events = await prisma.event.findMany({
       orderBy: { date: 'desc' },
       include: { images: true },
     });
-
-    // map images to include fileUrl (public)
-    const out = events.map(ev => ({
-      ...ev,
-      images: ev.images.map(img => ({
-        id: img.id,
-        encryptedName: img.encryptedName,
-        priority: img.priority,
-        fileUrl: `https://${process.env.AWS_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${img.encryptedName}`
-      }))
-    }));
-    return new Response(JSON.stringify(out), { headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify(events), { headers: { 'Content-Type': 'application/json' } });
   } catch (err) {
     console.error('GET /api/events error', err);
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 }
 
-// POST: expects JSON: { title, description, date, images: [{ key, priority }] }
+// POST: expects JSON: { title, description, date, imageUrl }
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { title, description = '', date = new Date().toISOString(), images = [] } = body;
+    const { title, description = '', date = new Date().toISOString(), imageUrl = '' } = body;
 
     if (!title) return new Response(JSON.stringify({ error: 'title required' }), { status: 400 });
 
@@ -41,10 +30,7 @@ export async function POST(req) {
         description,
         date: new Date(date),
         images: {
-          create: images.map(img => ({
-            encryptedName: img.key,
-            priority: typeof img.priority === 'number' ? img.priority : 2
-          }))
+          create: imageUrl ? [{ url: imageUrl }] : []
         }
       },
       include: { images: true }

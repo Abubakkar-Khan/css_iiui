@@ -12,17 +12,43 @@ export default function NewEventPage() {
   const router = useRouter();
 
   const handleSave = async (payload) => {
-    console.log("Saving event:", payload);
-    // In a real app, you'd handle file upload and API call here
-    // Example:
-    // const formData = new FormData();
-    // formData.append('title', payload.title);
-    // formData.append('description', payload.description);
-    // if (payload.featuredImage) formData.append('image', payload.featuredImage);
-    // await fetch('/api/events', { method: 'POST', body: formData });
+    let imageUrl = '';
     
-    alert('Event saved (simulated)');
-    router.push('/admin/events');
+    if (payload.featuredImage) {
+      const formData = new FormData();
+      formData.append('file', payload.featuredImage);
+
+      const res = await fetch('/api/upload-url', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        imageUrl = data.url;
+      } else {
+        alert('Image upload failed. Saving event without image.');
+      }
+    }
+
+    const res = await fetch('/api/events', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        title: payload.title, 
+        description: payload.description, 
+        date: new Date().toISOString(),
+        imageUrl 
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (res.ok) {
+      alert('Event created successfully!');
+      router.push('/admin/events');
+    } else {
+      const err = await res.json();
+      alert(`Error saving event: ${err.error || 'Unknown error'}`);
+    }
   };
 
   return (

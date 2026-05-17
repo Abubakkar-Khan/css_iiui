@@ -1,17 +1,36 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { s3, randomImageName } from '@/lib/s3';
+import { putObject, randomImageName } from '@/lib/cloudinary';
+
+export const runtime = 'nodejs';
 
 export async function POST(req) {
-  const { fileType } = await req.json();
-  const key = randomImageName() + '.' + (fileType.split('/')[1] || 'jpg');
+  try {
+    const formData = await req.formData();
+    const file = formData.get('file');
 
-  const command = new PutObjectCommand({
-    Bucket: process.env.AWS_BUCKET,
-    Key: key,
-    ContentType: fileType,
-  });
+    if (!file) {
+      return new Response(JSON.stringify({ error: 'No file provided' }), { status: 400 });
+    }
 
-  const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
-  return new Response(JSON.stringify({ uploadUrl, key }), { status: 200 });
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const key = randomImageName() + '.' + (file.type.split('/')[1] || 'jpg');
+    const result = await putObject({
+      key,
+      body: buffer,
+      contentType: file.type
+    });
+
+    // Return both secure_url as `url` and `key` for drop-in compatibility
+    return new Response(JSON.stringify({ 
+      url: result.secure_url, 
+      key: result.secure_url 
+    }), { 
+      status: 200, 
+      headers: { 'Content-Type': 'application/json' } 
+    });
+  } catch (err) {
+    console.error('Upload error:', err);
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+  }
 }
