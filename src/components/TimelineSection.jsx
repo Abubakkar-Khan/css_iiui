@@ -1,195 +1,120 @@
-// components/TimelineSection.jsx
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function TimelineSection({
-  title = 'Timeline',
-  subtitle = 'Key moments & milestones from our journey.',
+  title = 'System Roadmap',
+  subtitle = 'History & Milestones',
   items = [
-    { id:1, year:'2024', date:'16 Aug 2024', title:'Department Orientation',
-      image:'https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=1400&auto=format&fit=crop',
-      text:'Kickstarting the semester with a full house, onboarding, and project picks.' },
-    { id:2, year:'2024', date:'02 Sep 2024', title:'Workshop Highlights',
-      image:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1400&auto=format&fit=crop',
-      text:'Hands-on session: Git, Next.js basics, and deployment gotchas.' },
-    { id:3, year:'2024', date:'18 Sep 2024', title:'Tech Talk',
-      image:'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1400&auto=format&fit=crop',
-      text:'Guest speaker on AI in security — demos, Q&A, and resources.' },
-    { id:4, year:'2024', date:'26 Oct 2024', title:'Community Meetup',
-      image:'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1400&auto=format&fit=crop',
-      text:'Show-and-tell, lightning talks, and networking over snacks.' },
-    { id:5, year:'2024', date:'12 Nov 2024', title:'Hack Night',
-      image:'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1400&auto=format&fit=crop',
-      text:'Rapid prototyping evening — ship a tiny thing by midnight.' },
-    { id:6, year:'2024', date:'03 Dec 2024', title:'Open Source Sprint',
-      image:'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=1400&auto=format&fit=crop',
-      text:'Issues triage, docs polish, and first PRs for newcomers.' },
-    { id:7, year:'2025', date:'15 Jan 2025', title:'Kickoff & Roadmap',
-      image:'https://images.unsplash.com/photo-1537432376769-00a0b1d16bfb?q=80&w=1400&auto=format&fit=crop',
-      text:'Goals for the new year, committee updates, and project assignments.' },
-    { id:8, year:'2025', date:'28 Feb 2025', title:'DevOps Mini-Camp',
-      image:'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1400&auto=format&fit=crop',
-      text:'CI/CD fundamentals, pipelines, and observability crash course.' },
+    { id:1, date:'Aug 2024', title:'Initialization', image:'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop', text:'Onboarding and primary system setup for the new semester batch.' },
+    { id:2, date:'Sep 2024', title:'Version Control', image:'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop', text:'Implementing collaborative development standards and Git training.' },
+    { id:3, date:'Sep 2024', title:'Security Breach Talk', image:'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop', text:'Deep dive into system exploits and defensive security frameworks.' },
+    { id:4, date:'Oct 2024', title:'Node Sync', image:'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop', text:'Synchronizing community resources and project sprint reviews.' },
+    { id:5, date:'Nov 2024', title:'Production Sprint', image:'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop', text:'Overnight development session targeting core prototype delivery.' },
+    { id:6, date:'Dec 2024', title:'Upstreaming', image:'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop', text:'Finalizing project contributions and society documentation.' },
+    { id:7, date:'Jan 2025', title:'New Cycle', image:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop', text:'Roadmap update for 2025. Committee re-allocation and goal setting.' },
+    { id:8, date:'Feb 2025', title:'Ops Mini-Camp', image:'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=800&auto=format&fit=crop', text:'Deployment pipelines and cloud infrastructure crash course.' },
   ],
 }) {
   const trackRef = useRef(null);
   const [index, setIndex] = useState(0);
-  const maxIndex = useMemo(() => Math.max(0, items.length - 1), [items.length]);
-
-  // layout
-  const AXIS_TOP = 120;
-  const DATE_GAP = 24;
-  const DIAMOND = 14;
-  const LINE_CARD_GAP = 36;
-  const CARD_H = 320;
-
-  // ✅ fixed slide width (entire strip: date + diamond + card)
-  const SLIDE_W = 240; // px
 
   const scrollToCard = (i) => {
     const track = trackRef.current; if (!track) return;
-    const el = track.children[i];   if (!el) return;
-    track.scrollTo({ left: el.offsetLeft - 16, behavior: 'smooth' });
+    const el = track.children[i]; if (!el) return;
+    track.scrollTo({ left: el.offsetLeft - 20, behavior: 'smooth' });
   };
 
-  const getPageStep = () => {
-    const track = trackRef.current;
-    if (!track || !track.children.length) return 1;
-    const a = track.children[0], b = track.children[1];
-    let stride = a.getBoundingClientRect().width;
-    if (b) stride = Math.max(1, b.offsetLeft - a.offsetLeft); // includes gap
-    return Math.max(1, Math.round(track.clientWidth / stride));
+  const go = (dir) => {
+    const next = Math.min(Math.max(index + dir, 0), items.length - 1);
+    setIndex(next);
   };
-  const goPage = (dir) => {
-    const step = getPageStep();
-    setIndex((v) => Math.min(Math.max(v + dir * step, 0), maxIndex));
-  };
-
-  // drag / swipe + snap
-  useEffect(() => {
-    const track = trackRef.current; if (!track) return;
-    let down=false, startX=0, startScroll=0;
-    const getX = (e) => (e.touches ? e.touches[0] : e).clientX;
-    const onDown = (e) => { down=true; startX=getX(e); startScroll=track.scrollLeft; };
-    const onMove = (e) => { if(!down) return; track.scrollLeft=startScroll+(startX-getX(e)); };
-    const snap = () => {
-      if(!down) return; down=false;
-      let nearest=0, min=Infinity;
-      for (let i=0; i<track.children.length; i++) {
-        const c = track.children[i];
-        const d = Math.abs(c.offsetLeft - track.scrollLeft);
-        if (d < min) { min = d; nearest = i; }
-      }
-      setIndex(nearest);
-    };
-    track.addEventListener('pointerdown', onDown);
-    track.addEventListener('pointermove', onMove);
-    track.addEventListener('pointerup', snap);
-    track.addEventListener('pointercancel', snap);
-    track.addEventListener('touchstart', onDown, { passive:true });
-    track.addEventListener('touchmove', onMove, { passive:true });
-    track.addEventListener('touchend', snap);
-    return () => {
-      track.removeEventListener('pointerdown', onDown);
-      track.removeEventListener('pointermove', onMove);
-      track.removeEventListener('pointerup', snap);
-      track.removeEventListener('pointercancel', snap);
-      track.removeEventListener('touchstart', onDown);
-      track.removeEventListener('touchmove', onMove);
-      track.removeEventListener('touchend', snap);
-    };
-  }, []);
 
   useEffect(() => { scrollToCard(index); }, [index]);
 
+  const CARD_W = 280;
+  const AXIS_Y = 120;
+
   return (
-    <section id="timeline" className="section py-12 md:py-16 relative mx-auto max-w-6xl px-4" style={{ overflow: 'visible' }}>
-      <h2 className="section-title text-center">{title}</h2>
-      <p className="mt-2 text-center text-sm opacity-80">{subtitle}</p>
+    <section className="section py-16 md:py-32 relative" style={{ overflow: 'visible' }}>
+      <div className="text-center mb-16">
+        <span className="label justify-center">{subtitle}</span>
+        <h2 className="section-title mt-4">{title}</h2>
+      </div>
 
-      <div className="relative z-10 mt-8" style={{ overflow: 'visible' }}>
-        {/* axis */}
-        <div
-          className="pointer-events-none absolute left-1/2 z-0 hidden -translate-x-1/2 md:block"
-          style={{ top: AXIS_TOP, width: 'min(100%, 64rem)', height: 2, background: 'rgba(255,255,255,0.22)' }}
-        />
-
-        {/* arrows */}
-        <button
-          onClick={() => goPage(-1)}
-          className="absolute -left-2 hidden -translate-y-1/2 md:flex h-10 w-10 items-center justify-center rounded-full transition"
-          style={{ top: AXIS_TOP, background:'rgba(0,0,0,0.50)', border:'1px solid rgba(255,255,255,0.22)' }}
-          aria-label="Previous"
-        >‹</button>
-        <button
-          onClick={() => goPage(1)}
-          className="absolute -right-2 hidden -translate-y-1/2 md:flex h-10 w-10 items-center justify-center rounded-full transition"
-          style={{ top: AXIS_TOP, background:'rgba(0,0,0,0.50)', border:'1px solid rgba(255,255,255,0.22)' }}
+      <div className="relative group" style={{ overflow: 'visible' }}>
+        {/* Navigation Buttons - Left & Right */}
+        <button 
+          onClick={() => go(-1)}
+          className="slider-nav -left-4 md:-left-8 opacity-0 group-hover:opacity-100 disabled:opacity-0"
+          style={{ top: AXIS_Y + 120 }}
+          disabled={index === 0}
+          aria-label="Prev"
+        >
+          ‹
+        </button>
+        <button 
+          onClick={() => go(1)}
+          className="slider-nav -right-4 md:-right-8 opacity-0 group-hover:opacity-100 disabled:opacity-0"
+          style={{ top: AXIS_Y + 120 }}
+          disabled={index === items.length - 1}
           aria-label="Next"
-        >›</button>
+        >
+          ›
+        </button>
 
-        {/* track */}
+        {/* Horizontal axis line */}
+        <div
+          className="absolute left-0 right-0 hidden md:block pointer-events-none"
+          style={{ top: AXIS_Y, height: '1px', background: 'var(--border)' }}
+        >
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 border-r border-t border-border rotate-45" />
+        </div>
+
         <ul
           ref={trackRef}
-          className="no-scrollbar mx-auto flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-visible scroll-smooth"
-          style={{ maxWidth: '64rem' }}
+          className="no-scrollbar flex snap-x snap-mandatory gap-8 overflow-x-auto overflow-y-visible scroll-smooth pb-8"
         >
-          {items.map((it) => (
+          {items.map((it, idx) => (
             <li
               key={it.id}
-              className="relative snap-start shrink-0"              // ✅ don't shrink; treat as fixed slide
-              style={{
-                width: `${SLIDE_W}px`,                               // ✅ whole strip is ~240px wide
-                scrollMarginLeft: '16px',
-                paddingTop: AXIS_TOP + DIAMOND / 2 + LINE_CARD_GAP,   // date/diamond/card spacing
-              }}
+              className="relative snap-start shrink-0 group/card"
+              style={{ width: CARD_W, paddingTop: AXIS_Y + 60 }}
             >
-              {/* date */}
+              {/* Metadata above axis */}
               <div
-                className="absolute left-1/2 text-center"
-                style={{ top: AXIS_TOP, transform: `translate(-50%, calc(-100% - ${DATE_GAP}px))` }}
+                className="absolute left-1/2 -translate-x-1/2 text-center"
+                style={{ top: AXIS_Y - 40 }}
               >
-                <span className="rounded bg-white px-3 py-1 text-xs font-semibold text-black shadow">
-                  {it.date}
-                </span>
+                <div className="font-mono text-[8px] text-muted tracking-tighter mb-1">STAMP_{it.id.toString().padStart(2, '0')}</div>
+                <div className="text-[10px] font-black text-white uppercase tracking-widest">{it.date}</div>
               </div>
 
-              {/* diamond marker */}
-              <span
-                className="absolute block"
+              {/* Marker on axis */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 w-2 h-2 transition-all duration-300 hidden md:block"
                 style={{
-                  left: '50%',
-                  top: AXIS_TOP,
-                  width: `${DIAMOND}px`,
-                  height: `${DIAMOND}px`,
-                  background: '#fff',
-                  transform: 'translate(-50%, -50%) rotate(45deg)',
+                  top: AXIS_Y - 4,
+                  background: index === idx ? 'white' : 'transparent',
+                  border: '1px solid #333',
+                  boxShadow: index === idx ? '0 0 10px rgba(255,255,255,0.3)' : 'none'
                 }}
               />
 
-              {/* card fills the slide width */}
-              <article
-                className="card bg-black/40 rounded-lg p-2 text-center transition flex flex-col hover:-translate-y-0.5"
-                style={{ height: `${CARD_H}px`, border: 0 }}
-              >
-                <div className="overflow-hidden rounded-md">
+              {/* Card */}
+              <article className="card p-0 overflow-hidden flex flex-col h-[320px] transition-all duration-500 group-hover/card:border-white/30">
+                <div className="overflow-hidden h-36 relative">
                   <img
                     src={it.image}
                     alt=""
-                    className="h-44 w-full object-cover transition-transform duration-200 ease-out hover:scale-[1.02]"
+                    className="h-full w-full object-cover grayscale brightness-75 transition-transform duration-700 group-hover/card:grayscale-0 group-hover/card:brightness-100 group-hover/card:scale-105"
                     draggable={false}
                   />
+                  <div className="absolute inset-0 bg-black/40" />
                 </div>
-
-                <h3 className="mt-3 text-base font-extrabold leading-snug">{it.title}</h3>
-                <p
-                  className="mt-1 text-sm text-white/80"
-                  style={{ display:'-webkit-box', WebkitLineClamp:4, WebkitBoxOrient:'vertical', overflow:'hidden' }}
-                >
-                  {it.text}
-                </p>
-
-                <div className="mt-auto pt-2 text-xs text-white/70">Tap for details</div>
+                <div className="p-6 flex-1 flex flex-col">
+                  <h3 className="text-sm font-black uppercase tracking-tight leading-snug text-white">{it.title}</h3>
+                  <p className="mt-3 text-[11px] text-muted leading-relaxed line-clamp-4 font-medium">{it.text}</p>
+                </div>
               </article>
             </li>
           ))}
@@ -198,5 +123,3 @@ export default function TimelineSection({
     </section>
   );
 }
-
-

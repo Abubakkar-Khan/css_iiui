@@ -2,37 +2,103 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: dark; }
-html, body { height: 100%; background: #0b0b0b; }
-/* .grid-overlay {
-  pointer-events: none; position: fixed; inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
-  background-size: 24px 24px;
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,1));
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,1));
-  z-index: 0;
-} */
-.section { @apply relative z-10 max-w-6xl mx-auto px-4 sm:px-6; }
-.section-title { @apply text-2xl sm:text-3xl font-extrabold tracking-tight text-white; }
-.card { @apply bg-black/60 border border-white/10 rounded-xl p-4 sm:p-5 shadow; }
-.btn { @apply inline-flex items-center gap-2 bg-white text-black font-semibold rounded-lg px-4 py-2 hover:opacity-90 transition; }
-.btn-ghost { @apply inline-flex items-center gap-2 border border-white/10 text-white rounded-lg px-4 py-2 hover:bg-white/10 transition; }
-
-
-
-
-/* globals.css — theme + utilities */
-:root{
-  --card-bg: rgba(255,255,255,0.04);
-  --card-hover-bg: rgba(255,255,255,0.07);
-  --card-ring: rgba(255,255,255,0.92);
-  --axis: rgba(255,255,255,0.18);
-  --axis-dot: rgba(255,255,255,0.55);
+/* ── Design System: Dark Tech Utilitarian ── */
+:root {
+  --bg: #000000;
+  --fg: #ffffff;
+  --muted: #555555;
+  --border: #1a1a1a;
+  --surface: #0a0a0a;
+  --surface-hover: #111111;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
-.no-scrollbar::-webkit-scrollbar{display:none}
-.no-scrollbar{-ms-overflow-style:none; scrollbar-width:none}
 
+html { scroll-behavior: smooth; }
 
-.clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* ── Layout ── */
+.section {
+  @apply relative z-10 max-w-6xl mx-auto px-5 sm:px-8;
+}
+
+/* ── Typography ── */
+.section-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--fg);
+  text-transform: uppercase;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.label::before {
+  content: '[';
+  color: #333;
+}
+.label::after {
+  content: ']';
+  color: #333;
+}
+
+/* ── Cards ── */
+.card {
+  @apply bg-surface border border-border;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:hover {
+  border-color: #444;
+  background: var(--surface-hover);
+}
+
+/* ── Buttons ── */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 font-bold px-6 py-3 text-[10px] tracking-widest uppercase transition-all duration-200 bg-fg text-bg border border-fg;
+  font-family: var(--font-mono);
+}
+.btn:hover {
+  @apply bg-transparent text-fg;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 font-bold px-6 py-3 text-[10px] tracking-widest uppercase transition-all duration-200 bg-transparent text-fg border border-border;
+  font-family: var(--font-mono);
+}
+.btn-ghost:hover {
+  @apply border-fg;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Slider Navigation ── */
+.slider-nav {
+  @apply absolute top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center bg-black/50 border border-border text-white transition-all hover:bg-white hover:text-black;
+}
+
+/* ── Utilities ── */
+.text-muted { color: var(--muted); }
+.tech-grid {
+  background-image: radial-gradient(circle, #111 1px, transparent 1px);
+  background-size: 30px 30px;
+}

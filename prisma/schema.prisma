@@ -104,3 +104,16 @@
     title             String?
     createdAt         DateTime @default(now())
   }
+
+  model Alumni {
+    id            Int      @id @default(autoincrement())
+    name          String
+    gradYear      String
+    company       String?
+    role          String?
+    image         String?  // encrypted filename
+    linkedin      String?
+
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+  }

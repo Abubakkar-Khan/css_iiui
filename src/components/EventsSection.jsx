@@ -1,16 +1,17 @@
-// components/EventsSection.jsx
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 export default function EventsSection({ items = [] }) {
   const events = items.length
     ? items
-    : Array.from({ length: 8 }).map(() => ({
-        title: 'IT Department Orientation 2024',
-        date: '2 Sep 2024',
-        img: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1200&auto=format&fit=crop',
-        excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      }));
+    : [
+        { title: 'Orientation Protocol', date: '16 Aug 2024', img: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop', excerpt: 'Onboarding session for new entries. Introduction to society frameworks and roadmap.' },
+        { title: 'Dev Environment: Git', date: '02 Sep 2024', img: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop', excerpt: 'Core version control training. Branching strategies and collaborative workflows.' },
+        { title: 'System Security Lab', date: '18 Sep 2024', img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop', excerpt: 'Adversarial machine learning and network defense strategies. Live exploit demos.' },
+        { title: 'Community Node Sync', date: '26 Oct 2024', img: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop', excerpt: 'Internal meetup and project synchronization. Networking and resource allocation.' },
+        { title: 'Night Shift: Build', date: '12 Nov 2024', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop', excerpt: 'Intensive building session. Zero-to-one prototyping. Coffee and compilers.' },
+        { title: 'Open Source Cluster', date: '03 Dec 2024', img: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop', excerpt: 'Upstreaming local tools. Contribution sprints and documentation polish.' },
+      ];
 
   const trackRef = useRef(null);
   const [index, setIndex] = useState(0);
@@ -18,111 +19,69 @@ export default function EventsSection({ items = [] }) {
 
   const scrollToCard = (i) => {
     const track = trackRef.current; if (!track) return;
-    const el = track.children[i];  if (!el) return;
-    track.scrollTo({ left: el.offsetLeft - 16, behavior: 'smooth' });
+    const el = track.children[i]; if (!el) return;
+    track.scrollTo({ left: el.offsetLeft - 20, behavior: 'smooth' });
   };
 
-  const getPageStep = () => {
-    const track = trackRef.current;
-    if (!track || track.children.length === 0) return 1;
-    const a = track.children[0], b = track.children[1];
-    let stride = a.getBoundingClientRect().width;
-    if (b) stride = Math.max(1, b.offsetLeft - a.offsetLeft);
-    return Math.max(1, Math.round(track.clientWidth / stride));
+  const go = (dir) => {
+    setIndex((v) => Math.min(Math.max(v + dir, 0), maxIndex));
   };
-
-  const goPage = (dir) => {
-    const step = getPageStep();
-    setIndex((v) => Math.min(Math.max(v + dir * step, 0), maxIndex));
-  };
-
-  // Drag/swipe
-  useEffect(() => {
-    const track = trackRef.current; if (!track) return;
-    let down = false, startX = 0, startScroll = 0;
-    const getX = (e) => (e.touches ? e.touches[0] : e).clientX;
-    const onDown = (e) => { down = true; startX = getX(e); startScroll = track.scrollLeft; };
-    const onMove = (e) => { if (!down) return; track.scrollLeft = startScroll + (startX - getX(e)); };
-    const snap = () => {
-      if (!down) return; down = false;
-      let nearest = 0, min = Infinity;
-      for (let i = 0; i < track.children.length; i++) {
-        const c = track.children[i];
-        const d = Math.abs(c.offsetLeft - track.scrollLeft);
-        if (d < min) { min = d; nearest = i; }
-      }
-      setIndex(nearest);
-    };
-    track.addEventListener('pointerdown', onDown);
-    track.addEventListener('pointermove', onMove);
-    track.addEventListener('pointerup', snap);
-    track.addEventListener('pointercancel', snap);
-    track.addEventListener('touchstart', onDown, { passive: true });
-    track.addEventListener('touchmove', onMove, { passive: true });
-    track.addEventListener('touchend', snap);
-    return () => {
-      track.removeEventListener('pointerdown', onDown);
-      track.removeEventListener('pointermove', onMove);
-      track.removeEventListener('pointerup', snap);
-      track.removeEventListener('pointercancel', snap);
-      track.removeEventListener('touchstart', onDown);
-      track.removeEventListener('touchmove', onMove);
-      track.removeEventListener('touchend', snap);
-    };
-  }, []);
 
   useEffect(() => { scrollToCard(index); }, [index]);
 
-  // ✅ Bigger fixed dimensions
-  const CARD_W = 300; // px
-  const CARD_H = 400; // px
-
   return (
-    <section id="events" className="section py-12 md:py-16">
-      <h2 className="section-title text-center">Events</h2>
+    <section id="events" className="section py-16 md:py-24">
+      <div className="flex items-end justify-between mb-12">
+        <div>
+          <span className="label">Activity Log</span>
+          <h2 className="section-title mt-2">Latest Events</h2>
+        </div>
+      </div>
 
-      <div className="relative mt-8">
-        {/* Arrows */}
-        <button
-          onClick={() => goPage(-1)}
-          className="absolute -left-2 top-1/2 -translate-y-1/2 hidden md:flex h-10 w-10 items-center justify-center rounded-full transition"
-          style={{ background:'rgba(0,0,0,0.50)', border:'1px solid rgba(255,255,255,0.22)' }}
-          aria-label="Previous"
-        >‹</button>
-        <button
-          onClick={() => goPage(1)}
-          className="absolute -right-2 top-1/2 -translate-y-1/2 hidden md:flex h-10 w-10 items-center justify-center rounded-full transition"
-          style={{ background:'rgba(0,0,0,0.50)', border:'1px solid rgba(255,255,255,0.22)' }}
+      <div className="relative group">
+        {/* Navigation Buttons - Left & Right */}
+        <button 
+          onClick={() => go(-1)}
+          className="slider-nav -left-4 md:-left-6 opacity-0 group-hover:opacity-100 disabled:opacity-0"
+          disabled={index === 0}
+          aria-label="Prev"
+        >
+          ‹
+        </button>
+        <button 
+          onClick={() => go(1)}
+          className="slider-nav -right-4 md:-right-6 opacity-0 group-hover:opacity-100 disabled:opacity-0"
+          disabled={index === maxIndex}
           aria-label="Next"
-        >›</button>
+        >
+          ›
+        </button>
 
-        {/* Track */}
         <ul
           ref={trackRef}
-          className="no-scrollbar mx-auto flex snap-x snap-mandatory gap-5 overflow-x-auto overflow-y-visible scroll-smooth"
-          style={{ maxWidth: '64rem' }}
+          className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth"
         >
           {events.map((e, idx) => (
-            <li
-              key={idx}
-              className="snap-start shrink-0"
-              style={{ scrollMarginLeft: '16px', width: CARD_W }}
-            >
-              <article
-                className="card rounded-lg p-2 text-left bg-black/40 transition hover:-translate-y-0.5 flex flex-col"
-                style={{ border: 0, height: CARD_H }}
-              >
-                <img
-                  src={e.img}
-                  alt="event"
-                  className="rounded-md mb-4 aspect-[4/3] w-full object-cover transition-transform duration-200 ease-out hover:scale-[1.02]"
-                  draggable={false}
-                />
-                <div className="text-xs uppercase text-white/70">{e.date}</div>
-                <h3 className="mt-1 font-bold leading-snug">{e.title}</h3>
-                <p className="mt-2 text-sm text-white/80 line-clamp-3">{e.excerpt}</p>
-                <div className="mt-auto pt-2">
-                  <a className="btn-ghost" href="/events">Read More</a>
+            <li key={idx} className="snap-start shrink-0 w-[320px] md:w-[380px]">
+              <article className="card flex flex-col h-[450px] group/card overflow-hidden">
+                <div className="overflow-hidden h-52 relative">
+                  <img
+                    src={e.img}
+                    alt={e.title}
+                    className="h-full w-full object-cover grayscale brightness-75 transition-all duration-700 group-hover/card:grayscale-0 group-hover/card:brightness-100 group-hover/card:scale-105"
+                    draggable={false}
+                  />
+                  <div className="absolute top-4 left-4 font-mono text-[8px] bg-black/80 px-2 py-1 border border-white/10 opacity-60">
+                    LOG_ID: {idx.toString().padStart(4, '0')}
+                  </div>
+                </div>
+                <div className="p-6 flex-1 flex flex-col">
+                  <span className="label text-[9px] mb-2">{e.date}</span>
+                  <h3 className="text-lg font-black uppercase tracking-tight leading-tight">{e.title}</h3>
+                  <p className="mt-4 text-xs text-muted leading-relaxed line-clamp-3 font-medium">{e.excerpt}</p>
+                  <div className="mt-auto pt-6">
+                    <a className="btn-ghost text-[9px] w-full py-2" href="/events">Initialize Protocol →</a>
+                  </div>
                 </div>
               </article>
             </li>
