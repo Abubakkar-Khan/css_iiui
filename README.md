@@ -57,7 +57,6 @@ erDiagram
         string instagram "Nullable"
         string linkedin "Nullable"
         string facebook "Nullable"
-        string discord "Nullable"
         timestamp createdAt
         timestamp updatedAt
     }
@@ -70,6 +69,7 @@ erDiagram
         string role "Nullable"
         string imageUrl "Nullable"
         string linkedin "Nullable"
+        int priority "Default = 2"
         timestamp createdAt
         timestamp updatedAt
     }
