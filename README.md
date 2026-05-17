@@ -43,6 +43,9 @@ erDiagram
         string title
         text description
         datetime date
+        string locationType
+        string venue
+        string eventType
     }
 
     IMAGE {

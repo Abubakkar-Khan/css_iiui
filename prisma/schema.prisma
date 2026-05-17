@@ -17,14 +17,17 @@ model Admin {
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String   @db.Text
-  date        DateTime
-  images      Image[]  // Relation to images (event-specific)
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String   @db.Text
+  date         DateTime
+  locationType String   @default("OFFLINE") // OFFLINE or ONLINE
+  venue        String?  // e.g. Auditorium B, Zoom Link
+  eventType    String   @default("Workshop") // Workshop, Seminar, Hackathon, Other
+  images       Image[]  // Relation to images (event-specific)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([date])
 }

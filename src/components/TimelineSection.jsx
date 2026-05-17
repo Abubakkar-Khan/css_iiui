@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 export default function TimelineSection({
-  title = 'System Roadmap',
+  title = 'Our Journey',
   subtitle = 'History & Milestones',
   items = [
     { id:1, date:'Aug 2024', title:'Initialization', image:'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop', text:'Onboarding and primary system setup for the new semester batch.' },

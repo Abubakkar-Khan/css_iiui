@@ -33,9 +33,20 @@ export default function EventEditor({ event = null, onSave }) {
     }
   };
 
+  const [locationType, setLocationType] = useState(event?.locationType || 'OFFLINE');
+  const [venue, setVenue] = useState(event?.venue || '');
+  const [eventType, setEventType] = useState(event?.eventType || 'Workshop');
+
   const handleSave = async () => {
     const description = editor?.getHTML() || '';
-    const payload = { title, description, featuredImage };
+    const payload = { 
+      title, 
+      description, 
+      featuredImage,
+      locationType,
+      venue,
+      eventType
+    };
     await onSave?.(payload);
   };
 
@@ -50,6 +61,47 @@ export default function EventEditor({ event = null, onSave }) {
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
+      </div>
+
+      {/* Details Grid */}
+      <div className="grid md:grid-cols-3 gap-6 bg-surface border border-border p-6">
+        <div>
+          <label className="label mb-2 block">Event Type</label>
+          <select
+            value={eventType}
+            onChange={e => setEventType(e.target.value)}
+            className="w-full p-4 bg-[#0d0d0d] border border-border focus:border-white outline-none text-sm text-white"
+          >
+            <option value="Workshop">Workshop</option>
+            <option value="Seminar">Seminar</option>
+            <option value="Hackathon">Hackathon</option>
+            <option value="Speaker Session">Speaker Session</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="label mb-2 block">Location Type</label>
+          <select
+            value={locationType}
+            onChange={e => setLocationType(e.target.value)}
+            className="w-full p-4 bg-[#0d0d0d] border border-border focus:border-white outline-none text-sm text-white"
+          >
+            <option value="OFFLINE">OFFLINE (Physical)</option>
+            <option value="ONLINE">ONLINE (Virtual)</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="label mb-2 block">Venue / Link</label>
+          <input
+            type="text"
+            value={venue}
+            onChange={e => setVenue(e.target.value)}
+            className="w-full p-4 bg-[#0d0d0d] border border-border focus:border-white outline-none text-sm text-white"
+            placeholder="e.g. Auditorium B, Zoom Link"
+          />
+        </div>
       </div>
 
       {/* Editor & Toolbar Container */}

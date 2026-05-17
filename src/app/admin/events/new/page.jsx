@@ -37,6 +37,9 @@ export default function NewEventPage() {
         title: payload.title, 
         description: payload.description, 
         date: new Date().toISOString(),
+        locationType: payload.locationType,
+        venue: payload.venue,
+        eventType: payload.eventType,
         imageUrl 
       }),
       headers: { 'Content-Type': 'application/json' },

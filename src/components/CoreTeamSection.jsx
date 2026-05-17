@@ -19,8 +19,8 @@ export default function CoreTeamSection({ lead, members = [] }) {
   return (
     <section id="team" className="section py-16 md:py-32">
       <div className="text-center mb-16">
-        <span className="label justify-center">Executive Command</span>
-        <h2 className="section-title mt-4">Core Team</h2>
+        <span className="label justify-center">Society Organizers</span>
+        <h2 className="section-title mt-4">Team Members</h2>
       </div>
 
       {/* Featured Leader */}
@@ -33,9 +33,6 @@ export default function CoreTeamSection({ lead, members = [] }) {
               className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute bottom-4 left-4 font-mono text-[8px] bg-black/80 px-2 py-1 border border-white/10 opacity-60">
-              RANK: COMMANDER
-            </div>
           </div>
           <div className="p-8 md:p-16 flex flex-col justify-center bg-surface">
             <span className="label mb-2">{leader.role}</span>

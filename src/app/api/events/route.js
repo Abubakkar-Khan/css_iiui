@@ -20,7 +20,15 @@ export async function GET() {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { title, description = '', date = new Date().toISOString(), imageUrl = '' } = body;
+    const { 
+      title, 
+      description = '', 
+      date = new Date().toISOString(), 
+      locationType = 'OFFLINE',
+      venue = '',
+      eventType = 'Workshop',
+      imageUrl = '' 
+    } = body;
 
     if (!title) return new Response(JSON.stringify({ error: 'title required' }), { status: 400 });
 
@@ -29,6 +37,9 @@ export async function POST(req) {
         title,
         description,
         date: new Date(date),
+        locationType,
+        venue,
+        eventType,
         images: {
           create: imageUrl ? [{ url: imageUrl }] : []
         }

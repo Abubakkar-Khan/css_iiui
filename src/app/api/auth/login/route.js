@@ -1,15 +1,39 @@
-export async function POST(req) {
-  const { username, password } = await req.json();
-  if (!username || !password) return new Response(JSON.stringify({ error: 'Missing' }), { status: 400 });
+import prisma from '@/lib/prisma';
+import bcrypt from 'bcrypt';
 
-  if (username === process.env.ADMIN_NAME && password === process.env.ADMIN_PASS) {
-    return new Response(JSON.stringify({ ok: true }), {
+export const runtime = 'nodejs';
+
+export async function POST(req) {
+  try {
+    const { username, password } = await req.json();
+    if (!username || !password) {
+      return new Response(JSON.stringify({ error: 'Missing credentials' }), { status: 400 });
+    }
+
+    // Find admin by email/username
+    const admin = await prisma.admin.findUnique({
+      where: { email: username }
+    });
+
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
+    }
+
+    // Verify password
+    const isValid = await bcrypt.compare(password, admin.password);
+    if (!isValid) {
+      return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
+    }
+
+    return new Response(JSON.stringify({ ok: true, name: admin.name }), {
       status: 200,
       headers: {
-        'Set-Cookie': `admin=1; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${60 * 60 * 24}`,
+        'Set-Cookie': `admin=1; Path=/; HttpOnly; SameSite=Strict; Max-Age=${60 * 60 * 24}`,
         'Content-Type': 'application/json'
       }
     });
+  } catch (err) {
+    console.error("Login error:", err);
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
-  return new Response(JSON.stringify({ error: 'Invalid' }), { status: 401 });
 }

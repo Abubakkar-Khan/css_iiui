@@ -13,8 +13,8 @@ export default function FAQSection() {
   return (
     <section className="section py-16 md:py-32">
       <div className="text-center mb-16">
-        <span className="label justify-center">Common Protocol</span>
-        <h2 className="section-title mt-4">FAQ</h2>
+        <span className="label justify-center">Got Questions?</span>
+        <h2 className="section-title mt-4">Questions & Answers</h2>
       </div>
 
       <div className="max-w-3xl mx-auto space-y-4">

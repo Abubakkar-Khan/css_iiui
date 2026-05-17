@@ -40,6 +40,20 @@ export default async function EventPage({ params }) {
         <span className="label">{new Date(ev.date).toLocaleDateString(undefined, { dateStyle: 'long' })}</span>
         <h1 className="text-4xl md:text-5xl font-bold mt-2 uppercase tracking-tight">{ev.title}</h1>
         
+        <div className="flex flex-wrap gap-4 mt-6">
+          <span className="text-[10px] uppercase font-mono tracking-wider px-3 py-1 bg-white/5 border border-border/40 text-muted">
+            Type: {ev.eventType || 'Workshop'}
+          </span>
+          <span className="text-[10px] uppercase font-mono tracking-wider px-3 py-1 bg-white/5 border border-border/40 text-muted">
+            Format: {ev.locationType || 'OFFLINE'}
+          </span>
+          {ev.venue && (
+            <span className="text-[10px] uppercase font-mono tracking-wider px-3 py-1 bg-white/5 border border-border/40 text-muted">
+              Venue: {ev.venue}
+            </span>
+          )}
+        </div>
+
         <div className="mt-12 prose prose-invert max-w-none text-muted leading-relaxed">
           <div dangerouslySetInnerHTML={{ __html: ev.description }} />
           <p className="mt-8 italic">
