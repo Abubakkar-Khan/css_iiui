@@ -1,187 +1,83 @@
-  generator client {
-    provider = "prisma-client-js"
-  }
+generator client {
+  provider = "prisma-client-js"
+}
 
-  datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
-  }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
-  model Event {
-    id            Int                 @id @default(autoincrement())
-    title         String
-    description   String              @db.Text
-    date          DateTime
-    images        EventImage[]
-    registrations EventRegistration[] // relation
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String   // Hashed password
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-    createdAt     DateTime            @default(now())
-    updatedAt     DateTime            @updatedAt
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  date        DateTime
+  images      Image[]  // Relation to images (event-specific)
 
-    @@index([date])
-  }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  model EventImage {
-    id            Int      @id @default(autoincrement())
-    event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  @@index([date])
+}
 
-    eventId       Int
-    encryptedName String   // S3 encrypted key
-    priority      Int      @default(2) // 1 = featured, 2 = normal
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String
+  caption   String?
+  eventId   Int?     // Nullable: Null = non-event general image, Int = event image
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
 
-    @@index([priority])
-  }
+  @@index([eventId])
+}
 
-  model News {
-    id          Int      @id @default(autoincrement())
-    title       String
-    details     String   @db.Text
-    date        DateTime
-    image       String   // encrypted filename
+model News {
+  id        Int      @id @default(autoincrement())
+  title     String
+  details   String   @db.Text
+  date      DateTime
+  imageUrl  String?
 
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([date])
-  }
+  @@index([date])
+}
 
-  model TeamMember {
-    id          Int      @id @default(autoincrement())
-    name        String
-    designation String
-    details     String?  @db.Text
-    image       String?  // encrypted filename
-    instagram   String?
-    linkedin    String?
-    facebook    String?
-    discord     String?
+model TeamMember {
+  id          Int      @id @default(autoincrement())
+  name        String
+  designation String
+  details     String?  @db.Text
+  imageUrl    String?
+  instagram   String?
+  linkedin    String?
+  facebook    String?
+  discord     String?
 
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-  }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
-  model TimelineItem {
-    id          Int      @id @default(autoincrement())
-    date        DateTime
-    highlights  String
-    details     String   @db.Text
-    image       String   // encrypted filename
+model Alumni {
+  id        Int      @id @default(autoincrement())
+  name      String
+  gradYear  String
+  company   String?
+  role      String?
+  imageUrl  String?
+  linkedin  String?
 
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-
-    @@index([date])
-  }
-
-  enum BlogCategory {
-    TECH
-    RESEARCH
-    EVENTS
-    NEWS
-    OPINION
-    OTHER
-  }
-
-  model Post {
-    id          Int          @id @default(autoincrement())
-    title       String
-    slug        String       @unique
-    category    BlogCategory @default(OTHER)
-    description String       @db.Text
-    image       String       // encrypted filename
-
-    createdAt   DateTime     @default(now())
-    updatedAt   DateTime     @updatedAt
-
-    @@index([createdAt])
-  }
-
-  model GalleryImage {
-    id                Int      @id @default(autoincrement())
-    encryptedFileName String   @unique
-    title             String?
-    createdAt         DateTime @default(now())
-  }
-
-  model Alumni {
-    id            Int      @id @default(autoincrement())
-    name          String
-    gradYear      String
-    company       String?
-    role          String?
-    image         String?  // encrypted filename
-    linkedin      String?
-
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-  }
-
-  enum Role {
-    SUPER_ADMIN
-    EDITOR
-    RECRUITER
-  }
-
-  model User {
-    id        Int      @id @default(autoincrement())
-    email     String   @unique
-    name      String
-    password  String
-    role      Role     @default(EDITOR)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-  }
-
-  enum RegStatus {
-    PENDING
-    APPROVED
-    ATTENDED
-    CANCELLED
-  }
-
-  model EventRegistration {
-    id           Int       @id @default(autoincrement())
-    event        Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-    eventId      Int
-    studentName  String
-    studentEmail String
-    rollNumber   String
-    whatsapp     String
-    status       RegStatus @default(PENDING)
-    createdAt    DateTime  @default(now())
-
-    @@index([eventId])
-  }
-
-  enum AppStatus {
-    PENDING
-    INTERVIEWING
-    SELECTED
-    REJECTED
-  }
-
-  model MembershipApplication {
-    id         Int       @id @default(autoincrement())
-    name       String
-    rollNumber String
-    email      String
-    whatsapp   String
-    department String
-    skills     String    @db.Text
-    whyJoin    String    @db.Text
-    status     AppStatus @default(PENDING)
-    createdAt  DateTime  @default(now())
-  }
-
-  model Inquiry {
-    id        Int      @id @default(autoincrement())
-    name      String
-    email     String
-    subject   String
-    message   String   @db.Text
-    isRead    Boolean  @default(false)
-    createdAt DateTime @default(now())
-  }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

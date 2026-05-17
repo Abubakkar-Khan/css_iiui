@@ -2,19 +2,25 @@
 
 A premium, high-fidelity, Swiss-utilitarian web portal designed and built for the **Computer Science Society (CSS)** at the **International Islamic University Islamabad (IIUI)**.
 
-This portal serves as a central hub for student registration, showcasing society events, highlighting executive leadership, documenting academic timelines, and maintaining a robust alumni directory.
-
 ---
 
 ## 1. Relational Database Schema (ERD)
 
-The system uses **Prisma ORM** integrated with a **PostgreSQL** database. Below is the interactive Entity-Relationship Diagram (ERD) mapping the complete data models of the active database backend.
+The system uses **Prisma ORM** integrated with a **PostgreSQL** database. Below is the simplified and optimized Entity-Relationship Diagram (ERD) mapping the complete data models of the backend.
 
 ```mermaid
 erDiagram
-    EVENT ||--o{ EVENT_IMAGE : "contains (1:N)"
-    EVENT ||--o{ EVENT_REGISTRATION : "has (1:N)"
+    EVENT ||--o{ IMAGE : "contains (1:N)"
     
+    ADMIN {
+        int id PK
+        string email "Unique"
+        string name
+        string password "Hashed"
+        timestamp createdAt
+        timestamp updatedAt
+    }
+
     EVENT {
         int id PK
         string title
@@ -24,13 +30,12 @@ erDiagram
         timestamp updatedAt
     }
 
-    EVENT_IMAGE {
+    IMAGE {
         int id PK
-        int eventId FK
-        string encryptedName
-        int priority "1 = Featured, 2 = Normal"
+        string url
+        string caption "Nullable"
+        int eventId FK "Nullable (Null = Non-Event, Int = Event)"
         timestamp createdAt
-        timestamp updatedAt
     }
 
     NEWS {
@@ -38,7 +43,7 @@ erDiagram
         string title
         text details
         datetime date
-        string image
+        string imageUrl "Nullable"
         timestamp createdAt
         timestamp updatedAt
     }
@@ -47,100 +52,33 @@ erDiagram
         int id PK
         string name
         string designation
-        text details
-        string image
-        string instagram
-        string linkedin
-        string facebook
-        string discord
+        text details "Nullable"
+        string imageUrl "Nullable"
+        string instagram "Nullable"
+        string linkedin "Nullable"
+        string facebook "Nullable"
+        string discord "Nullable"
         timestamp createdAt
         timestamp updatedAt
-    }
-
-    TIMELINE_ITEM {
-        int id PK
-        datetime date
-        string highlights
-        text details
-        string image
-        timestamp createdAt
-        timestamp updatedAt
-    }
-
-    POST {
-        int id PK
-        string title
-        string slug
-        BlogCategory category "Enum"
-        text description
-        string image
-        timestamp createdAt
-        timestamp updatedAt
-    }
-
-    GALLERY_IMAGE {
-        int id PK
-        string encryptedFileName
-        string title
-        timestamp createdAt
     }
 
     ALUMNI {
         int id PK
         string name
         string gradYear
-        string company
-        string role
-        string image
-        string linkedin
+        string company "Nullable"
+        string role "Nullable"
+        string imageUrl "Nullable"
+        string linkedin "Nullable"
         timestamp createdAt
         timestamp updatedAt
-    }
-
-    USER {
-        int id PK
-        string email
-        string name
-        string password
-        Role role "Enum"
-        timestamp createdAt
-        timestamp updatedAt
-    }
-
-    EVENT_REGISTRATION {
-        int id PK
-        int eventId FK
-        string studentName
-        string studentEmail
-        string rollNumber
-        string whatsapp
-        RegStatus status "Enum"
-        timestamp createdAt
-    }
-
-    MEMBERSHIP_APPLICATION {
-        int id PK
-        string name
-        string rollNumber
-        string email
-        string whatsapp
-        string department
-        text skills
-        text whyJoin
-        AppStatus status "Enum"
-        timestamp createdAt
-    }
-
-    INQUIRY {
-        int id PK
-        string name
-        string email
-        string subject
-        text message
-        boolean isRead
-        timestamp createdAt
     }
 ```
+
+### Table Relation Strategy:
+- **`Image` Table:** Acts as a unified asset library. 
+  - If `eventId` is **defined**, the image belongs to a specific event (e.g., event recap gallery).
+  - If `eventId` is **NULL**, it is a non-event general image (e.g., promotional graphic, header background).
 
 ---
 
