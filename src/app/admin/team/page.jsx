@@ -3,6 +3,16 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+const getDesignationPriority = (designation) => {
+  const desc = (designation || '').toLowerCase();
+  if (desc.includes('president') && !desc.includes('vice')) return 1;
+  if (desc.includes('vice president') || desc.includes('vice-president')) return 2;
+  if (desc.includes('secretary')) return 3;
+  if (desc.includes('lead') && !desc.includes('co-') && !desc.includes('sub-') && !desc.includes('vice')) return 4;
+  if (desc.includes('co-lead') || desc.includes('colead') || desc.includes('sub-lead') || desc.includes('sublead') || desc.includes('vice lead')) return 5;
+  return 6;
+};
+
 export default function AdminTeamPage() {
   const [members, setMembers] = useState([]);
   const [editingMember, setEditingMember] = useState(null);
@@ -228,38 +238,54 @@ export default function AdminTeamPage() {
       )}
 
       {/* Executives List */}
-      <div className="border border-border bg-surface overflow-hidden rounded-none divide-y divide-border">
-        {members.map(m => (
-          <div key={m.id} className="flex flex-row items-center justify-between p-5 hover:bg-white/[0.01] transition-colors gap-4">
-            {/* Left Part: Avatar & Details in a row */}
-            <div className="flex items-center gap-5 flex-1 min-w-0">
-              <img
-                src={m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200'}
-                alt={m.name}
-                className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
-              />
-              <div className="min-w-0 flex flex-col sm:flex-row sm:items-center sm:gap-8">
-                <div className="text-sm font-bold text-white truncate">{m.name}</div>
-                <div className="text-xs text-muted font-mono sm:mt-0 mt-1">{m.designation}</div>
+      <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {[...members].sort((a, b) => getDesignationPriority(a.designation) - getDesignationPriority(b.designation)).map(m => (
+          <article key={m.id} className="card p-0 group overflow-hidden bg-[var(--surface)] border border-border hover:border-white/20 transition-all duration-300 flex flex-col justify-between h-full">
+            <div className="flex flex-col h-full justify-between">
+              <div>
+                <div className="overflow-hidden aspect-square border-b border-border">
+                  <img
+                    src={m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400'}
+                    alt={m.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-5 text-center">
+                  <span className="text-[9px] font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2 py-0.5 inline-block border border-white/10 rounded-none mb-2">
+                    {m.designation}
+                  </span>
+                  <h3 className="mt-1 text-base font-bold text-white uppercase tracking-tight truncate">{m.name}</h3>
+                  {m.details && (
+                    <p className="mt-2 text-xs text-muted leading-relaxed line-clamp-2 font-medium">{m.details}</p>
+                  )}
+                </div>
+              </div>
+              
+              <div className="p-4 pt-0 bg-surface">
+                <div className="pt-3 border-t border-border/40 flex items-center justify-between gap-3">
+                  <button
+                    onClick={() => handleEdit(m)}
+                    className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(m.id)}
+                    className="text-[9px] font-mono font-bold uppercase tracking-wider text-red-500/70 hover:text-red-400 transition-colors cursor-pointer"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
-            {/* Right Part: Actions */}
-            <div className="flex items-center gap-6 shrink-0">
-              <button onClick={() => handleEdit(m)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer">
-                Edit
-              </button>
-              <button onClick={() => handleDelete(m.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer">
-                Delete
-              </button>
-            </div>
-          </div>
+          </article>
         ))}
-        {members.length === 0 && (
-          <div className="p-20 text-center text-sm text-muted bg-surface">
-            No executive roster members registered. Initialize database seed.
-          </div>
-        )}
       </div>
+      {members.length === 0 && (
+        <div className="border border-border p-20 text-center text-sm text-muted bg-surface mt-8">
+          No executive roster members registered. Initialize database seed.
+        </div>
+      )}
     </div>
   );
 }

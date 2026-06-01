@@ -230,42 +230,49 @@ export default function AdminAlumniPage() {
         </form>
       )}
 
-      {/* Alumni List */}
-      <div className="border border-border bg-surface overflow-hidden rounded-none divide-y divide-border">
+      {/* Alumni Grid */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {alumni.map(al => (
-          <div key={al.id} className="flex flex-row items-center justify-between p-5 hover:bg-white/[0.01] transition-colors gap-4">
-            {/* Left Part: Avatar & Details in a row */}
-            <div className="flex items-center gap-5 flex-1 min-w-0">
-              <img
-                src={al.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200'}
-                alt={al.name}
-                className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
-              />
-              <div className="min-w-0 flex flex-col sm:flex-row sm:items-center sm:gap-6">
-                <div className="text-sm font-bold text-white truncate">{al.name}</div>
-                <span className="text-[8px] font-mono bg-border px-2 py-0.5 uppercase text-muted tracking-wider rounded-none shrink-0 w-max sm:mt-0 mt-1">YEAR {al.gradYear}</span>
-                <div className="text-xs text-muted truncate">
-                  {al.role && al.company ? `${al.role} at ${al.company}` : al.company || al.role || 'Seeking Opportunities'}
-                </div>
+          <article key={al.id} className="card p-4 flex flex-col group border-white/5 hover:border-white/20 transition-all duration-300 bg-black justify-between h-full">
+            <div>
+              <div className="relative overflow-hidden aspect-square border border-white/10 mb-4 bg-black">
+                <img
+                  src={al.imageUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400'}
+                  alt={al.name}
+                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                />
               </div>
+              <span className="label text-[9px] mb-2">Class of {al.gradYear}</span>
+              <h3 className="text-md font-black uppercase tracking-tight text-white transition-colors truncate">
+                {al.name}
+              </h3>
+              <p className="mt-2 text-xs text-muted leading-relaxed font-medium">
+                {al.role} {al.company && <><span className="text-white/30">@</span> {al.company}</>}
+              </p>
             </div>
-            {/* Right Part: Actions */}
-            <div className="flex items-center gap-6 shrink-0">
-              <button onClick={() => handleEdit(al)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer">
+
+            <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between gap-3 bg-black">
+              <button
+                onClick={() => handleEdit(al)}
+                className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer"
+              >
                 Edit
               </button>
-              <button onClick={() => handleDelete(al.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer">
+              <button
+                onClick={() => handleDelete(al.id)}
+                className="text-[9px] font-mono font-bold uppercase tracking-wider text-red-500/70 hover:text-red-400 transition-colors cursor-pointer"
+              >
                 Delete
               </button>
             </div>
-          </div>
+          </article>
         ))}
-        {alumni.length === 0 && (
-          <div className="p-20 text-center text-sm text-muted bg-surface">
-            No alumni cohorts registered. Initialize alumni data.
-          </div>
-        )}
       </div>
+      {alumni.length === 0 && (
+        <div className="border border-border p-20 text-center text-sm text-muted bg-surface mt-8">
+          No alumni cohorts registered. Initialize alumni data.
+        </div>
+      )}
     </div>
   );
 }

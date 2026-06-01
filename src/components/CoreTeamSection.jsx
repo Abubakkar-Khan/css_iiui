@@ -3,6 +3,16 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FaLinkedinIn, FaInstagram, FaFacebookF } from 'react-icons/fa6'
 
+const getDesignationPriority = (designation) => {
+  const desc = (designation || '').toLowerCase();
+  if (desc.includes('president') && !desc.includes('vice')) return 1;
+  if (desc.includes('vice president') || desc.includes('vice-president')) return 2;
+  if (desc.includes('secretary')) return 3;
+  if (desc.includes('lead') && !desc.includes('co-') && !desc.includes('sub-') && !desc.includes('vice')) return 4;
+  if (desc.includes('co-lead') || desc.includes('colead') || desc.includes('sub-lead') || desc.includes('sublead') || desc.includes('vice lead')) return 5;
+  return 6;
+};
+
 export default function CoreTeamSection() {
   const [president, setPresident] = useState(null)
   const [leads, setLeads] = useState([])
@@ -13,17 +23,25 @@ export default function CoreTeamSection() {
       .then(res => res.json())
       .then(data => {
         if (data && Array.isArray(data)) {
-          // Find the president (designation contains "president")
-          const pres = data.find(m =>
-            m.designation.toLowerCase().includes('president')
-          )
+          // Sort all data by designation priority first
+          const sortedData = [...data].sort((a, b) => {
+            return getDesignationPriority(a.designation) - getDesignationPriority(b.designation);
+          });
+
+          // Find the president (designation contains "president" and not "vice")
+          const pres = sortedData.find(m => {
+            const d = m.designation.toLowerCase();
+            return d.includes('president') && !d.includes('vice');
+          });
           setPresident(pres || null)
 
-          // Filter leads (designation contains "lead"), excluding the president
-          const leadMembers = data.filter(m => {
-            const d = m.designation.toLowerCase()
-            return d.includes('lead') && !(pres && m.id === pres.id)
-          })
+          // Filter leads (designation contains "lead" or high ranking roles), excluding the president
+          const leadMembers = sortedData.filter(m => {
+            const d = m.designation.toLowerCase();
+            const isPres = pres && m.id === pres.id;
+            const isLeadOrOfficer = d.includes('lead') || d.includes('vice president') || d.includes('vice-president') || d.includes('secretary');
+            return isLeadOrOfficer && !isPres;
+          });
           setLeads(leadMembers)
         }
         setLoading(false)
@@ -64,7 +82,9 @@ export default function CoreTeamSection() {
                   />
                 </div>
                 <div className="p-8 md:p-12 flex flex-col justify-center bg-surface">
-                  <span className="label mb-2">{president.designation}</span>
+                  <span className="text-[9px] font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2.5 py-1 inline-block border border-white/10 rounded-none mb-3 w-max">
+                    {president.designation}
+                  </span>
                   <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
                     {president.name}
                   </h3>
@@ -132,7 +152,7 @@ function MemberCard({ member: m }) {
             />
           </div>
           <div className="p-4 bg-surface text-center">
-            <span className="text-[8px] font-mono uppercase text-muted tracking-wider block mb-1">
+            <span className="text-[9px] font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2 py-0.5 inline-block border border-white/10 rounded-none mb-2">
               {m.designation}
             </span>
             <h3 className="text-xs font-black text-white uppercase tracking-tight truncate">

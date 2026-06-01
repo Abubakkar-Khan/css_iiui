@@ -183,39 +183,55 @@ export default function AdminNewsPage() {
         </form>
       )}
 
-      {/* News List */}
-      <div className="border border-border bg-surface overflow-hidden rounded-none divide-y divide-border">
+      {/* News Grid */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {newsList.map(item => (
-          <div key={item.id} className="flex flex-row items-center justify-between p-5 hover:bg-white/[0.01] transition-colors gap-4">
-            {/* Left Part: Cover & Details in a row */}
-            <div className="flex items-center gap-5 flex-1 min-w-0">
-              <img
-                src={item.imageUrl || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=200'}
-                alt={item.title}
-                className="h-10 w-16 object-cover border border-border shrink-0"
-              />
-              <div className="min-w-0 flex flex-col sm:flex-row sm:items-center sm:gap-6">
-                <div className="text-sm font-bold text-white truncate">{item.title}</div>
-                <span className="text-[8px] font-mono text-muted tracking-wider shrink-0 sm:mt-0 mt-1">{new Date(item.date).toLocaleDateString()}</span>
+          <article key={item.id} className="card p-0 overflow-hidden bg-black flex flex-col justify-between h-full border border-border hover:border-white/20 transition-all duration-300">
+            <div>
+              <div className="aspect-[16/9] w-full overflow-hidden border-b border-border bg-black">
+                <img
+                  src={item.imageUrl || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=400'}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-6">
+                <span className="label text-[9px] mb-2">
+                  {new Date(item.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                </span>
+                <h3 className="text-base font-bold text-white uppercase tracking-tight mb-3 line-clamp-2">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-muted leading-relaxed line-clamp-4">
+                  {item.details}
+                </p>
               </div>
             </div>
-            {/* Right Part: Actions */}
-            <div className="flex items-center gap-6 shrink-0">
-              <button onClick={() => handleEdit(item)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer">
-                Edit
-              </button>
-              <button onClick={() => handleDelete(item.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer">
-                Delete
-              </button>
+
+            <div className="p-6 pt-0 bg-surface">
+              <div className="pt-4 border-t border-border/40 flex items-center justify-between gap-3">
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="text-[9px] font-mono font-bold uppercase tracking-wider text-red-500/70 hover:text-red-400 transition-colors cursor-pointer"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
+          </article>
         ))}
-        {newsList.length === 0 && (
-          <div className="p-20 text-center text-sm text-muted bg-surface">
-            No news announcements registered. Create your first post above!
-          </div>
-        )}
       </div>
+      {newsList.length === 0 && (
+        <div className="border border-border p-20 text-center text-sm text-muted bg-surface mt-8">
+          No news announcements registered. Create your first post above!
+        </div>
+      )}
     </div>
   );
 }

@@ -1,9 +1,13 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import EventCard from '@/components/EventCard';
 
 export default function AdminEventsPage() {
   const [events, setEvents] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     fetch('/api/events')
@@ -30,34 +34,23 @@ export default function AdminEventsPage() {
         </Link>
       </div>
 
-      <div className="border border-border bg-surface overflow-hidden rounded-none divide-y divide-border">
-        {events.map(e => (
-          <div key={e.id} className="flex flex-row items-center justify-between p-5 hover:bg-white/[0.02] transition-colors gap-4">
-            {/* Left Part: Date & Title in a row */}
-            <div className="flex items-center gap-5 flex-1 min-w-0">
-              <span className="text-[10px] font-mono text-muted uppercase tracking-wider shrink-0">{new Date(e.date).toLocaleDateString()}</span>
-              <div className="text-sm font-bold text-white truncate">{e.title}</div>
-            </div>
-            {/* Right Part: Actions */}
-            <div className="flex items-center gap-6 shrink-0">
-              <Link href={`/admin/events/${e.id}`} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors">
-                Edit
-              </Link>
-              <button 
-                onClick={() => deleteEvent(e.id)}
-                className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {events.map((e, index) => (
+          <EventCard
+            key={e.id}
+            event={e}
+            index={index}
+            onEdit={(event) => router.push(`/admin/events/${event.id}`)}
+            onDelete={deleteEvent}
+          />
         ))}
-        {events.length === 0 && (
-          <div className="p-20 text-center text-sm text-muted bg-surface">
-            No event fragments found. Initialize new data.
-          </div>
-        )}
       </div>
+
+      {events.length === 0 && (
+        <div className="border border-border p-20 text-center text-sm text-muted bg-surface mt-8">
+          No event fragments found. Initialize new data.
+        </div>
+      )}
     </div>
   );
 }
