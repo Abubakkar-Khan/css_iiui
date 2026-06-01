@@ -3,6 +3,27 @@ import { deleteObject } from '@/lib/cloudinary';
 
 export const runtime = 'nodejs';
 
+export async function GET(req, { params }) {
+  try {
+    const id = Number(params.id);
+    if (!Number.isFinite(id)) {
+      return new Response(JSON.stringify({ error: 'Invalid ID' }), { status: 400 });
+    }
+
+    const res = await db.query('SELECT * FROM "News" WHERE "id" = $1', [id]);
+    if (res.rows.length === 0) {
+      return new Response(JSON.stringify({ error: 'Not Found' }), { status: 404 });
+    }
+
+    return new Response(JSON.stringify(res.rows[0]), { 
+      headers: { 'Content-Type': 'application/json' } 
+    });
+  } catch (err) {
+    console.error("GET /api/news/[id] error:", err);
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+  }
+}
+
 export async function PUT(req, { params }) {
   try {
     const id = Number(params.id);

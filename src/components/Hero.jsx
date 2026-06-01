@@ -1,24 +1,14 @@
 'use client'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 const DEFAULT_SLIDES = [
   {
+    id: null,
     title: 'Empowering CS Students\nat IIUI',
     body: 'Welcome to the Computer Science Society. We build a strong developer community through practical learning, events, and industry collaboration.',
     img: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop',
     tag: 'Welcome',
-  },
-  {
-    title: 'Learn & Build with\nWorkshops',
-    body: 'Expand your technical skills with our regular hands-on workshops covering web development, artificial intelligence, cloud computing, and more.',
-    img: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1600&auto=format&fit=crop',
-    tag: 'Education',
-  },
-  {
-    title: 'Collaborate in\nHackathons',
-    body: 'Test your coding skills and teamwork in our exciting hackathons. Solve real-world challenges, build prototypes, and win prizes.',
-    img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1600&auto=format&fit=crop',
-    tag: 'Innovation',
   },
 ]
 
@@ -35,6 +25,7 @@ export default function Hero() {
       .then(data => {
         if (data && data.length > 0) {
           const formatted = data.slice(0, 5).map((item) => ({
+            id: item.id,
             title: item.title,
             body: item.details,
             img: item.imageUrl || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop',
@@ -130,8 +121,11 @@ export default function Hero() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <a href="/events" className="btn">Explore Events</a>
-              <a href="/about" className="btn-ghost">About Us</a>
+              {s.id ? (
+                <Link href={`/news/${s.id}`} className="btn">Read More</Link>
+              ) : (
+                <Link href="/events" className="btn">Explore Events</Link>
+              )}
             </div>
           </div>
         </div>

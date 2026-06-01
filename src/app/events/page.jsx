@@ -1,10 +1,12 @@
 // src/app/events/page.jsx
 'use client'
 import { useEffect, useState } from 'react'
+import EventCard from '@/components/EventCard'
 
 export default function EventsPage() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState('All')
 
   useEffect(() => {
     fetch('/api/events')
@@ -15,6 +17,13 @@ export default function EventsPage() {
       })
       .catch(() => setLoading(false))
   }, [])
+
+  // Collect unique event types for the filter bar
+  const eventTypes = ['All', ...new Set(events.map(e => e.eventType || 'Workshop'))]
+
+  const filtered = filter === 'All'
+    ? events
+    : events.filter(e => (e.eventType || 'Workshop') === filter)
 
   return (
     <div className="section-pad section">
@@ -32,56 +41,44 @@ export default function EventsPage() {
         </div>
       ) : (
         <div className="mt-16">
-          <h2 className="text-xl font-bold uppercase tracking-tight mb-8">All Scheduled Events</h2>
+          {/* Filter Bar */}
+          {eventTypes.length > 2 && (
+            <div className="flex flex-wrap gap-3 mb-8">
+              {eventTypes.map(type => (
+                <button
+                  key={type}
+                  onClick={() => setFilter(type)}
+                  className={`text-[9px] font-mono uppercase tracking-widest px-4 py-2 border transition-all duration-200 ${
+                    filter === type
+                      ? 'bg-white text-black border-white'
+                      : 'bg-transparent text-muted border-border hover:border-white/40 hover:text-white'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <h2 className="text-xl font-bold uppercase tracking-tight mb-8">
+            {filter === 'All' ? 'All Scheduled Events' : filter}
+          </h2>
+
           <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {events.map((e) => (
+            {filtered.map((e) => (
               <EventCard key={e.id} event={e} />
             ))}
           </div>
-          {events.length === 0 && (
+
+          {filtered.length === 0 && (
             <div className="border border-border p-20 text-center text-sm text-muted bg-surface mt-8">
-              No events scheduled yet. Check back soon!
+              {filter === 'All'
+                ? 'No events scheduled yet. Check back soon!'
+                : `No ${filter} events found.`}
             </div>
           )}
         </div>
       )}
     </div>
-  )
-}
-
-function EventCard({ event }) {
-  const imageUrl = event.images?.[0]?.url || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop';
-  
-  return (
-    <article className="card p-0 flex flex-col group overflow-hidden bg-black border border-border h-full justify-between">
-      <div>
-        {/* Square Image */}
-        <div className="overflow-hidden aspect-square border-b border-border relative">
-          <img
-            src={imageUrl}
-            alt={event.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        </div>
-        {/* Details */}
-        <div className="p-4 bg-surface">
-          <div className="flex flex-wrap gap-2 mb-2">
-            <span className="label text-[7px]">{new Date(event.date).toLocaleDateString()}</span>
-            <span className="text-[7px] font-mono text-muted bg-border px-1.5 py-0.5 uppercase">{event.eventType || 'Workshop'}</span>
-          </div>
-          <h3 className="text-[11px] font-black text-white mb-2 uppercase tracking-tight leading-tight line-clamp-1">
-            {event.title}
-          </h3>
-          <div className="text-[10px] text-muted leading-relaxed line-clamp-2" dangerouslySetInnerHTML={{ __html: event.description }} />
-        </div>
-      </div>
-      <div className="p-4 pt-2 bg-surface">
-        <div className="pt-2 border-t border-border/40">
-          <a href={`/events/${event.id}`} className="btn-ghost w-full text-[8px] text-center block">
-            Details →
-          </a>
-        </div>
-      </div>
-    </article>
   )
 }
