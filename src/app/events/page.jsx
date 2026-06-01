@@ -18,8 +18,8 @@ export default function EventsPage() {
 
   return (
     <div className="section-pad section">
-      <div className="max-w-2xl">
-        <span className="label">Our Calendar</span>
+      <div className="max-w-2xl mx-auto text-center mb-16">
+        <span className="label justify-center">Our Calendar</span>
         <h1 className="section-title mt-2">Events & Workshops</h1>
         <p className="mt-4 text-muted text-sm leading-relaxed">
           Explore technical workshops, guest lectures, and programming hackathons organized by the Computer Science Society at IIUI.

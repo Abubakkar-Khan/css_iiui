@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const EventEditor = dynamic(() => import("@/components/admin/EventEditor"), {
   ssr: false,
@@ -10,47 +11,62 @@ const EventEditor = dynamic(() => import("@/components/admin/EventEditor"), {
 
 export default function NewEventPage() {
   const router = useRouter();
+  const [syncing, setSyncing] = useState(false);
 
   const handleSave = async (payload) => {
-    let imageUrl = '';
+    setSyncing(true);
+    const imageUrls = [];
     
-    if (payload.featuredImage) {
-      const formData = new FormData();
-      formData.append('file', payload.featuredImage);
+    // Upload multiple slideshow images one by one
+    if (payload.featuredImages && payload.featuredImages.length > 0) {
+      for (const file of payload.featuredImages) {
+        const formData = new FormData();
+        formData.append('file', file);
 
-      const res = await fetch('/api/upload-url', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (res.ok) {
-        const data = await res.json();
-        imageUrl = data.url;
-      } else {
-        alert('Image upload failed. Saving event without image.');
+        try {
+          const res = await fetch('/api/upload-url', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if (res.ok) {
+            const data = await res.json();
+            imageUrls.push(data.url);
+          } else {
+            console.error(`Failed to upload ${file.name}`);
+          }
+        } catch (err) {
+          console.error(`Error uploading ${file.name}`, err);
+        }
       }
     }
 
-    const res = await fetch('/api/events', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        title: payload.title, 
-        description: payload.description, 
-        date: new Date().toISOString(),
-        locationType: payload.locationType,
-        venue: payload.venue,
-        eventType: payload.eventType,
-        imageUrl 
-      }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    try {
+      const res = await fetch('/api/events', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          title: payload.title, 
+          description: payload.description, 
+          date: new Date().toISOString(),
+          locationType: payload.locationType,
+          venue: payload.venue,
+          eventType: payload.eventType,
+          images: imageUrls
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-    if (res.ok) {
-      alert('Event created successfully!');
-      router.push('/admin/events');
-    } else {
-      const err = await res.json();
-      alert(`Error saving event: ${err.error || 'Unknown error'}`);
+      if (res.ok) {
+        router.push('/admin/events');
+      } else {
+        const err = await res.json();
+        alert(`Error saving event: ${err.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error("Failed to save event", err);
+      alert("Failed to connect to the server.");
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -63,7 +79,13 @@ export default function NewEventPage() {
         </Link>
       </div>
 
-      <EventEditor onSave={handleSave} />
+      {syncing ? (
+        <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
+          Uploading images & saving event...
+        </div>
+      ) : (
+        <EventEditor onSave={handleSave} />
+      )}
     </div>
   );
 }

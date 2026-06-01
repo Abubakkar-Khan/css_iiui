@@ -1,13 +1,11 @@
-import prisma from '@/lib/prisma';
+import db from '@/lib/db';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    const members = await prisma.teamMember.findMany({
-      orderBy: { id: 'asc' }
-    });
-    return new Response(JSON.stringify(members), { 
+    const res = await db.query('SELECT * FROM "TeamMember" ORDER BY "id" ASC');
+    return new Response(JSON.stringify(res.rows), { 
       headers: { 'Content-Type': 'application/json' } 
     });
   } catch (err) {
@@ -25,11 +23,12 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: 'Name and Designation are required' }), { status: 400 });
     }
 
-    const member = await prisma.teamMember.create({
-      data: { name, designation, details, imageUrl, instagram, linkedin, facebook }
-    });
+    const res = await db.query(
+      'INSERT INTO "TeamMember" ("name", "designation", "details", "imageUrl", "instagram", "linkedin", "facebook", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING *',
+      [name, designation, details, imageUrl, instagram, linkedin, facebook]
+    );
 
-    return new Response(JSON.stringify(member), { 
+    return new Response(JSON.stringify(res.rows[0]), { 
       status: 201, 
       headers: { 'Content-Type': 'application/json' } 
     });

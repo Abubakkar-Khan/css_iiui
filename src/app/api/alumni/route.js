@@ -1,16 +1,11 @@
-import prisma from '@/lib/prisma';
+import db from '@/lib/db';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    const alumni = await prisma.alumni.findMany({
-      orderBy: [
-        { priority: 'asc' },
-        { gradYear: 'desc' }
-      ]
-    });
-    return new Response(JSON.stringify(alumni), { 
+    const res = await db.query('SELECT * FROM "Alumni" ORDER BY "priority" ASC, "gradYear" DESC');
+    return new Response(JSON.stringify(res.rows), { 
       headers: { 'Content-Type': 'application/json' } 
     });
   } catch (err) {
@@ -28,19 +23,14 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: 'Name and Graduation Year are required' }), { status: 400 });
     }
 
-    const item = await prisma.alumni.create({
-      data: { 
-        name, 
-        gradYear, 
-        company, 
-        role, 
-        imageUrl, 
-        linkedin, 
-        priority: typeof priority === 'number' ? priority : Number(priority) || 2 
-      }
-    });
+    const priorityVal = typeof priority === 'number' ? priority : Number(priority) || 2;
 
-    return new Response(JSON.stringify(item), { 
+    const res = await db.query(
+      'INSERT INTO "Alumni" ("name", "gradYear", "company", "role", "imageUrl", "linkedin", "priority", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING *',
+      [name, gradYear, company, role, imageUrl, linkedin, priorityVal]
+    );
+
+    return new Response(JSON.stringify(res.rows[0]), { 
       status: 201, 
       headers: { 'Content-Type': 'application/json' } 
     });

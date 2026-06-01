@@ -5,12 +5,12 @@ export default function EventsSection({ items = [] }) {
   const events = items.length
     ? items
     : [
-        { title: 'Orientation Protocol', date: '16 Aug 2024', img: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop', excerpt: 'Onboarding session for new entries. Introduction to society frameworks and roadmap.' },
-        { title: 'Dev Environment: Git', date: '02 Sep 2024', img: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop', excerpt: 'Core version control training. Branching strategies and collaborative workflows.' },
-        { title: 'System Security Lab', date: '18 Sep 2024', img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop', excerpt: 'Adversarial machine learning and network defense strategies. Live exploit demos.' },
-        { title: 'Community Node Sync', date: '26 Oct 2024', img: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop', excerpt: 'Internal meetup and project synchronization. Networking and resource allocation.' },
-        { title: 'Night Shift: Build', date: '12 Nov 2024', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop', excerpt: 'Intensive building session. Zero-to-one prototyping. Coffee and compilers.' },
-        { title: 'Open Source Cluster', date: '03 Dec 2024', img: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop', excerpt: 'Upstreaming local tools. Contribution sprints and documentation polish.' },
+        { title: 'Freshmen Orientation', date: '16 Aug 2024', img: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop', excerpt: 'Welcoming session for new computer science entries. Introduction to society committees, operations, and academic life.' },
+        { title: 'Git & GitHub Workshop', date: '02 Sep 2024', img: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop', excerpt: 'Hands-on version control training. Mastering repository branching, merging, and collaborative student project workflows.' },
+        { title: 'Cyber Security Seminar', date: '18 Sep 2024', img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop', excerpt: 'Deep dive into digital system vulnerabilities, defensive coding practices, and industrial security frameworks.' },
+        { title: 'Welcome Meetup', date: '26 Oct 2024', img: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop', excerpt: 'Social gathering for students and faculty. Network, align project targets, and connect with peer engineers.' },
+        { title: 'Overnight Hackathon', date: '12 Nov 2024', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop', excerpt: 'High-intensity building session. Develop a real-world software solution overnight with peer support and snacks.' },
+        { title: 'Open Source Contribution Day', date: '03 Dec 2024', img: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop', excerpt: 'Learn how to contribute to international open-source software libraries, write documentation, and upstream code.' },
       ];
 
   const trackRef = useRef(null);
@@ -31,30 +31,32 @@ export default function EventsSection({ items = [] }) {
 
   return (
     <section id="events" className="section pt-16 pb-6 md:pt-24 md:pb-8">
-      <div className="section-header flex items-end justify-between">
-        <div>
-          <span className="label">Activity Log</span>
-          <h2 className="section-title mt-2">Latest Events</h2>
-        </div>
+      <div className="section-header text-center mb-12">
+        <span className="label justify-center">Recent Events</span>
+        <h2 className="section-title mt-2">Latest Events</h2>
       </div>
 
       <div className="relative">
-        <button 
-          onClick={() => go(-1)}
-          className="slider-nav -left-4 md:-left-6 z-20 hover:bg-white hover:text-black transition-colors"
-          disabled={index === 0}
-          aria-label="Prev"
-        >
-          ‹
-        </button>
-        <button 
-          onClick={() => go(1)}
-          className="slider-nav -right-4 md:-right-6 z-20 hover:bg-white hover:text-black transition-colors"
-          disabled={index === maxIndex}
-          aria-label="Next"
-        >
-          ›
-        </button>
+        {events.length > 1 && (
+          <>
+            <button 
+              onClick={() => go(-1)}
+              className="slider-nav -left-4 md:-left-6 z-20 hover:bg-white hover:text-black transition-colors"
+              disabled={index === 0}
+              aria-label="Prev"
+            >
+              ‹
+            </button>
+            <button 
+              onClick={() => go(1)}
+              className="slider-nav -right-4 md:-right-6 z-20 hover:bg-white hover:text-black transition-colors"
+              disabled={index === maxIndex}
+              aria-label="Next"
+            >
+              ›
+            </button>
+          </>
+        )}
 
         <ul
           ref={trackRef}
@@ -74,8 +76,8 @@ export default function EventsSection({ items = [] }) {
                     className="h-full w-full object-cover brightness-95 transition-all duration-500 group-hover/card:scale-105"
                     draggable={false}
                   />
-                  <div className="absolute top-2 left-2 font-mono text-[6px] bg-black/85 px-1.5 py-0.5 border border-white/10 opacity-70">
-                    EV {idx + 1}
+                  <div className="absolute top-2 left-2 font-mono text-[7px] bg-black/85 px-1.5 py-0.5 border border-white/10 opacity-70">
+                    Event {idx + 1}
                   </div>
                 </div>
                 {/* Details */}

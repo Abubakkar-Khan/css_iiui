@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design System: Dark Tech Utilitarian ── */
+/* ── Design System: Obsidian Charcoal ── */
 :root {
-  --bg: #000000;
-  --fg: #ffffff;
-  --muted: #555555;
-  --border: #1a1a1a;
-  --surface: #0a0a0a;
-  --surface-hover: #111111;
+  --bg: #0d0e12;           /* Soft charcoal, easier on eyes than absolute black */
+  --fg: #e2e8f0;           /* Soft off-white, less harsh than pure white */
+  --muted: #8a8f98;        /* Soothing gray for details */
+  --border: #1d1f27;       /* Soft dark borders */
+  --surface: #14161f;      /* Obsidian charcoal card surface */
+  --surface-hover: #191c28; /* hover overlay state */
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 

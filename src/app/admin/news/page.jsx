@@ -81,7 +81,6 @@ export default function AdminNewsPage() {
     });
 
     if (res.ok) {
-      alert(editingNews ? 'News post updated!' : 'News post added!');
       handleCancel();
       fetchNews();
     } else {

@@ -81,7 +81,6 @@ export default function AdminGalleryPage() {
       });
 
       if (res.ok) {
-        alert('Image synced and saved successfully!');
         handleCancel();
         fetchImages();
       } else {

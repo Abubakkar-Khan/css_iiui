@@ -90,7 +90,6 @@ export default function AdminTeamPage() {
     });
 
     if (res.ok) {
-      alert(editingMember ? 'Cabinet profile updated!' : 'Cabinet profile created!');
       handleCancel();
       fetchMembers();
     } else {

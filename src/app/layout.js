@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen antialiased bg-black selection:bg-white selection:text-black">
+      <body className="min-h-screen antialiased bg-[var(--bg)] selection:bg-white selection:text-black">
         <InteractiveGrid />
         <div className="fixed inset-0 pointer-events-none tech-grid opacity-20" />
         <Navbar />

@@ -1,70 +1,137 @@
-export default function CoreTeamSection({ lead, members = [] }) {
-  const leader = lead || {
-    name: 'Abdullah Haroon',
-    role: 'President',
-    img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop',
-    bio: 'Leading society operations, technical infrastructure, and building a world-class developer community at IIUI.',
-  }
-  const others = members.length
-    ? members
-    : [
-        { name: 'Junaid Khan', role: 'V President', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop' },
-        { name: 'Ayesha Tariq', role: 'Gen Sec', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop' },
-        { name: 'Hamza Ali', role: 'Tech Lead', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop' },
-        { name: 'Fatima Noor', role: 'Operations', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop' },
-        { name: 'Usman Sheikh', role: 'Design', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop' },
-        { name: 'Zainab Malik', role: 'Media', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop' },
-      ]
+'use client'
+import { useEffect, useState } from 'react'
+import { FaLinkedinIn, FaInstagram, FaFacebookF } from 'react-icons/fa6'
+
+const DEFAULT_MEMBERS = [
+  { 
+    name: 'Abdullah Haroon', 
+    designation: 'President', 
+    imageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop',
+    details: 'Leading society operations, technical infrastructure, and building a world-class developer community.',
+    linkedin: 'https://www.linkedin.com/company/computer-science-society-css/'
+  },
+  { 
+    name: 'Junaid Khan', 
+    designation: 'Vice President', 
+    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop',
+    details: 'Coordinating event operations and corporate partnerships.',
+    linkedin: 'https://www.linkedin.com/company/computer-science-society-css/'
+  },
+  { 
+    name: 'Ayesha Tariq', 
+    designation: 'General Secretary', 
+    imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop',
+    details: 'Managing external communications and team organization.',
+    linkedin: 'https://www.linkedin.com/company/computer-science-society-css/'
+  },
+  { 
+    name: 'Hamza Ali', 
+    designation: 'Technical Lead', 
+    imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
+    details: 'Designing dev curricula, bootcamps, and hackathon challenges.',
+    linkedin: 'https://www.linkedin.com/company/computer-science-society-css/'
+  },
+  { 
+    name: 'Fatima Noor', 
+    designation: 'Operations Lead', 
+    imageUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop',
+    details: 'Overseeing logistical execution and workshop operations.',
+    linkedin: 'https://www.linkedin.com/company/computer-science-society-css/'
+  },
+  { 
+    name: 'Usman Sheikh', 
+    designation: 'Design Lead', 
+    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop',
+    details: 'Directing all brand visuals and user interface designs.',
+    linkedin: 'https://www.linkedin.com/company/computer-science-society-css/'
+  },
+]
+
+export default function CoreTeamSection() {
+  const [members, setMembers] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/team')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          setMembers(data)
+        } else {
+          setMembers(DEFAULT_MEMBERS)
+        }
+        setLoading(false)
+      })
+      .catch(() => {
+        setMembers(DEFAULT_MEMBERS)
+        setLoading(false)
+      })
+  }, [])
 
   return (
     <section id="team" className="section pt-16 pb-16 md:pt-24 md:pb-24">
       <div className="section-header text-center mb-12">
-        <span className="label justify-center">Society Organizers</span>
+        <span className="label justify-center">Roster Cabinet</span>
         <h2 className="section-title mt-4">Team Members</h2>
       </div>
 
-      {/* 1. Leader (President) with Details on the Right */}
-      <div className="mb-16 flex justify-center">
-        <article className="card p-0 overflow-hidden max-w-2xl w-full bg-black border-white/10 hover:border-white/20 transition-all duration-300 flex flex-col md:flex-row">
-          {/* Picture on Left */}
-          <div className="w-full md:w-[220px] shrink-0 aspect-square md:aspect-auto border-b md:border-b-0 md:border-r border-border overflow-hidden">
-            <img
-              src={leader.imageUrl || leader.img}
-              alt={leader.name}
-              className="w-full h-full object-cover brightness-95"
-            />
-          </div>
-          {/* Details on Right */}
-          <div className="p-6 md:p-8 flex flex-col justify-center text-left flex-1 bg-surface">
-            <span className="label text-[8px] mb-2">{leader.role || leader.designation}</span>
-            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-wider">{leader.name}</h3>
-            <p className="mt-4 text-xs text-muted leading-relaxed max-w-md">
-              {leader.bio || 'Leading society operations and technical community initiatives at IIUI.'}
-            </p>
-          </div>
-        </article>
-      </div>
+      {loading ? (
+        <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
+          Syncing team roster...
+        </div>
+      ) : (
+        <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {members.map((m, idx) => (
+            <article key={m.id || idx} className="card p-0 group overflow-hidden bg-[var(--surface)] border border-border hover:border-white/20 transition-all duration-300 flex flex-col justify-between h-full">
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <div className="overflow-hidden relative aspect-square border-b border-border">
+                    <img
+                      src={m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400'}
+                      alt={m.name}
+                      className="w-full h-full object-cover brightness-90 transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-4 bg-surface text-center">
+                    <span className="text-[8px] font-mono uppercase text-muted tracking-wider block mb-1">
+                      {m.designation}
+                    </span>
+                    <h3 className="text-xs font-black text-white uppercase tracking-tight truncate">
+                      {m.name}
+                    </h3>
+                    {m.details && (
+                      <p className="mt-2 text-[10px] text-muted leading-relaxed line-clamp-2 font-medium">
+                        {m.details}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-      {/* 2. Tiny Team Cards Grid Below */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-        {others.map((m, idx) => (
-          <article key={idx} className="card p-0 overflow-hidden group/m border-white/5 hover:border-white/20 bg-black flex flex-col justify-between transition-all duration-300">
-            <div>
-              <div className="overflow-hidden relative aspect-square border-b border-border">
-                <img
-                  src={m.imageUrl || m.img}
-                  alt={m.name}
-                  className="w-full h-full object-cover brightness-90 transition-all duration-500 group-hover/m:scale-105"
-                />
+                {/* Shared Social Icons */}
+                {(m.linkedin || m.instagram || m.facebook) && (
+                  <div className="flex justify-center gap-4 py-3 border-t border-border bg-[#0d0f14]/50">
+                    {m.linkedin && (
+                      <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-white transition-colors" aria-label="LinkedIn">
+                        <FaLinkedinIn size={12} />
+                      </a>
+                    )}
+                    {m.instagram && (
+                      <a href={m.instagram} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-white transition-colors" aria-label="Instagram">
+                        <FaInstagram size={12} />
+                      </a>
+                    )}
+                    {m.facebook && (
+                      <a href={m.facebook} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-white transition-colors" aria-label="Facebook">
+                        <FaFacebookF size={12} />
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className="p-3 bg-surface text-center">
-                <span className="text-[7px] font-mono uppercase text-muted tracking-wider block mb-0.5">{m.role || m.designation}</span>
-                <div className="text-[9px] font-black text-white uppercase tracking-tight truncate">{m.name}</div>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

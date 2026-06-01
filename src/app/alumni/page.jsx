@@ -11,7 +11,7 @@ export default function AlumniPage() {
     fetch('/api/alumni')
       .then(res => res.json())
       .then(data => {
-        // Sort by priority (ascending, so lower numbers or higher numbers go first)
+        // Sort by priority (ascending, so lower numbers go first)
         const sorted = data.sort((a, b) => (a.priority || 0) - (b.priority || 0));
         setAlumni(sorted);
         setLoading(false);
@@ -21,9 +21,9 @@ export default function AlumniPage() {
 
   return (
     <div className="section-pad section">
-      <div className="max-w-2xl mb-16">
-        <span className="label">Alumni Network</span>
-        <h1 className="section-title mt-4 font-black leading-tight uppercase">
+      <div className="max-w-2xl mx-auto text-center mb-16">
+        <span className="label justify-center">Alumni Network</span>
+        <h1 className="section-title mt-4 font-black leading-tight uppercase text-white">
           Graduates Directory
         </h1>
         <p className="mt-2 text-white/70 font-semibold text-lg md:text-xl tracking-tight">
@@ -52,7 +52,7 @@ export default function AlumniPage() {
 
               <div className="flex-1 flex flex-col justify-between">
                 <div>
-                  <span className="label text-[9px] mb-2">[ {person.gradYear ? `F${person.gradYear.slice(-2) - 4}` : 'CSS'} ] • Class of {person.gradYear}</span>
+                  <span className="label text-[9px] mb-2">Class of {person.gradYear}</span>
                   <h3 className="text-md font-black uppercase tracking-tight text-white transition-colors">
                     {person.name}
                   </h3>

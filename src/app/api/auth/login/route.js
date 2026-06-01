@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import db from '@/lib/db';
 import bcrypt from 'bcrypt';
 
 export const runtime = 'nodejs';
@@ -11,13 +11,12 @@ export async function POST(req) {
     }
 
     // Find admin by email/username
-    const admin = await prisma.admin.findUnique({
-      where: { email: username }
-    });
-
-    if (!admin) {
+    const res = await db.query('SELECT * FROM "Admin" WHERE "email" = $1', [username]);
+    
+    if (res.rows.length === 0) {
       return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
     }
+    const admin = res.rows[0];
 
     // Verify password
     const isValid = await bcrypt.compare(password, admin.password);

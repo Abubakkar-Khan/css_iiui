@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import db from '@/lib/db';
 import { deleteObject } from '@/lib/cloudinary';
 
 export const runtime = 'nodejs';
@@ -13,10 +13,11 @@ export async function PUT(req, { params }) {
     const body = await req.json();
     const { title, details, imageUrl, date } = body;
 
-    const existing = await prisma.news.findUnique({ where: { id } });
-    if (!existing) {
+    const existingRes = await db.query('SELECT * FROM "News" WHERE "id" = $1', [id]);
+    if (existingRes.rows.length === 0) {
       return new Response(JSON.stringify({ error: 'Not Found' }), { status: 404 });
     }
+    const existing = existingRes.rows[0];
 
     // Clean up old Cloudinary cover photo if replaced
     if (imageUrl && existing.imageUrl && existing.imageUrl !== imageUrl) {
@@ -24,17 +25,18 @@ export async function PUT(req, { params }) {
       catch (e) { console.warn("[DEBUG] Failed to delete old news cover", e.message); }
     }
 
-    const updated = await prisma.news.update({
-      where: { id },
-      data: {
-        title,
-        details,
-        date: date ? new Date(date) : existing.date,
-        imageUrl
-      }
-    });
+    const updatedRes = await db.query(
+      'UPDATE "News" SET "title" = $1, "details" = $2, "date" = $3, "imageUrl" = $4, "updatedAt" = NOW() WHERE "id" = $5 RETURNING *',
+      [
+        title !== undefined ? title : existing.title,
+        details !== undefined ? details : existing.details,
+        date ? new Date(date) : existing.date,
+        imageUrl !== undefined ? imageUrl : existing.imageUrl,
+        id
+      ]
+    );
 
-    return new Response(JSON.stringify(updated), { 
+    return new Response(JSON.stringify(updatedRes.rows[0]), { 
       headers: { 'Content-Type': 'application/json' } 
     });
   } catch (err) {
@@ -50,10 +52,11 @@ export async function DELETE(req, { params }) {
       return new Response(JSON.stringify({ error: 'Invalid ID' }), { status: 400 });
     }
 
-    const existing = await prisma.news.findUnique({ where: { id } });
-    if (!existing) {
+    const existingRes = await db.query('SELECT * FROM "News" WHERE "id" = $1', [id]);
+    if (existingRes.rows.length === 0) {
       return new Response(JSON.stringify({ error: 'Not Found' }), { status: 404 });
     }
+    const existing = existingRes.rows[0];
 
     // Clean up cover photo in Cloudinary
     if (existing.imageUrl) {
@@ -61,7 +64,7 @@ export async function DELETE(req, { params }) {
       catch (e) { console.warn("[DEBUG] Failed to delete news cover", e.message); }
     }
 
-    await prisma.news.delete({ where: { id } });
+    await db.query('DELETE FROM "News" WHERE "id" = $1', [id]);
     return new Response(JSON.stringify({ ok: true }));
   } catch (err) {
     console.error("DELETE /api/news/[id] error:", err);

@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import db from '@/lib/db';
 import { deleteObject } from '@/lib/cloudinary';
 
 export const runtime = 'nodejs';
@@ -13,10 +13,11 @@ export async function PUT(req, { params }) {
     const body = await req.json();
     const { name, gradYear, company, role, imageUrl, linkedin, priority } = body;
 
-    const existing = await prisma.alumni.findUnique({ where: { id } });
-    if (!existing) {
+    const existingRes = await db.query('SELECT * FROM "Alumni" WHERE "id" = $1', [id]);
+    if (existingRes.rows.length === 0) {
       return new Response(JSON.stringify({ error: 'Not Found' }), { status: 404 });
     }
+    const existing = existingRes.rows[0];
 
     // Clean up old Cloudinary portrait if a new one is uploaded
     if (imageUrl && existing.imageUrl && existing.imageUrl !== imageUrl) {
@@ -24,20 +25,23 @@ export async function PUT(req, { params }) {
       catch (e) { console.warn("[DEBUG] Failed to delete old alumni picture", e.message); }
     }
 
-    const updated = await prisma.alumni.update({
-      where: { id },
-      data: { 
-        name, 
-        gradYear, 
-        company, 
-        role, 
-        imageUrl, 
-        linkedin, 
-        priority: typeof priority === 'number' ? priority : Number(priority) || 2 
-      }
-    });
+    const priorityVal = typeof priority === 'number' ? priority : (priority !== undefined ? Number(priority) || 2 : existing.priority);
 
-    return new Response(JSON.stringify(updated), { 
+    const updatedRes = await db.query(
+      'UPDATE "Alumni" SET "name" = $1, "gradYear" = $2, "company" = $3, "role" = $4, "imageUrl" = $5, "linkedin" = $6, "priority" = $7, "updatedAt" = NOW() WHERE "id" = $8 RETURNING *',
+      [
+        name !== undefined ? name : existing.name,
+        gradYear !== undefined ? gradYear : existing.gradYear,
+        company !== undefined ? company : existing.company,
+        role !== undefined ? role : existing.role,
+        imageUrl !== undefined ? imageUrl : existing.imageUrl,
+        linkedin !== undefined ? linkedin : existing.linkedin,
+        priorityVal,
+        id
+      ]
+    );
+
+    return new Response(JSON.stringify(updatedRes.rows[0]), { 
       headers: { 'Content-Type': 'application/json' } 
     });
   } catch (err) {
@@ -53,10 +57,11 @@ export async function DELETE(req, { params }) {
       return new Response(JSON.stringify({ error: 'Invalid ID' }), { status: 400 });
     }
 
-    const existing = await prisma.alumni.findUnique({ where: { id } });
-    if (!existing) {
+    const existingRes = await db.query('SELECT * FROM "Alumni" WHERE "id" = $1', [id]);
+    if (existingRes.rows.length === 0) {
       return new Response(JSON.stringify({ error: 'Not Found' }), { status: 404 });
     }
+    const existing = existingRes.rows[0];
 
     // Clean up photo in Cloudinary
     if (existing.imageUrl) {
@@ -64,7 +69,7 @@ export async function DELETE(req, { params }) {
       catch (e) { console.warn("[DEBUG] Failed to delete alumni picture", e.message); }
     }
 
-    await prisma.alumni.delete({ where: { id } });
+    await db.query('DELETE FROM "Alumni" WHERE "id" = $1', [id]);
     return new Response(JSON.stringify({ ok: true }));
   } catch (err) {
     console.error("DELETE /api/alumni/[id] error:", err);

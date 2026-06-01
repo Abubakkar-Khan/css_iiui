@@ -1,13 +1,11 @@
-import prisma from '@/lib/prisma';
+import db from '@/lib/db';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    const news = await prisma.news.findMany({
-      orderBy: { date: 'desc' }
-    });
-    return new Response(JSON.stringify(news), { 
+    const res = await db.query('SELECT * FROM "News" ORDER BY "date" DESC');
+    return new Response(JSON.stringify(res.rows), { 
       headers: { 'Content-Type': 'application/json' } 
     });
   } catch (err) {
@@ -25,16 +23,12 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: 'Title and details are required' }), { status: 400 });
     }
 
-    const item = await prisma.news.create({
-      data: {
-        title,
-        details,
-        date: new Date(date),
-        imageUrl
-      }
-    });
+    const res = await db.query(
+      'INSERT INTO "News" ("title", "details", "imageUrl", "date", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, NOW(), NOW()) RETURNING *',
+      [title, details, imageUrl, new Date(date)]
+    );
 
-    return new Response(JSON.stringify(item), { 
+    return new Response(JSON.stringify(res.rows[0]), { 
       status: 201, 
       headers: { 'Content-Type': 'application/json' } 
     });

@@ -7,24 +7,36 @@ export default function Footer() {
         <div className="flex flex-col items-center md:items-start">
           <div className="font-mono text-[10px] text-white font-black tracking-[0.3em] uppercase">CS SOCIETY // IIUI</div>
           <div className="font-mono text-[8px] text-muted mt-2 tracking-widest">
-            © {new Date().getFullYear()} — OPERATIONAL_INTELLIGENCE_UNIT.ARC
+            © {new Date().getFullYear()} — Computer Science Department, IIUI
           </div>
         </div>
 
         <nav className="flex gap-10 text-lg text-muted">
           {[
             { Icon: FaFacebookF, href: '#' },
-            { Icon: FaInstagram, href: '#' },
-            { Icon: FaLinkedinIn, href: '#' },
+            { Icon: FaInstagram, href: 'https://www.instagram.com/css.iiui?igsh=cHp5aTk3Z2E0YXhj' },
+            { Icon: FaLinkedinIn, href: 'https://www.linkedin.com/company/computer-science-society-css/' },
             { Icon: FaDiscord, href: '#' }
           ].map(({ Icon, href }, i) => (
-            <a key={i} href={href} className="transition-all hover:text-white hover:-translate-y-1" aria-label="Social">
+            <a 
+              key={i} 
+              href={href} 
+              target={href !== '#' ? '_blank' : undefined}
+              rel={href !== '#' ? 'noopener noreferrer' : undefined}
+              className="transition-all hover:text-white hover:-translate-y-1" 
+              aria-label="Social"
+            >
               <Icon />
             </a>
           ))}
         </nav>
 
-        <a className="btn text-[9px] px-10 border-white/20" href="/about#join">Initialize Membership</a>
+        <a 
+          className="btn text-[9px] px-10 border-white/20" 
+          href="/contact"
+        >
+          Contact Us
+        </a>
       </div>
     </footer>
   );

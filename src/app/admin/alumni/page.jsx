@@ -90,7 +90,6 @@ export default function AdminAlumniPage() {
     });
 
     if (res.ok) {
-      alert(editingAlumni ? 'Alumni profile synced!' : 'Alumni profile added!');
       handleCancel();
       fetchAlumni();
     } else {
@@ -116,13 +115,13 @@ export default function AdminAlumniPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div className="max-w-xl">
           <Link href="/admin" className="label hover:text-white transition-colors">← Dashboard</Link>
-          <h1 className="section-title mt-4">Manage Alumni</h1>
+          <h1 className="section-title mt-4 text-white">Manage Alumni</h1>
           <p className="mt-4 text-muted text-sm leading-relaxed">
             Record, prioritize, and showcase society graduates and their career landmarks.
           </p>
         </div>
         {!showForm && (
-          <button onClick={() => setShowForm(true)} className="btn">
+          <button onClick={() => setShowForm(true)} className="btn cursor-pointer">
             + Add Alumni
           </button>
         )}
@@ -130,7 +129,7 @@ export default function AdminAlumniPage() {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="border border-border p-8 bg-surface max-w-3xl space-y-6 mb-12">
-          <h2 className="text-xl font-bold uppercase tracking-tight">
+          <h2 className="text-xl font-bold uppercase tracking-tight text-white">
             {editingAlumni ? 'Edit Alumni Profile' : 'New Alumni Profile'}
           </h2>
 
@@ -142,19 +141,19 @@ export default function AdminAlumniPage() {
                 required
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm"
+                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm text-white"
                 placeholder="Abdullah Khan"
               />
             </div>
             <div>
-              <label className="label mb-2 block">Graduation Batch Designation</label>
+              <label className="label mb-2 block">Graduation Year</label>
               <input
                 type="text"
                 required
                 value={gradYear}
                 onChange={e => setGradYear(e.target.value)}
-                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm"
-                placeholder="F20"
+                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm text-white"
+                placeholder="2024"
               />
             </div>
           </div>
@@ -166,7 +165,7 @@ export default function AdminAlumniPage() {
                 type="text"
                 value={company}
                 onChange={e => setCompany(e.target.value)}
-                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm"
+                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm text-white"
                 placeholder="Google"
               />
             </div>
@@ -176,7 +175,7 @@ export default function AdminAlumniPage() {
                 type="text"
                 value={role}
                 onChange={e => setRole(e.target.value)}
-                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm"
+                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm text-white"
                 placeholder="Senior Engineer"
               />
             </div>
@@ -189,7 +188,7 @@ export default function AdminAlumniPage() {
                 type="text"
                 value={linkedin}
                 onChange={e => setLinkedin(e.target.value)}
-                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-xs font-mono"
+                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-xs font-mono text-white"
                 placeholder="https://linkedin.com/in/..."
               />
             </div>
@@ -200,7 +199,7 @@ export default function AdminAlumniPage() {
                 required
                 value={priority}
                 onChange={e => setPriority(e.target.value)}
-                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm"
+                className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm text-white"
                 placeholder="2"
               />
             </div>
@@ -221,10 +220,10 @@ export default function AdminAlumniPage() {
           </div>
 
           <div className="flex justify-end gap-4 pt-4">
-            <button type="button" onClick={handleCancel} className="btn bg-transparent border border-border text-muted hover:text-white">
+            <button type="button" onClick={handleCancel} className="btn bg-transparent border border-border text-muted hover:text-white cursor-pointer">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="btn">
+            <button type="submit" disabled={loading} className="btn cursor-pointer">
               {loading ? 'SAVING...' : 'SYNC ALUMNI'}
             </button>
           </div>
@@ -237,7 +236,7 @@ export default function AdminAlumniPage() {
           <thead>
             <tr className="border-b border-border bg-[#0d0d0d]">
               <th className="p-5 label">Avatar</th>
-              <th className="p-5 label">Name / Batch</th>
+              <th className="p-5 label">Name / Year</th>
               <th className="p-5 label">Career Placement</th>
               <th className="p-5 label">Weight</th>
               <th className="p-5 label text-right">Actions</th>
@@ -255,7 +254,7 @@ export default function AdminAlumniPage() {
                 </td>
                 <td className="p-5">
                   <div className="text-sm font-bold text-white">{al.name}</div>
-                  <span className="text-[9px] font-mono bg-border px-2 py-0.5 mt-1 inline-block uppercase text-muted">BATCH {al.gradYear}</span>
+                  <span className="text-[9px] font-mono bg-border px-2 py-0.5 mt-1 inline-block uppercase text-muted">YEAR {al.gradYear}</span>
                 </td>
                 <td className="p-5 text-xs text-muted">
                   {al.role && al.company ? `${al.role} at ${al.company}` : al.company || al.role || 'Seeking Opportunities'}
@@ -263,10 +262,10 @@ export default function AdminAlumniPage() {
                 <td className="p-5 text-xs font-mono text-white">{al.priority}</td>
                 <td className="p-5 text-right">
                   <div className="flex justify-end gap-6">
-                    <button onClick={() => handleEdit(al)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors">
+                    <button onClick={() => handleEdit(al)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer">
                       Edit
                     </button>
-                    <button onClick={() => handleDelete(al.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors">
+                    <button onClick={() => handleDelete(al.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer">
                       Delete
                     </button>
                   </div>

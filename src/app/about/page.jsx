@@ -4,8 +4,8 @@ import TimelineSection from '@/components/TimelineSection'
 export default function AboutPage() {
   return (
     <div className="section py-12 md:py-20" id="about">
-      <div className="max-w-3xl">
-        <span className="label">The Society</span>
+      <div className="max-w-3xl mx-auto text-center mb-16">
+        <span className="label justify-center">The Society</span>
         <h1 className="section-title mt-2">About CSS IIUI</h1>
         <p className="mt-6 text-muted text-lg leading-relaxed">
           The Computer Science Society (CSS) at International Islamic University, Islamabad is the premier student organization 
@@ -51,15 +51,6 @@ export default function AboutPage() {
       {/* Timeline Section */}
       <div className="mt-24">
         <TimelineSection title="Our Journey" subtitle="Key milestones and historical moments." />
-      </div>
-
-      {/* CTA */}
-      <div className="mt-24 border-t border-border pt-12 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div>
-          <h2 className="text-xl font-bold uppercase tracking-tight">Interested in joining?</h2>
-          <p className="text-muted text-sm mt-1">Become part of the most active community at IIUI.</p>
-        </div>
-        <a className="btn px-12" href="#join">Register Now</a>
       </div>
     </div>
   )
