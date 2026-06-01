@@ -228,49 +228,37 @@ export default function AdminTeamPage() {
       )}
 
       {/* Executives List */}
-      <div className="border border-border bg-surface overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-border bg-[#0d0d0d]">
-              <th className="p-5 label">Avatar</th>
-              <th className="p-5 label">Full Name</th>
-              <th className="p-5 label">Designation</th>
-              <th className="p-5 label text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {members.map(m => (
-              <tr key={m.id} className="border-b border-border/50 hover:bg-white/[0.01] transition-colors">
-                <td className="p-5">
-                  <img
-                    src={m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200'}
-                    alt={m.name}
-                    className="h-10 w-10 rounded-full object-cover border border-border"
-                  />
-                </td>
-                <td className="p-5 text-sm font-bold text-white">{m.name}</td>
-                <td className="p-5 text-xs text-muted font-mono">{m.designation}</td>
-                <td className="p-5 text-right">
-                  <div className="flex justify-end gap-6">
-                    <button onClick={() => handleEdit(m)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors">
-                      Edit
-                    </button>
-                    <button onClick={() => handleDelete(m.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors">
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {members.length === 0 && (
-              <tr>
-                <td colSpan="4" className="p-20 text-center text-sm text-muted">
-                  No executive roster members registered. Initialize database seed.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="border border-border bg-surface overflow-hidden rounded-none divide-y divide-border">
+        {members.map(m => (
+          <div key={m.id} className="flex flex-row items-center justify-between p-5 hover:bg-white/[0.01] transition-colors gap-4">
+            {/* Left Part: Avatar & Details in a row */}
+            <div className="flex items-center gap-5 flex-1 min-w-0">
+              <img
+                src={m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200'}
+                alt={m.name}
+                className="h-10 w-10 rounded-full object-cover border border-border shrink-0"
+              />
+              <div className="min-w-0 flex flex-col sm:flex-row sm:items-center sm:gap-8">
+                <div className="text-sm font-bold text-white truncate">{m.name}</div>
+                <div className="text-xs text-muted font-mono sm:mt-0 mt-1">{m.designation}</div>
+              </div>
+            </div>
+            {/* Right Part: Actions */}
+            <div className="flex items-center gap-6 shrink-0">
+              <button onClick={() => handleEdit(m)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer">
+                Edit
+              </button>
+              <button onClick={() => handleDelete(m.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+        {members.length === 0 && (
+          <div className="p-20 text-center text-sm text-muted bg-surface">
+            No executive roster members registered. Initialize database seed.
+          </div>
+        )}
       </div>
     </div>
   );

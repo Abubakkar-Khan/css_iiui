@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design System: Obsidian Charcoal ── */
+/* ── Design System: Obsidian Zinc Blackish ── */
 :root {
-  --bg: #0d0e12;           /* Soft charcoal, easier on eyes than absolute black */
-  --fg: #e2e8f0;           /* Soft off-white, less harsh than pure white */
-  --muted: #8a8f98;        /* Soothing gray for details */
-  --border: #1d1f27;       /* Soft dark borders */
-  --surface: #14161f;      /* Obsidian charcoal card surface */
-  --surface-hover: #191c28; /* hover overlay state */
+  --bg: #09090b;           /* Deep obsidian, neutral zinc blackish */
+  --fg: #f4f4f5;           /* Soothing off-white */
+  --muted: #71717a;        /* Neutral muted grey */
+  --border: #18181b;       /* Soothing dark border */
+  --surface: #0f0f11;      /* Zinc blackish card surface */
+  --surface-hover: #151518; /* soft feedback state */
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 

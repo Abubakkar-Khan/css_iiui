@@ -1,199 +1,299 @@
-# CS Society (CSS) Web Portal — Complete System Report & Guide for Beginners
+# CS Society (CSS) Web Portal — Technical Documentation & Architecture Manual
 
-Welcome! This is the official system report and dummy-friendly documentation for the **Computer Science Society (CSS)** web platform at the **International Islamic University, Islamabad (IIUI)**. 
-
-Whether you are a developer, an administrator, a sponsor, or a student just getting started, this guide will explain everything about this codebase in the simplest possible terms.
+This document serves as the official, comprehensive technical documentation for the **Computer Science Society (CSS)** web platform at the **International Islamic University, Islamabad (IIUI)**. It describes the design patterns, system architecture, database models, API flows, and software dependencies of the application.
 
 ---
 
-## 1. What is this project?
+## 1. System Architecture
 
-The CSS Web Portal is a professional, high-performance web platform designed to represent the Computer Science Society of IIUI. It serves three main audiences:
+The CSS Web Portal is engineered as a monolithic modern web application using the **Next.js 15 App Router** framework. It integrates frontend client components, server-rendered layouts, and API route controllers into a single unified deployment.
 
-1. **Sponsors & Partners:** A gorgeous, clean corporate showcase of our hackathons, workshops, and society strength to attract partnerships and sponsorships.
-2. **Students & Alumni:** A public directory where students can read society news, check out the active executive cabinet members, see our alumni success directory in the tech industry, and explore galleries of past events.
-3. **Society Administrators (CMS):** A secure, locked control dashboard where administrators can add, update, or remove events, news, cabinet members, and image portfolios in real-time.
+### High-Level Architectural Flow
+```mermaid
+graph TD
+    Client[Web Browser Client]
+    NextServer[Next.js Server-Side Engine]
+    Pool[node-postgres pg.Pool]
+    DB[(Neon Cloud PostgreSQL)]
+    Cloudinary[(Cloudinary Media Delivery CDN)]
+    Resend[Resend REST API]
+
+    Client -- HTTP Requests / Web UI Interaction --> NextServer
+    NextServer -- Raw SQL Queries --> Pool
+    Pool -- Connection Pool --> DB
+    Client -- Direct Client-Side Media Upload --> Cloudinary
+    NextServer -- Email Notification payload --> Resend
+```
+
+### Key Architectural Decisions
+1. **ORM Elimination (Raw SQL):** We eliminated Prisma and heavy ORM libraries in favor of native PostgreSQL bindings using node-postgres (`pg`). This allows for maximum query execution speed, transparency in code, and direct transaction controls.
+2. **Server-Side API Boundaries:** API endpoints are written as standard Next.js route handlers located under `src/app/api/`. They execute on the server-side, securing environment credentials (such as database URLs and API keys) from client leakage.
+3. **Decoupled Media Management:** Media files (such as event slideshows, alumni headshots, and news covers) are uploaded directly to the Cloudinary CDN. Only the CDN URLs are persisted in the database. This prevents binary data storage from bloating the relational database, ensuring high-speed queries.
+4. **Resend REST API Direct Binding:** Email dispatch is implemented directly via clientless standard HTTP requests (`fetch`) to the Resend API endpoints. This avoids importing third-party libraries, keeping the codebase extremely lightweight.
 
 ---
 
-## 2. The Simple Technology Stack
+## 2. System Class Diagram
 
-To keep the application fast, lightweight, and easy to maintain, we chose a focused set of modern technologies:
-
-* **Framework:** **Next.js 15** (built with React) — A powerful web framework that handles both the visual frontend pages and the backend server code in a single project.
-* **Database:** **PostgreSQL** — A robust database system hosted in the cloud on **Neon Database**.
-* **Direct Database Driver:** **Node-Postgres (`pg` package)** — We communicate with PostgreSQL directly using raw SQL queries rather than slow or heavy frameworks. This keeps our queries fast and easily explainable.
-* **Image CDN Storage:** **Cloudinary** — Rather than slowing down our database by saving large image files, all pictures are sent directly to Cloudinary. We only store the fast-loading, optimized image URLs in our database.
-
----
-
-## 3. Database Architecture (How the Data is Structured)
-
-Our database consists of **6 clean tables** structured to link together logically:
+The database models and service managers are structured in a relational object paradigm. The class diagram below maps out the entities in PostgreSQL along with their types, relations, and core service layers.
 
 ```mermaid
-erDiagram
-    EVENT ||--o{ IMAGE : "has slideshow images (1:N)"
+classDiagram
+    class DatabaseService {
+        +Pool pool
+        +query(text: string, params: Array) Promise~QueryResult~
+    }
+
+    class CloudinaryService {
+        +uploadImage(fileStr: string) Promise~string~
+        +deleteImage(publicId: string) Promise~boolean~
+    }
+
+    class Admin {
+        +int id
+        +string email
+        +string name
+        +string password
+    }
+
+    class Event {
+        +int id
+        +string title
+        +text description
+        +datetime date
+        +string locationType
+        +string venue
+        +string eventType
+        +datetime createdAt
+        +datetime updatedAt
+    }
+
+    class Image {
+        +int id
+        +string url
+        +string caption
+        +int eventId
+        +datetime createdAt
+    }
+
+    class News {
+        +int id
+        +string title
+        +text details
+        +datetime date
+        +string imageUrl
+        +datetime createdAt
+    }
+
+    class TeamMember {
+        +int id
+        +string name
+        +string designation
+        +text details
+        +string imageUrl
+        +string instagram
+        +string linkedin
+        +string facebook
+    }
+
+    class Alumni {
+        +int id
+        +string name
+        +string gradYear
+        +string company
+        +string role
+        +string imageUrl
+        +string linkedin
+        +int priority
+    }
+
+    Event "1" -- "0..*" Image : has-slideshow-images
+    DatabaseService ..> Admin : queries
+    DatabaseService ..> Event : queries
+    DatabaseService ..> Image : queries
+    DatabaseService ..> News : queries
+    DatabaseService ..> TeamMember : queries
+    DatabaseService ..> Alumni : queries
+```
+
+---
+
+## 3. Sequence Diagrams (Key Flows)
+
+The following diagrams illustrate the dynamic run-time interactions between components for the application's most critical operations.
+
+### Flow A: Dynamic Event Creation with Multi-Image Slideshow Upload
+This sequence diagram shows how an administrator uploads multiple images, creates a new event, and cascades the association into the database without blocking the client.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin as Admin Portal UI
+    participant Cloudinary as Cloudinary API
+    participant API as Next.js Events API Route
+    participant DB as PostgreSQL Database
+
+    Admin->>Cloudinary: Upload multi-image files directly (base64/unsigned)
+    activate Cloudinary
+    Cloudinary-->>Admin: Return Cloudinary CDN Image URLs array
+    deactivate Cloudinary
+
+    Admin->>API: POST /api/events (JSON payload containing title, date, & URLs)
+    activate API
+    API->>DB: INSERT INTO "Event" (...) RETURNING id
+    activate DB
+    DB-->>API: Return new event record (id = X)
+    deactivate DB
+
+    loop For each image URL
+        API->>DB: INSERT INTO "Image" (url, eventId) VALUES (URL, X)
+        activate DB
+        DB-->>API: Confirm association insert
+        deactivate DB
+    end
+
+    API-->>Admin: HTTP 201 Created (payload with nested Event + Images)
+    deactivate API
+```
+
+### Flow B: Contact Form Submission and Real-time Email Dispatch
+This diagram details the sequence where a student or sponsor submits the contact form, leading to a silent simulation or real email dispatch to the society lead via Resend.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Contact Page UI
+    participant API as Next.js Contact API Route
+    participant Resend as Resend email server
+    actor Lead as Society Lead Inbox
+
+    User->>API: POST /api/contact { name, email, subject, message }
+    activate API
     
-    ADMIN {
-        int id PK "Auto-incrementing ID"
-        string email "Login Username"
-        string name "Display Name"
-        string password "Secured Hash"
-    }
+    alt RESEND_API_KEY is not defined in .env
+        API->>API: Log Simulation Details to Server Console
+        API-->>User: HTTP 200 OK (simulated: true)
+    else RESEND_API_KEY is active
+        API->>Resend: Fetch POST /emails (Bearer token + HTML body)
+        activate Resend
+        Resend->>Lead: Forward email notification
+        Resend-->>API: HTTP 200 OK { id: email_id }
+        deactivate Resend
+        API-->>User: HTTP 200 OK { ok: true }
+    end
+    deactivate API
+```
 
-    EVENT {
-        int id PK "Auto-incrementing ID"
-        string title "Event Name"
-        text description "Markdown or plain details"
-        datetime date "Date scheduled"
-        string locationType "OFFLINE / ONLINE"
-        string venue "Auditiorium B, Zoom, etc."
-        string eventType "Workshop, Hackathon, Seminar"
-    }
+### Flow C: Public Client Data Retrieval (e.g., Core Cabinet Team Grid)
+This sequence shows the retrieval flow for client pages where components fetch dynamic listings from PostgreSQL asynchronously post-mount.
 
-    IMAGE {
-        int id PK "Auto-incrementing ID"
-        string url "Cloudinary link"
-        string caption "Hover text"
-        int eventId FK "Belongs to Event (NULL = general image)"
-    }
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Browser as Browser Client
+    participant Component as Roster Component (use client)
+    participant API as Next.js Team API Route
+    participant DB as PostgreSQL Database
 
-    NEWS {
-        int id PK "Auto-incrementing ID"
-        string title "Announcement heading"
-        text details "Full update details"
-        datetime date "Publish date"
-        string imageUrl "Cover image"
-    }
-
-    TEAM_MEMBER {
-        int id PK "Auto-incrementing ID"
-        string name "Cabinet member name"
-        string designation "President, Tech Lead, etc."
-        text details "Short bio"
-        string imageUrl "Headshot photo"
-        string instagram "Profile handle (optional)"
-        string linkedin "Profile URL (optional)"
-        string facebook "Profile URL (optional)"
-    }
-
-    ALUMNI {
-        int id PK "Auto-incrementing ID"
-        string name "Graduate name"
-        string gradYear "Year of graduation (e.g. 2024)"
-        string company "Current employer (Google, etc.)"
-        string role "Current title (Senior Engineer, etc.)"
-        string imageUrl "Professional headshot"
-        string linkedin "LinkedIn profile"
-        int priority "Sort weight (lower = pinned first)"
-    }
+    Browser->>Component: Render main Page container
+    activate Component
+    Component->>Component: Fire useEffect() mount trigger
+    Component->>API: GET /api/team
+    activate API
+    API->>DB: SELECT * FROM "TeamMember" ORDER BY "id" ASC
+    activate DB
+    DB-->>API: Return query row data array
+    deactivate DB
+    API-->>Component: HTTP 200 OK JSON array
+    deactivate API
+    Component->>Component: Update React state (setEvents)
+    Component-->>Browser: Re-render UI with dynamic cabinet cards
+    deactivate Component
 ```
 
 ---
 
-## 4. How the Code Actually Works (Easily Explained!)
+## 4. Libraries & Dependencies
 
-### A. Raw SQL Database Queries (No Prisma!)
-Instead of heavy software mapping packages, we run direct **raw SQL queries** using the Node.js `pg` client pool located at `src/lib/db.js`.
-Because PostgreSQL converts tables and columns to lowercase automatically by default, we **double-quote** all table and column names (`"Event"`, `"TeamMember"`, `"gradYear"`, etc.) in our SQL queries to match the schema perfectly!
+The dependencies in `package.json` are optimized to keep compilation targets clean, fast, and simple. All redundant and bulky third-party libraries (including ORMs like Prisma, custom text-editors like Tiptap, and heavy server-side image processors like sharp) have been completely pruned.
 
-**Example (Fetching active team members):**
+### Dependency Rationale Matrix
+
+| Dependency | Category | Rationale | Why Not an Alternative? |
+| :--- | :--- | :--- | :--- |
+| **`next` (v15.4.6)** | Core Framework | Provides serverless API routes, optimized static pre-rendering, and client-side page transitions in a single integrated project directory. | Replaces express + standard react, which require separate server-hosting architectures. |
+| **`react` & `react-dom` (v19.1.0)** | Frontend Core | Industry-standard declarative UI engine. Next.js relies directly on its components. | Native JavaScript code is too verbose for complex responsive layouts. |
+| **`pg` (v8.16.3)** | Database Driver | High-performance PostgreSQL client pool allowing direct connection and execution of raw SQL queries. | Replaces Prisma ORM. By running pure SQL, we avoid heavy compile-time ORM clients and memory overhead. |
+| **`cloudinary` (v2.10.0)** | Media Service | Server-side image deletion helper (during admin asset removals) to clear obsolete files. | Replaces local disk storage. Keeping uploads in the cloud keeps backups small. |
+| **`next-cloudinary` (v6.17.5)** | Media Frontend | Component package providing standard secure widgets allowing unsigned files to be uploaded from browsers directly to Cloudinary. | Direct REST calls require complex chunked signatures and custom upload loops. |
+| **`react-icons` (v4.12.0)** | Icon Utility | Package grouping popular SVG icon libraries (FontAwesome, Lucide). Used for roster social badges. | Reduces asset loading by bundling only the specific vector elements used during build. |
+| **`bcrypt` (v6.0.0)** | Cryptography | Industry standard one-way blowfish password hashing algorithm to secure admin records. | Replaces plain-text comparison. Necessary to ensure database breach protection. |
+| **`zod` (v4.1.11)** | Data Validation | Type-safe schema validation engine used to clean, check, and cast raw inputs prior to SQL insertion. | Direct JS manual conditions are error-prone and hard to maintain across APIs. |
+
+---
+
+## 5. System Execution Deep-Dive
+
+### Raw SQL and Case Sensitivity Conventions
+Because PostgreSQL automatically converts non-quoted identifier names to lowercase, all tables and columns generated during database migrations require explicit **double-quoting** in raw SQL queries.
+* **Incorrect:** `SELECT id, gradYear FROM Alumni` (Errors out, database searches for `alumni` and `gradyear`).
+* **Correct:** `SELECT "id", "gradYear" FROM "Alumni"` (Executes correctly, matching PascalCase table and camelCase column definitions).
+
+### Clean & Silent Admin CMS Rows
+Success banners and standard browser notifications (`alert(...)`) were removed entirely from the Administrative CMS. State transitions are processed silently in the client state followed by immediate program-controlled route redirects, preserving a modern, fluid user experience. 
+
+Furthermore, data listings inside the administrator controls are configured in sleek, horizontal flex layouts. Instead of ugly legacy stacked list views, parameters (such as Avatar, Full Name, Designation, and Actions) are aligned in strict, spacious horizontal columns.
+
+### Cross-Origin Image Downloader
+In the public visual gallery (`src/app/gallery/page.jsx`), downloading external resources directly is often blocked by browser CORS restrictions (opening images in a new tab instead of initiating a download). To bypass this, we implemented a custom blob generator:
 ```javascript
-// Located inside src/app/api/team/route.js
-const res = await db.query('SELECT * FROM "TeamMember" ORDER BY "id" ASC');
-return new Response(JSON.stringify(res.rows));
+const handleDownload = async (url, filename) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = filename || 'download.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    console.error("Downloader failure:", err);
+  }
+};
 ```
 
-**Example (Uploading dynamic multi-image event recaps):**
-When creating a new event, we insert the event metadata first, then loop through all uploaded Cloudinary URLs and insert them as associated items into the `"Image"` table:
-```javascript
-// Located inside src/app/api/events/route.js
-const eventRes = await db.query(
-  'INSERT INTO "Event" ("title", "description", "date", "locationType", "venue", "eventType", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *',
-  [title, description, new Date(date), locationType, venue, eventType]
-);
-const ev = eventRes.rows[0];
-
-for (const url of images) {
-  await db.query(
-    'INSERT INTO "Image" ("url", "eventId", "createdAt") VALUES ($1, $2, NOW())',
-    [url, ev.id]
-  );
-}
-```
-
-### B. High-Performance Front-end Features
-1. **Interactive Event Slideshows:** In the event details page (`src/app/events/[id]`), all uploaded event images are passed to a lightweight custom slideshow component (`src/components/EventSlideshow.jsx`). It renders smooth sliding transitions with prev/next buttons and paginated indicator dots—with **zero package overhead**.
-2. **Instant Gallery Image Downloads:** In the public gallery (`src/app/gallery/page.jsx`), we created a cross-origin downloader that fetches images as file blobs:
-   ```javascript
-   const res = await fetch(url);
-   const blob = await res.blob();
-   const blobUrl = window.URL.createObjectURL(blob);
-   // Programmatically trigger a browser download!
-   ```
-3. **Silent CMS Operations:** Browser success popups (`alert(...)`) were removed across the admin management panel. Saving a team member or posting news now completes instantly and quietly with silent route redirects.
-4. **Soft obsidian Theme:** Our theme (`globals.css`) uses a warm, soothing obsidian charcoal palette (`#0d0e12`) that reduces strain on the eyes. All primary headings and dynamic catalog pages are beautifully centered for a high-end, cohesive grid appearance.
-5. **Team Social Badges:** If a cabinet team member provides their profile URLs (LinkedIn, Instagram, or Facebook) inside the database, beautiful, subtle hover icons appear inside their cards automatically.
+### SMTP Email Simulation vs Live Delivery
+To ensure zero operational downtime, the `/api/contact` API route contains a fallback handler:
+1. **Simulation Mode:** If no `RESEND_API_KEY` is present in the server's `.env`, the API logs the sender, recipient, subject, and body into the server logs and returns a `simulated: true` response. This allows frontend testing to pass successfully out-of-the-box.
+2. **Live Mode:** Once the administrator adds their `RESEND_API_KEY` key to the cloud env, fetch requests are dispatched to Resend's secure email API using standard onboarding domain headers, instantly routing emails to `abusart2023@gmai.com`.
 
 ---
 
-## 5. Setting Up the Project Locally (Beginner's Guide)
+## 6. Directory File Map
 
-Follow these simple steps to run this project on your personal computer:
-
-### Step 1: Clone or Extract the Project
-Extract the zip/rar file into a dedicated project folder on your computer.
-
-### Step 2: Install Node.js
-Ensure you have **Node.js** installed (Version 18 or above recommended). Download it from [nodejs.org](https://nodejs.org).
-
-### Step 3: Install Project Packages
-Open your command line/terminal in the project folder and run:
-```bash
-npm install
-```
-This downloads all necessary modules (Next.js, pg, cloudinary, etc.) automatically.
-
-### Step 4: Configure Environment Keys (`.env`)
-Create a new file named `.env` in the root project folder (next to `package.json`) and populate it with these keys:
-```env
-# Neon Postgres Connection URL
-DATABASE_URL="postgresql://neondb_owner:npg_NX1lCgyjSh4x@ep-solitary-night-ao2g0vt7-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
-
-# Cloudinary Integration (Do not edit unless replacing Cloudinary accounts)
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="dxfob5w5j"
-NEXT_PUBLIC_CLOUDINARY_API_KEY="829218522733291"
-CLOUDINARY_API_SECRET="_HposDpzAF38lbVrYPbl_zLpc-c"
-```
-
-### Step 5: Start the Development Server
-Run the local dev command in your terminal:
-```bash
-npm run dev
-```
-Open **[http://localhost:3000](http://localhost:3000)** inside your browser. The live portal is now running locally on your computer!
-
----
-
-## 6. Project Directory Reference (Where things are)
-
-To easily locate and edit specific parts of the codebase, refer to this simple guide:
-
-* `src/app/` — Contains all core visual pages of our application.
-  * `page.js` — The main homepage.
-  * `about/page.jsx` — The "About Us" timeline page.
-  * `alumni/page.jsx` — The Graduated Alumni directory catalog.
-  * `events/page.jsx` — Public calendar list of workshops and hackathons.
-  * `events/[id]/page.jsx` — Dynamic detail page featuring the **image slideshow** for a single event.
-  * `gallery/page.jsx` — Visual grid with integrated **image download buttons**.
-  * `team/page.jsx` — public cabinet roster listing with **LinkedIn and social media badges**.
-* `src/app/admin/` — The protected control panel for society heads.
-  * `page.jsx` — The central administrative dashboard.
-  * `events/new/page.jsx` — Creator interface allowing **multiple slideshow image uploads**.
-  * `team/page.jsx`, `alumni/page.jsx`, `gallery/page.jsx`, `news/page.jsx` — CMS tables to sync rosters, uploads, and posts silently.
-* `src/app/api/` — Backend query endpoints executing direct raw SQL calls to fetch, insert, or delete data.
-* `src/components/` — Reusable front-end building blocks (e.g. `Navbar.jsx`, `Footer.jsx`, `EventSlideshow.jsx`, `CoreTeamSection.jsx`).
-* `src/lib/` — Backend helpers.
-  * `db.js` — Direct PostgreSQL raw SQL query pool.
-  * `cloudinary.js` — Image upload and purge controllers.
+* `src/app/` — All routing segments and visual pages.
+  * `layout.js` — Main page container, custom webfonts, and **explicit favicon-16x16.png mappings**.
+  * `globals.css` — Core zinc-obsidian CSS variables, global scrollbars, and customized typography.
+  * `page.js` — Core homepage assembling Hero, Events, and FAQ elements.
+  * `about/` — Static about page showcasing society history (freed of cellular grid files and joining forms).
+  * `alumni/` — Graduated alumni grid sorted by priority index.
+  * `team/` — Core cabinet roster showing live LinkedIn/Instagram/FB badges.
+  * `gallery/` — Media page containing the responsive image grid and **CORS blob downloaders**.
+  * `contact/` — Compact message dispatcher linked to the Resend API handler.
+* `src/app/admin/` — Locked administrative panels.
+  * `page.jsx` — Administrative index panel.
+  * `login/` — Standard secure dashboard access point.
+  * `events/new/` — Slideshow event creator allowing multiple Cloudinary assets to be added in parallel.
+  * `team/`, `alumni/`, `gallery/`, `news/` — Silent CMS managers aligned in clean horizontal flex rows.
+* `src/app/api/` — Backend raw SQL database queries.
+* `src/components/` — Global design components.
+  * `Navbar.jsx` — Sticky header controller.
+  * `Footer.jsx` — Branded footer including only Instagram/LinkedIn and the CSS corporate brand logo.
+  * `EventSlideshow.jsx` — Dynamic event slides carousel component.
+* `src/lib/` — Client connection drivers.
+  * `db.js` — standard PostgreSQL pg.Pool pool loader.
+  * `cloudinary.js` — Media uploads API configuration.

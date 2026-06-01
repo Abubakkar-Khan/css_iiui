@@ -1,6 +1,9 @@
 export const metadata = {
   title: 'CS SOCIETY // IIUI',
   description: 'The official Computer Science Society at International Islamic University, Islamabad.',
+  icons: {
+    icon: '/favicon-16x16.png',
+  },
 }
 import './globals.css'
 import Navbar from '@/components/Navbar'
@@ -11,6 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <head>
+        <link rel="icon" type="image/png" href="/favicon-16x16.png" />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
           rel="stylesheet"

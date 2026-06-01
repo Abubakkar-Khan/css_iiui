@@ -184,49 +184,37 @@ export default function AdminNewsPage() {
       )}
 
       {/* News List */}
-      <div className="border border-border bg-surface overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-border bg-[#0d0d0d]">
-              <th className="p-5 label">Cover</th>
-              <th className="p-5 label">Announcements</th>
-              <th className="p-5 label">Publish Date</th>
-              <th className="p-5 label text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {newsList.map(item => (
-              <tr key={item.id} className="border-b border-border/50 hover:bg-white/[0.01] transition-colors">
-                <td className="p-5">
-                  <img
-                    src={item.imageUrl || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=200'}
-                    alt={item.title}
-                    className="h-10 w-16 object-cover border border-border"
-                  />
-                </td>
-                <td className="p-5 text-sm font-bold text-white max-w-xs truncate">{item.title}</td>
-                <td className="p-5 text-xs text-muted font-mono">{new Date(item.date).toLocaleDateString()}</td>
-                <td className="p-5 text-right">
-                  <div className="flex justify-end gap-6">
-                    <button onClick={() => handleEdit(item)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors">
-                      Edit
-                    </button>
-                    <button onClick={() => handleDelete(item.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors">
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {newsList.length === 0 && (
-              <tr>
-                <td colSpan="4" className="p-20 text-center text-sm text-muted">
-                  No news announcements registered. Create your first post above!
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="border border-border bg-surface overflow-hidden rounded-none divide-y divide-border">
+        {newsList.map(item => (
+          <div key={item.id} className="flex flex-row items-center justify-between p-5 hover:bg-white/[0.01] transition-colors gap-4">
+            {/* Left Part: Cover & Details in a row */}
+            <div className="flex items-center gap-5 flex-1 min-w-0">
+              <img
+                src={item.imageUrl || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=200'}
+                alt={item.title}
+                className="h-10 w-16 object-cover border border-border shrink-0"
+              />
+              <div className="min-w-0 flex flex-col sm:flex-row sm:items-center sm:gap-6">
+                <div className="text-sm font-bold text-white truncate">{item.title}</div>
+                <span className="text-[8px] font-mono text-muted tracking-wider shrink-0 sm:mt-0 mt-1">{new Date(item.date).toLocaleDateString()}</span>
+              </div>
+            </div>
+            {/* Right Part: Actions */}
+            <div className="flex items-center gap-6 shrink-0">
+              <button onClick={() => handleEdit(item)} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer">
+                Edit
+              </button>
+              <button onClick={() => handleDelete(item.id)} className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+        {newsList.length === 0 && (
+          <div className="p-20 text-center text-sm text-muted bg-surface">
+            No news announcements registered. Create your first post above!
+          </div>
+        )}
       </div>
     </div>
   );

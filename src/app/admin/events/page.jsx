@@ -30,44 +30,33 @@ export default function AdminEventsPage() {
         </Link>
       </div>
 
-      <div className="border border-border bg-surface overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-border bg-[#0d0d0d]">
-              <th className="p-5 label">Status / Date</th>
-              <th className="p-5 label">Fragment Title</th>
-              <th className="p-5 label text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map(e => (
-              <tr key={e.id} className="border-b border-border/50 hover:bg-white/[0.02] transition-colors">
-                <td className="p-5 text-xs text-muted font-mono">{new Date(e.date).toLocaleDateString()}</td>
-                <td className="p-5 text-sm font-bold text-white">{e.title}</td>
-                <td className="p-5 text-right">
-                  <div className="flex justify-end gap-6">
-                    <Link href={`/admin/events/${e.id}`} className="text-[10px] font-bold uppercase tracking-widest text-muted hover:text-white transition-colors">
-                      Edit
-                    </Link>
-                    <button 
-                      onClick={() => deleteEvent(e.id)}
-                      className="text-[10px] font-bold uppercase tracking-widest text-red-500/70 hover:text-red-500 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {events.length === 0 && (
-              <tr>
-                <td colSpan="3" className="p-20 text-center text-sm text-muted">
-                  No event fragments found. Initialize new data.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="border border-border bg-surface overflow-hidden rounded-none divide-y divide-border">
+        {events.map(e => (
+          <div key={e.id} className="flex flex-row items-center justify-between p-5 hover:bg-white/[0.02] transition-colors gap-4">
+            {/* Left Part: Date & Title in a row */}
+            <div className="flex items-center gap-5 flex-1 min-w-0">
+              <span className="text-[10px] font-mono text-muted uppercase tracking-wider shrink-0">{new Date(e.date).toLocaleDateString()}</span>
+              <div className="text-sm font-bold text-white truncate">{e.title}</div>
+            </div>
+            {/* Right Part: Actions */}
+            <div className="flex items-center gap-6 shrink-0">
+              <Link href={`/admin/events/${e.id}`} className="text-[10px] font-bold uppercase tracking-wider text-muted hover:text-white transition-colors">
+                Edit
+              </Link>
+              <button 
+                onClick={() => deleteEvent(e.id)}
+                className="text-[10px] font-bold uppercase tracking-wider text-red-500/70 hover:text-red-500 transition-colors cursor-pointer"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+        {events.length === 0 && (
+          <div className="p-20 text-center text-sm text-muted bg-surface">
+            No event fragments found. Initialize new data.
+          </div>
+        )}
       </div>
     </div>
   );
