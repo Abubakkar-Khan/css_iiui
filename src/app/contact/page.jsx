@@ -49,7 +49,7 @@ export default function ContactPage() {
       <div className="max-w-xl mx-auto text-center mb-12">
         <span className="label justify-center">Get in Touch</span>
         <h1 className="section-title mt-2 text-white">Contact Us</h1>
-        <p className="mt-4 text-muted text-sm leading-relaxed">
+        <p className="mt-4 text-muted text-base leading-relaxed">
           Have a question, feedback, or sponsorship opportunity? Send a message directly to the CS Society lead!
         </p>
       </div>
@@ -61,11 +61,11 @@ export default function ContactPage() {
               ✓
             </div>
             <h2 className="text-lg font-bold text-white uppercase tracking-tight">Message Dispatched!</h2>
-            <p className="text-xs text-muted leading-relaxed max-w-sm mx-auto">
+            <p className="text-sm text-muted leading-relaxed max-w-sm mx-auto">
               Your inquiry has been successfully transmitted using Resend to the CS Society lead. We will reach back to you shortly.
             </p>
             <div className="pt-4">
-              <Link href="/" className="btn text-[9px] px-8">
+              <Link href="/" className="btn text-xs px-8">
                 Back to Home
               </Link>
             </div>

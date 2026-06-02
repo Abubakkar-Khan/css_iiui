@@ -10,7 +10,7 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: 'All fields are required' }), { status: 400 });
     }
 
-    const recipient = 'abusart2023@gmai.com';
+    const recipient = process.env.ADMIN_EMAIL || 'abusart2023@gmail.com';
     const resendApiKey = process.env.RESEND_API_KEY;
 
     if (!resendApiKey) {
@@ -27,6 +27,8 @@ export async function POST(req) {
       });
     }
 
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'CSS Portal <onboarding@resend.dev>';
+
     // Call Resend REST API directly - extremely simple and clean with no dependencies!
     const mailRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -35,7 +37,7 @@ export async function POST(req) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'CSS Portal <onboarding@resend.dev>',
+        from: fromEmail,
         to: recipient,
         subject: `CSS Contact: ${subject}`,
         html: `
