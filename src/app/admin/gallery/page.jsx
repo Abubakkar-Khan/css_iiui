@@ -95,6 +95,7 @@ export default function AdminGalleryPage() {
   };
 
   const handleDelete = async (id) => {
+    if (!confirm('Delete this image?')) return;
     const res = await fetch(`/api/gallery/${id}`, { method: 'DELETE' });
     if (res.ok) {
       setImages(images.filter(img => img.id !== id));

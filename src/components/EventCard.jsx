@@ -34,11 +34,6 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
             draggable={false}
             loading="lazy"
           />
-          {index !== undefined && (
-            <div className="absolute top-3 left-3 font-mono text-[9px] tracking-widest uppercase bg-black/85 text-zinc-300 px-2.5 py-1 border border-white/10 backdrop-blur-sm">
-              [ Event {index + 1} ]
-            </div>
-          )}
         </div>
 
         {/* Content Block */}
@@ -82,7 +77,7 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
           <div className="pt-4 border-t border-border/40">
             <Link
               href={`/events/${event.id}`}
-              className="w-full text-center text-xs md:text-sm font-mono font-black uppercase tracking-widest block py-3 border border-border text-white hover:border-white hover:bg-white hover:text-black transition-all duration-300"
+              className="w-full text-center text-xs md:text-sm font-mono font-black uppercase tracking-widest block py-3 bg-white text-black hover:bg-transparent hover:text-white border border-white transition-all duration-300"
             >
               View Details →
             </Link>

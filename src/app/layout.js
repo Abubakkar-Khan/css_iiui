@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'CS SOCIETY // IIUI',
+  title: 'CSS IIUI',
   description: 'The official Computer Science Society at International Islamic University, Islamabad.',
   icons: {
     icon: '/favicon-16x16.png',

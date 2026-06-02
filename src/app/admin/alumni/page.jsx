@@ -100,6 +100,7 @@ export default function AdminAlumniPage() {
   };
 
   const handleDelete = async (id) => {
+    if (!confirm('Delete this item?')) return;
     const res = await fetch(`/api/alumni/${id}`, { method: 'DELETE' });
     if (res.ok) {
       setAlumni(alumni.filter(al => al.id !== id));
