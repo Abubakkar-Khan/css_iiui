@@ -111,9 +111,11 @@ graph TD
 
 3. **Decoupled media storage** — Images are uploaded to Cloudinary. Only the resulting CDN URLs are stored in the database. This keeps the database lightweight and backups small.
 
-4. **Client-side rendering for data pages** — Most public pages use `'use client'` with `useEffect` + `fetch` to load data on mount. This keeps the initial page shell fast while data hydrates.
+4. **Server Component Pre-fetching for Landing Page** — Pre-fetches news, events, and team details on the server to prevent loading skeletons, sequential roundtrips, and cold starts, boosting load speed.
 
 5. **PostgreSQL case sensitivity** — Since Prisma generates PascalCase table names and camelCase columns, all raw SQL queries use double-quoted identifiers (e.g., `"TeamMember"`, `"gradYear"`) to match exactly.
+
+6. **Image Optimization & Cache Strategy** — Integrated Next.js `<Image>` component and a custom URL pre-processor (`src/lib/images.js`) to apply CDN-level resizing and formats (`f_auto,q_auto`). Strip out cache-busting query strings to maximize CDN and browser cache HIT rates.
 
 ---
 

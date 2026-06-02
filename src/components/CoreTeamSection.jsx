@@ -1,7 +1,10 @@
+// src/components/CoreTeamSection.jsx
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { FaLinkedinIn, FaInstagram, FaFacebookF } from 'react-icons/fa6'
+import { optimizeImageUrl } from '@/lib/images'
 
 const getDesignationPriority = (designation) => {
   const desc = (designation || '').toLowerCase();
@@ -86,11 +89,14 @@ export default function CoreTeamSection({ initialTeam = [] }) {
           {president && (
             <div className="mb-12">
               <div className="card p-0 overflow-hidden bg-[var(--surface)] border border-border hover:border-white/20 transition-all duration-300 grid md:grid-cols-2 max-w-3xl mx-auto">
-                <div className="overflow-hidden relative aspect-square border-b md:border-b-0 md:border-r border-border">
-                  <img
-                    src={president.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400'}
+                <div className="overflow-hidden relative aspect-square border-b md:border-b-0 md:border-r border-border bg-black/20">
+                  <Image
+                    src={optimizeImageUrl(president.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400', 600, 600)}
                     alt={president.name}
+                    width={600}
+                    height={600}
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    priority
                   />
                 </div>
                 <div className="p-8 md:p-12 flex flex-col justify-center bg-surface">
@@ -156,11 +162,14 @@ function MemberCard({ member: m }) {
     <article className="card p-0 group overflow-hidden bg-[var(--surface)] border border-border hover:border-white/20 transition-all duration-300 flex flex-col justify-between h-full">
       <div className="flex flex-col h-full justify-between">
         <div>
-          <div className="overflow-hidden relative aspect-square border-b border-border">
-            <img
-              src={m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400'}
+          <div className="overflow-hidden relative aspect-square border-b border-border bg-black/20">
+            <Image
+              src={optimizeImageUrl(m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400', 400, 400)}
               alt={m.name}
+              width={400}
+              height={400}
               className="w-full h-full object-cover brightness-90 transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
             />
           </div>
           <div className="p-4 bg-surface text-center">

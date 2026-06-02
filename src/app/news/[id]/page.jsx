@@ -1,5 +1,7 @@
 import db from '@/lib/db';
 import Link from 'next/link';
+import Image from 'next/image';
+import { optimizeImageUrl } from '@/lib/images';
 
 export const revalidate = 0;
 
@@ -59,10 +61,13 @@ export default async function NewsDetailPage({ params }) {
         {/* Cover Image */}
         {article.imageUrl && (
           <div className="mt-10 border border-border overflow-hidden">
-            <img
-              src={article.imageUrl}
+            <Image
+              src={optimizeImageUrl(article.imageUrl, 1200)}
               alt={article.title}
+              width={1200}
+              height={675}
               className="w-full h-auto object-cover"
+              priority
             />
           </div>
         )}

@@ -1,5 +1,8 @@
+// src/components/TimelineSection.jsx
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { optimizeImageUrl } from '@/lib/images';
 
 export default function TimelineSection({
   title = 'Our Journey',
@@ -107,12 +110,15 @@ export default function TimelineSection({
 
               {/* Card */}
               <article className="card p-0 overflow-hidden flex flex-col h-[320px] transition-all duration-500 group-hover/card:border-white/30">
-                <div className="overflow-hidden h-36 relative">
-                  <img
-                    src={it.image}
+                <div className="overflow-hidden h-36 relative bg-black/20">
+                  <Image
+                    src={optimizeImageUrl(it.image, 400, 300)}
                     alt=""
+                    width={400}
+                    height={300}
                     className="h-full w-full object-cover brightness-90 transition-transform duration-700 group-hover/card:brightness-100 group-hover/card:scale-105"
                     draggable={false}
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/40" />
                 </div>

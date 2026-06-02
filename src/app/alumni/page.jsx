@@ -1,7 +1,9 @@
 // src/app/alumni/page.jsx
 'use client'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { FaLinkedinIn } from 'react-icons/fa6'
+import { optimizeImageUrl } from '@/lib/images'
 
 export default function AlumniPage() {
   const [alumni, setAlumni] = useState([])
@@ -42,11 +44,14 @@ export default function AlumniPage() {
               key={person.id}
               className="card p-4 flex flex-col group border-white/5 hover:border-white/20 transition-all duration-300 bg-black"
             >
-              <div className="relative overflow-hidden aspect-square border border-white/10 mb-4 bg-black">
-                <img
-                  src={person.imageUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400'}
+              <div className="relative overflow-hidden aspect-square border border-white/10 mb-4 bg-black/20">
+                <Image
+                  src={optimizeImageUrl(person.imageUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400', 400, 400)}
                   alt={person.name}
+                  width={400}
+                  height={400}
                   className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                  loading="lazy"
                 />
               </div>
 

@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { optimizeImageUrl } from '@/lib/images'
 
 const DEFAULT_SLIDES = [
   {
@@ -90,10 +92,13 @@ export default function Hero({ initialNews = [] }) {
         {/* Image */}
         <div className="relative h-[65vh] md:h-[80vh] overflow-hidden">
           {slides.map((slide, i) => (
-            <img
+            <Image
               key={i}
-              src={slide.img}
-              alt=""
+              src={optimizeImageUrl(slide.img, 1200)}
+              alt="Slide backdrop"
+              fill
+              priority={i === 0}
+              sizes="100vw"
               className="absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out"
               style={{ 
                 opacity: i === idx ? 0.6 : 0,

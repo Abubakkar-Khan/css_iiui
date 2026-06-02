@@ -2,6 +2,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { optimizeImageUrl } from '@/lib/images'
 
 export default function GalleryPage() {
   const [images, setImages] = useState([])
@@ -69,10 +71,13 @@ export default function GalleryPage() {
               className="card p-0 group overflow-hidden relative aspect-square bg-surface border border-border cursor-pointer"
               onClick={() => setSelectedImage(img)}
             >
-              <img
-                src={img.url}
+              <Image
+                src={optimizeImageUrl(img.url, 500, 500)}
                 alt={img.caption || 'Gallery Image'}
+                width={500}
+                height={500}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
               />
               <figcaption className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/95 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end items-start h-full">
                 {img.event && (
@@ -129,11 +134,13 @@ export default function GalleryPage() {
             </button>
 
             {/* Image display */}
-            <div className="flex-1 flex items-center justify-center overflow-hidden h-[50vh] md:h-[60vh] mt-6">
-              <img 
-                src={selectedImage.url} 
+            <div className="flex-1 flex items-center justify-center overflow-hidden h-[50vh] md:h-[60vh] mt-6 relative w-full bg-black/20 border border-[var(--border)]">
+              <Image 
+                src={optimizeImageUrl(selectedImage.url, 1200)} 
                 alt={selectedImage.caption || 'Full view'}
-                className="max-w-full max-h-full object-contain border border-[var(--border)]"
+                fill
+                sizes="(max-width: 1024px) 100vw, 1200px"
+                className="object-contain"
               />
             </div>
 
