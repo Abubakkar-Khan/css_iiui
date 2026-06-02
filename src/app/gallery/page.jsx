@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 export default function GalleryPage() {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedImage, setSelectedImage] = useState(null)
 
   useEffect(() => {
     fetch('/api/gallery')
@@ -54,7 +55,11 @@ export default function GalleryPage() {
       ) : (
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {images.map((img) => (
-            <figure key={img.id} className="card p-0 group overflow-hidden relative aspect-square bg-black">
+            <figure 
+              key={img.id} 
+              className="card p-0 group overflow-hidden relative aspect-square bg-black cursor-pointer"
+              onClick={() => setSelectedImage(img)}
+            >
               <img
                 src={img.url}
                 alt={img.caption || 'Gallery Image'}
@@ -91,6 +96,59 @@ export default function GalleryPage() {
               No gallery images found yet. Add them in the Admin Dashboard!
             </div>
           )}
+        </div>
+      )}
+
+      {/* Lightbox / Fullscreen Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4 cursor-pointer transition-opacity duration-300"
+          onClick={() => setSelectedImage(null)}
+        >
+          {/* Close button */}
+          <button 
+            className="absolute top-6 right-6 text-white text-4xl font-light hover:text-zinc-400 transition-colors focus:outline-none cursor-pointer"
+            onClick={() => setSelectedImage(null)}
+          >
+            &times;
+          </button>
+
+          {/* Modal Container */}
+          <div 
+            className="relative max-w-5xl max-h-[85vh] flex flex-col items-center gap-4 pointer-events-auto"
+            onClick={e => e.stopPropagation()} // Prevent close on image/content click
+          >
+            {/* Image in its original aspect ratio */}
+            <img 
+              src={selectedImage.url} 
+              alt={selectedImage.caption || 'Full Gallery Image'} 
+              className="max-h-[75vh] max-w-full object-contain border border-white/10"
+            />
+            
+            {/* Info and Download */}
+            <div className="w-full flex items-center justify-between gap-4 mt-2 px-2">
+              <div className="text-left">
+                {selectedImage.event && (
+                  <span className="text-xs font-mono text-white/50 uppercase tracking-wider block">
+                    Event: {selectedImage.event.title}
+                  </span>
+                )}
+                <span className="text-sm text-white font-semibold">{selectedImage.caption || 'Society Event'}</span>
+              </div>
+
+              <button
+                onClick={() => handleDownload(selectedImage.url, `css-iiui-${selectedImage.id}.jpg`)}
+                className="inline-flex items-center gap-2 text-xs tracking-wider font-mono uppercase bg-white text-black px-4 py-2 hover:bg-white/90 transition-colors font-bold cursor-pointer shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download Original
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

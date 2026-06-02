@@ -24,12 +24,12 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
     <article className="card flex flex-col group/card overflow-hidden bg-surface h-full border border-border justify-between hover:border-zinc-700 transition-all duration-300">
       <div>
         {/* Aspect Ratio Image Container */}
-        <div className="overflow-hidden aspect-video border-b border-border relative bg-black/20">
+        <div className="overflow-hidden aspect-square border-b border-border relative bg-black/20">
           <Image
-            src={optimizeImageUrl(imageUrl, 500, 280)}
+            src={optimizeImageUrl(imageUrl, 500, 500)}
             alt={event.title}
             width={500}
-            height={280}
+            height={500}
             className="h-full w-full object-cover brightness-95 transition-transform duration-700 group-hover/card:scale-103"
             draggable={false}
             loading="lazy"
@@ -55,7 +55,7 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
       {/* Action Footer */}
       <div className="p-6 pt-0">
         {isAdmin ? (
-          <div className="pt-4 border-t border-border/40 flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 pt-2">
             {onEdit && (
               <button
                 onClick={() => onEdit(event)}
@@ -74,7 +74,7 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
             )}
           </div>
         ) : (
-          <div className="pt-4 border-t border-border/40">
+          <div className="pt-2">
             <Link
               href={`/events/${event.id}`}
               className="w-full text-center text-xs md:text-sm font-mono font-black uppercase tracking-widest block py-3 bg-white text-black hover:bg-transparent hover:text-white border border-white transition-all duration-300"
