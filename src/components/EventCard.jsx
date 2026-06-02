@@ -37,7 +37,7 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
         </div>
 
         {/* Content Block */}
-        <div className="p-6 text-left space-y-3">
+        <div className="p-5 text-left space-y-2">
           <div className="text-xs md:text-sm font-mono text-muted uppercase tracking-widest font-black">
             {formattedDate} {event.eventType && `• ${event.eventType}`}
           </div>
@@ -53,9 +53,9 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
       </div>
 
       {/* Action Footer */}
-      <div className="p-6 pt-0">
+      <div className="p-5 pt-0">
         {isAdmin ? (
-          <div className="flex items-center justify-between gap-3 pt-2">
+          <div className="flex items-center justify-between gap-3 pt-1">
             {onEdit && (
               <button
                 onClick={() => onEdit(event)}
@@ -74,10 +74,10 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
             )}
           </div>
         ) : (
-          <div className="pt-2">
+          <div className="pt-1">
             <Link
               href={`/events/${event.id}`}
-              className="w-full text-center text-xs md:text-sm font-mono font-black uppercase tracking-widest block py-3 bg-white text-black hover:bg-transparent hover:text-white border border-white transition-all duration-300"
+              className="w-full text-center text-xs md:text-sm font-mono font-black uppercase tracking-widest block py-2.5 bg-white text-black hover:bg-transparent hover:text-white border border-white transition-all duration-300"
             >
               View Details →
             </Link>

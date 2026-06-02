@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design System: Obsidian Zinc Blackish ── */
+/* ── Design System: Soft Obsidian Zinc (Eye-Soothing Black & White) ── */
 :root {
-  --bg: #09090b;           /* Deep obsidian, neutral zinc blackish */
-  --fg: #f4f4f5;           /* Soothing off-white */
-  --muted: #71717a;        /* Neutral muted grey */
-  --border: #18181b;       /* Soothing dark border */
-  --surface: #0f0f11;      /* Zinc blackish card surface */
-  --surface-hover: #151518; /* soft feedback state */
+  --bg: #0b0b0d;            /* Softer obsidian charcoal background */
+  --fg: #e4e4e7;            /* Soothing light zinc text (no pure white glare) */
+  --muted: #94949e;         /* Legible medium zinc grey */
+  --border: #222227;        /* Softer border color */
+  --surface: #121215;       /* Elevated dark-zinc card surface */
+  --surface-hover: #18181c; /* Soft hover feedback surface */
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
@@ -76,7 +76,7 @@ body {
 
 /* ── Cards ── */
 .card {
-  @apply bg-surface border border-border;
+  @apply bg-surface border border-border rounded-md; /* Softer rounded corners */
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card:hover {
@@ -86,7 +86,7 @@ body {
 
 /* ── Buttons ── */
 .btn {
-  @apply inline-flex items-center justify-center gap-2 font-bold px-8 py-4 text-sm tracking-widest uppercase transition-all duration-200 bg-fg text-bg border border-fg;
+  @apply inline-flex items-center justify-center gap-2 font-bold px-8 py-3.5 text-sm tracking-widest uppercase transition-all duration-200 bg-fg text-bg border border-fg rounded; /* Subtle rounding for tactile shape */
   font-family: var(--font-mono);
 }
 .btn:hover {
@@ -94,7 +94,7 @@ body {
 }
 
 .btn-ghost {
-  @apply inline-flex items-center justify-center gap-2 font-bold px-8 py-4 text-sm tracking-widest uppercase transition-all duration-200 bg-transparent text-fg border border-border;
+  @apply inline-flex items-center justify-center gap-2 font-bold px-8 py-3.5 text-sm tracking-widest uppercase transition-all duration-200 bg-transparent text-fg border border-border rounded; /* Subtle rounding */
   font-family: var(--font-mono);
 }
 .btn-ghost:hover {
