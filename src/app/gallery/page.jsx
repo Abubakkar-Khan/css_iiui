@@ -1,10 +1,12 @@
 // src/app/gallery/page.jsx
 'use client'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 export default function GalleryPage() {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedImage, setSelectedImage] = useState(null)
 
   useEffect(() => {
     fetch('/api/gallery')
@@ -15,6 +17,15 @@ export default function GalleryPage() {
       })
       .catch(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    if (!selectedImage) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setSelectedImage(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImage]);
 
   const handleDownload = async (url, filename) => {
     try {
@@ -32,7 +43,6 @@ export default function GalleryPage() {
       window.URL.revokeObjectURL(blobUrl)
     } catch (err) {
       console.error("Failed to download image", err)
-      // Fallback: Open in new tab
       window.open(url, '_blank')
     }
   }
@@ -54,7 +64,11 @@ export default function GalleryPage() {
       ) : (
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {images.map((img) => (
-            <figure key={img.id} className="card p-0 group overflow-hidden relative aspect-square bg-black">
+            <figure 
+              key={img.id} 
+              className="card p-0 group overflow-hidden relative aspect-square bg-surface border border-border cursor-pointer"
+              onClick={() => setSelectedImage(img)}
+            >
               <img
                 src={img.url}
                 alt={img.caption || 'Gallery Image'}
@@ -91,6 +105,69 @@ export default function GalleryPage() {
               No gallery images found yet. Add them in the Admin Dashboard!
             </div>
           )}
+        </div>
+      )}
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 animate-fade-in-up"
+          onClick={() => setSelectedImage(null)}
+        >
+          {/* Modal Container */}
+          <div 
+            className="relative max-w-4xl max-h-[85vh] w-full bg-[var(--surface)] border border-[var(--border)] p-6 flex flex-col gap-4 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button 
+              className="absolute top-4 right-4 text-muted hover:text-white text-xs font-mono uppercase tracking-wider"
+              onClick={() => setSelectedImage(null)}
+              aria-label="Close modal"
+            >
+              [ Close ]
+            </button>
+
+            {/* Image display */}
+            <div className="flex-1 flex items-center justify-center overflow-hidden h-[50vh] md:h-[60vh] mt-6">
+              <img 
+                src={selectedImage.url} 
+                alt={selectedImage.caption || 'Full view'}
+                className="max-w-full max-h-full object-contain border border-[var(--border)]"
+              />
+            </div>
+
+            {/* Metadata Footer */}
+            <div className="pt-4 border-t border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
+              <div>
+                {selectedImage.event && (
+                  <span className="text-[8px] font-mono text-muted uppercase tracking-widest block mb-1">
+                    Event: {selectedImage.event.title}
+                  </span>
+                )}
+                <h3 className="text-xs font-black uppercase tracking-tight text-white">
+                  {selectedImage.caption || 'Society Event Capture'}
+                </h3>
+              </div>
+
+              <div className="flex gap-3">
+                {selectedImage.event && selectedImage.eventId && (
+                  <Link
+                    href={`/events/${selectedImage.eventId}`}
+                    className="btn text-[9px] px-4 py-2"
+                  >
+                    View Event →
+                  </Link>
+                )}
+                <button
+                  onClick={() => handleDownload(selectedImage.url, `css-iiui-${selectedImage.id}.jpg`)}
+                  className="btn-ghost text-[9px] px-4 py-2"
+                >
+                  Download Image
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

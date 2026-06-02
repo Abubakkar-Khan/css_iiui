@@ -4,7 +4,7 @@ import { FaInstagram, FaLinkedinIn } from "react-icons/fa6";
 
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-border bg-black relative z-10">
+    <footer className="mt-16 border-t border-border bg-surface relative z-10">
       <div className="section py-16 flex flex-col md:flex-row items-center justify-between gap-10">
         {/* CSS Logo replacing standard text */}
         <div className="flex items-center select-none">
@@ -38,7 +38,7 @@ export default function Footer() {
         </nav>
 
         <a 
-          className="btn text-[9px] px-10 border-white/20" 
+          className="btn text-[9px] px-10" 
           href="/contact"
         >
           Contact Us

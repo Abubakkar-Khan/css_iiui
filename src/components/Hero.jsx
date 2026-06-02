@@ -12,36 +12,39 @@ const DEFAULT_SLIDES = [
   },
 ]
 
-export default function Hero() {
-  const [slides, setSlides] = useState([])
+export default function Hero({ initialNews = [] }) {
+  const formatNews = (data) => {
+    if (data && data.length > 0) {
+      return data.slice(0, 5).map((item) => ({
+        id: item.id,
+        title: item.title,
+        body: item.details,
+        img: item.imageUrl || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop',
+        tag: new Date(item.date).toLocaleDateString(undefined, { dateStyle: 'medium' }),
+      }))
+    }
+    return DEFAULT_SLIDES
+  }
+
+  const [slides, setSlides] = useState(() => formatNews(initialNews))
   const [idx, setIdx] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(initialNews.length === 0)
 
   const go = (dir) => setIdx(v => (v + dir + slides.length) % slides.length)
 
   useEffect(() => {
+    if (initialNews.length > 0) return
     fetch('/api/news')
       .then(res => res.json())
       .then(data => {
-        if (data && data.length > 0) {
-          const formatted = data.slice(0, 5).map((item) => ({
-            id: item.id,
-            title: item.title,
-            body: item.details,
-            img: item.imageUrl || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop',
-            tag: new Date(item.date).toLocaleDateString(undefined, { dateStyle: 'medium' }),
-          }))
-          setSlides(formatted)
-        } else {
-          setSlides(DEFAULT_SLIDES)
-        }
+        setSlides(formatNews(data))
         setLoading(false)
       })
       .catch(() => {
         setSlides(DEFAULT_SLIDES)
         setLoading(false)
       })
-  }, [])
+  }, [initialNews])
 
   useEffect(() => {
     if (slides.length <= 1) return
@@ -63,7 +66,7 @@ export default function Hero() {
 
   return (
     <section className="section mt-4 md:mt-8">
-      <div className="relative group overflow-hidden border border-border bg-black">
+      <div className="relative group overflow-hidden border border-border bg-surface">
         {/* Navigation Buttons - Left & Right */}
         {slides.length > 1 && (
           <>
@@ -95,13 +98,13 @@ export default function Hero() {
               style={{ 
                 opacity: i === idx ? 0.6 : 0,
                 transform: i === idx ? 'scale(1)' : 'scale(1.05)',
-                filter: 'contrast(1.05) brightness(0.7)'
+                filter: 'contrast(1.02) brightness(0.65)'
               }}
             />
           ))}
           
           {/* Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--surface)] via-transparent to-transparent" />
         </div>
 
         {/* Content */}
@@ -112,7 +115,7 @@ export default function Hero() {
           >
             <span className="label">{s.tag}</span>
 
-            <h1 className="mt-4 text-3xl md:text-6xl font-black leading-none tracking-tighter whitespace-pre-line uppercase text-white">
+            <h1 className="mt-4 text-3xl md:text-6xl font-black leading-none tracking-tighter whitespace-pre-line uppercase text-zinc-100">
               {s.title}
             </h1>
 

@@ -13,43 +13,55 @@ const getDesignationPriority = (designation) => {
   return 6;
 };
 
-export default function CoreTeamSection() {
+export default function CoreTeamSection({ initialTeam = [] }) {
   const [president, setPresident] = useState(null)
   const [leads, setLeads] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(initialTeam.length === 0)
+
+  const processTeam = (data) => {
+    if (data && Array.isArray(data)) {
+      const sortedData = [...data].sort((a, b) => {
+        return getDesignationPriority(a.designation) - getDesignationPriority(b.designation);
+      });
+
+      const pres = sortedData.find(m => {
+        const d = m.designation.toLowerCase();
+        return d.includes('president') && !d.includes('vice');
+      });
+
+      const leadMembers = sortedData.filter(m => {
+        const d = m.designation.toLowerCase();
+        const isPres = pres && m.id === pres.id;
+        const isLeadOrOfficer = d.includes('lead') || d.includes('vice president') || d.includes('vice-president') || d.includes('secretary');
+        return isLeadOrOfficer && !isPres;
+      });
+
+      return { president: pres || null, leads: leadMembers };
+    }
+    return { president: null, leads: [] };
+  }
 
   useEffect(() => {
+    if (initialTeam.length > 0) {
+      const { president: pres, leads: ld } = processTeam(initialTeam);
+      setPresident(pres);
+      setLeads(ld);
+      setLoading(false);
+      return;
+    }
+
     fetch('/api/team')
       .then(res => res.json())
       .then(data => {
-        if (data && Array.isArray(data)) {
-          // Sort all data by designation priority first
-          const sortedData = [...data].sort((a, b) => {
-            return getDesignationPriority(a.designation) - getDesignationPriority(b.designation);
-          });
-
-          // Find the president (designation contains "president" and not "vice")
-          const pres = sortedData.find(m => {
-            const d = m.designation.toLowerCase();
-            return d.includes('president') && !d.includes('vice');
-          });
-          setPresident(pres || null)
-
-          // Filter leads (designation contains "lead" or high ranking roles), excluding the president
-          const leadMembers = sortedData.filter(m => {
-            const d = m.designation.toLowerCase();
-            const isPres = pres && m.id === pres.id;
-            const isLeadOrOfficer = d.includes('lead') || d.includes('vice president') || d.includes('vice-president') || d.includes('secretary');
-            return isLeadOrOfficer && !isPres;
-          });
-          setLeads(leadMembers)
-        }
-        setLoading(false)
+        const { president: pres, leads: ld } = processTeam(data);
+        setPresident(pres);
+        setLeads(ld);
+        setLoading(false);
       })
       .catch(() => {
-        setLoading(false)
-      })
-  }, [])
+        setLoading(false);
+      });
+  }, [initialTeam]);
 
   const hasPeople = president || leads.length > 0
 

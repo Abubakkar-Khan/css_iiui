@@ -19,7 +19,7 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
   const isAdmin = !!(onEdit || onDelete);
 
   return (
-    <article className="card flex flex-col group/card overflow-hidden bg-black h-full border border-border justify-between">
+    <article className="card flex flex-col group/card overflow-hidden bg-surface h-full border border-border justify-between">
       <div>
         {/* Square Image */}
         <div className="overflow-hidden aspect-square border-b border-border relative">
@@ -75,7 +75,7 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
           <div className="pt-2 border-t border-border/40">
             <Link
               href={`/events/${event.id}`}
-              className="w-full text-center text-[9px] font-mono font-bold uppercase tracking-widest block py-2.5 bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-300"
+              className="w-full text-center text-[9px] font-mono font-bold uppercase tracking-widest block py-2 bg-fg text-bg border border-fg hover:bg-transparent hover:text-fg transition-all duration-300"
             >
               View Details →
             </Link>

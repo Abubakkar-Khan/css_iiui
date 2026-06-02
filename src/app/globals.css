@@ -4,12 +4,12 @@
 
 /* ── Design System: Obsidian Zinc Blackish ── */
 :root {
-  --bg: #09090b;           /* Deep obsidian, neutral zinc blackish */
-  --fg: #f4f4f5;           /* Soothing off-white */
-  --muted: #71717a;        /* Neutral muted grey */
-  --border: #18181b;       /* Soothing dark border */
-  --surface: #0f0f11;      /* Zinc blackish card surface */
-  --surface-hover: #151518; /* soft feedback state */
+  --bg: #121214;           /* Softer charcoal/slate dark background */
+  --fg: #e2e8f0;           /* Soft off-white (zinc-200/slate-200) */
+  --muted: #8a8a93;        /* Highly readable soft zinc grey */
+  --border: #222227;       /* Slightly lighter border to softly define cards */
+  --surface: #18181b;      /* Softer charcoal surface for card backgrounds */
+  --surface-hover: #202024; /* Soft hover state */
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 

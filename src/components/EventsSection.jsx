@@ -2,38 +2,40 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import EventCard from './EventCard';
 
-export default function EventsSection() {
-  const [events, setEvents] = useState([])
-  const [loading, setLoading] = useState(true)
+export default function EventsSection({ initialEvents = [] }) {
+  const formatEvents = (data) => {
+    if (data && Array.isArray(data)) {
+      return data.map(e => ({
+        id: e.id,
+        title: e.title,
+        date: new Date(e.date).toLocaleDateString(undefined, { dateStyle: 'medium' }),
+        img: e.images?.[0]?.url || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop',
+        excerpt: e.description ? e.description.replace(/<[^>]*>/g, '').substring(0, 120) + '...' : 'Explore scheduled society events and hands-on developer training.'
+      }))
+    }
+    return []
+  }
+
+  const [events, setEvents] = useState(() => formatEvents(initialEvents))
+  const [loading, setLoading] = useState(initialEvents.length === 0)
 
   const trackRef = useRef(null);
   const [index, setIndex] = useState(0);
   const maxIndex = useMemo(() => Math.max(0, events.length - 1), [events.length]);
 
   useEffect(() => {
+    if (initialEvents.length > 0) return
     fetch('/api/events')
       .then(res => res.json())
       .then(data => {
-        if (data && Array.isArray(data)) {
-          // Format DB entries to fit section styling
-          const formatted = data.map(e => ({
-            id: e.id,
-            title: e.title,
-            date: new Date(e.date).toLocaleDateString(undefined, { dateStyle: 'medium' }),
-            img: e.images?.[0]?.url || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop',
-            excerpt: e.description ? e.description.replace(/<[^>]*>/g, '').substring(0, 120) + '...' : 'Explore scheduled society events and hands-on developer training.'
-          }))
-          setEvents(formatted)
-        } else {
-          setEvents([])
-        }
+        setEvents(formatEvents(data))
         setLoading(false)
       })
       .catch(() => {
         setEvents([])
         setLoading(false)
       })
-  }, [])
+  }, [initialEvents])
 
   const scrollToCard = (i) => {
     const track = trackRef.current; if (!track) return;

@@ -8,14 +8,28 @@ export async function GET() {
     const eventsRes = await db.query('SELECT * FROM "Event" ORDER BY "date" DESC');
     const events = eventsRes.rows;
     
-    const eventsWithImages = [];
-    for (const ev of events) {
-      const imagesRes = await db.query('SELECT * FROM "Image" WHERE "eventId" = $1', [ev.id]);
-      eventsWithImages.push({
-        ...ev,
-        images: imagesRes.rows
+    if (events.length === 0) {
+      return new Response(JSON.stringify([]), { 
+        headers: { 'Content-Type': 'application/json' } 
       });
     }
+
+    const eventIds = events.map(e => e.id);
+    const imagesRes = await db.query('SELECT * FROM "Image" WHERE "eventId" = ANY($1::int[])', [eventIds]);
+    const images = imagesRes.rows;
+
+    const imagesByEventId = {};
+    images.forEach(img => {
+      if (!imagesByEventId[img.eventId]) {
+        imagesByEventId[img.eventId] = [];
+      }
+      imagesByEventId[img.eventId].push(img);
+    });
+
+    const eventsWithImages = events.map(ev => ({
+      ...ev,
+      images: imagesByEventId[ev.id] || []
+    }));
     
     return new Response(JSON.stringify(eventsWithImages), { 
       headers: { 'Content-Type': 'application/json' } 
