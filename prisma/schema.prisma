@@ -24,6 +24,7 @@ model Event {
   locationType String   @default("OFFLINE") // OFFLINE or ONLINE
   venue        String?  // e.g. Auditorium B, Zoom Link
   eventType    String   @default("Workshop") // Workshop, Seminar, Hackathon, Other
+  registrationLink String?
   images       Image[]  // Relation to images (event-specific)
 
   createdAt    DateTime @default(now())

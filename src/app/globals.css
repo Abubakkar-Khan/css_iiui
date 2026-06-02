@@ -19,6 +19,8 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 1.15rem; /* Larger base font size for legibility */
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -44,18 +46,18 @@ body {
 
 /* ── Typography ── */
 .section-title {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2.5rem, 6vw, 4rem); /* Enlarged headings */
   font-weight: 800;
   letter-spacing: -0.04em;
-  line-height: 1;
+  line-height: 1.1;
   color: var(--fg);
   text-transform: uppercase;
 }
 
 .label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 500;
+  font-size: 0.85rem; /* Enlarged labels */
+  font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
@@ -84,7 +86,7 @@ body {
 
 /* ── Buttons ── */
 .btn {
-  @apply inline-flex items-center justify-center gap-2 font-bold px-6 py-3 text-[10px] tracking-widest uppercase transition-all duration-200 bg-fg text-bg border border-fg;
+  @apply inline-flex items-center justify-center gap-2 font-bold px-8 py-4 text-sm tracking-widest uppercase transition-all duration-200 bg-fg text-bg border border-fg;
   font-family: var(--font-mono);
 }
 .btn:hover {
@@ -92,7 +94,7 @@ body {
 }
 
 .btn-ghost {
-  @apply inline-flex items-center justify-center gap-2 font-bold px-6 py-3 text-[10px] tracking-widest uppercase transition-all duration-200 bg-transparent text-fg border border-border;
+  @apply inline-flex items-center justify-center gap-2 font-bold px-8 py-4 text-sm tracking-widest uppercase transition-all duration-200 bg-transparent text-fg border border-border;
   font-family: var(--font-mono);
 }
 .btn-ghost:hover {

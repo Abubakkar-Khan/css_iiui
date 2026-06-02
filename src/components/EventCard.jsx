@@ -1,5 +1,7 @@
 // src/components/EventCard.jsx
 import Link from 'next/link';
+import Image from 'next/image';
+import { optimizeImageUrl } from '@/lib/images';
 
 export default function EventCard({ event, index, onEdit, onDelete }) {
   const imageUrl = event.images?.[0]?.url || event.img || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop';
@@ -13,69 +15,74 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
 
   // Format description into plaintext snippet
   const plainDescription = event.description 
-    ? event.description.replace(/<[^>]*>/g, '').substring(0, 120) + '...'
+    ? event.description.replace(/<[^>]*>/g, '').substring(0, 100) + '...'
     : (event.excerpt || 'Explore scheduled society events and hands-on developer training.');
 
   const isAdmin = !!(onEdit || onDelete);
 
   return (
-    <article className="card flex flex-col group/card overflow-hidden bg-black h-full border border-border justify-between">
+    <article className="card flex flex-col group/card overflow-hidden bg-surface h-full border border-border justify-between hover:border-zinc-700 transition-all duration-300">
       <div>
-        {/* Square Image */}
-        <div className="overflow-hidden aspect-square border-b border-border relative">
-          <img
-            src={imageUrl}
+        {/* Aspect Ratio Image Container */}
+        <div className="overflow-hidden aspect-video border-b border-border relative bg-black/20">
+          <Image
+            src={optimizeImageUrl(imageUrl, 500, 280)}
             alt={event.title}
-            className="h-full w-full object-cover brightness-95 transition-all duration-500 group-hover/card:scale-105"
+            width={500}
+            height={280}
+            className="h-full w-full object-cover brightness-95 transition-transform duration-700 group-hover/card:scale-103"
             draggable={false}
+            loading="lazy"
           />
           {index !== undefined && (
-            <div className="absolute top-2 left-2 font-mono text-[7px] bg-black/85 px-1.5 py-0.5 border border-white/10 opacity-70">
-              Event {index + 1}
+            <div className="absolute top-3 left-3 font-mono text-[9px] tracking-widest uppercase bg-black/85 text-zinc-300 px-2.5 py-1 border border-white/10 backdrop-blur-sm">
+              [ Event {index + 1} ]
             </div>
           )}
         </div>
-        {/* Details */}
-        <div className="p-4 bg-surface text-left">
-          <div className="flex flex-wrap gap-2 mb-2">
-            <span className="text-[7px] font-mono text-muted uppercase tracking-wider block">{formattedDate}</span>
-            {event.eventType && (
-              <span className="text-[6px] font-mono text-muted bg-border px-1.5 py-0.5 uppercase border border-border">{event.eventType}</span>
-            )}
+
+        {/* Content Block */}
+        <div className="p-6 text-left space-y-3">
+          <div className="text-xs md:text-sm font-mono text-muted uppercase tracking-widest font-black">
+            {formattedDate} {event.eventType && `• ${event.eventType}`}
           </div>
-          <h3 className="text-[11px] font-black uppercase tracking-tight text-white line-clamp-1 group-hover/card:text-muted transition-colors leading-tight">
+          
+          <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white leading-tight line-clamp-2">
             {event.title}
           </h3>
-          <p className="mt-1 text-[10px] text-muted leading-relaxed line-clamp-2">
+          
+          <p className="text-sm md:text-base text-muted/95 leading-relaxed font-semibold line-clamp-2">
             {plainDescription}
           </p>
         </div>
       </div>
-      <div className="p-4 pt-0 bg-surface">
+
+      {/* Action Footer */}
+      <div className="p-6 pt-0">
         {isAdmin ? (
-          <div className="pt-3 border-t border-border/40 flex items-center justify-between gap-3">
+          <div className="pt-4 border-t border-border/40 flex items-center justify-between gap-3">
             {onEdit && (
               <button
                 onClick={() => onEdit(event)}
-                className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted hover:text-white transition-colors cursor-pointer"
+                className="text-xs md:text-sm font-mono font-black uppercase tracking-widest text-muted hover:text-white transition-colors cursor-pointer"
               >
-                Edit
+                [ Edit ]
               </button>
             )}
             {onDelete && (
               <button
                 onClick={() => onDelete(event.id)}
-                className="text-[9px] font-mono font-bold uppercase tracking-wider text-red-500/70 hover:text-red-400 transition-colors cursor-pointer"
+                className="text-xs md:text-sm font-mono font-black uppercase tracking-widest text-red-500 hover:text-red-400 transition-colors cursor-pointer"
               >
-                Delete
+                [ Delete ]
               </button>
             )}
           </div>
         ) : (
-          <div className="pt-2 border-t border-border/40">
+          <div className="pt-4 border-t border-border/40">
             <Link
               href={`/events/${event.id}`}
-              className="w-full text-center text-[9px] font-mono font-bold uppercase tracking-widest block py-2.5 bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-300"
+              className="w-full text-center text-xs md:text-sm font-mono font-black uppercase tracking-widest block py-3 border border-border text-white hover:border-white hover:bg-white hover:text-black transition-all duration-300"
             >
               View Details →
             </Link>
@@ -85,3 +92,4 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
     </article>
   );
 }
+

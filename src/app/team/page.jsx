@@ -64,7 +64,7 @@ export default function TeamPage() {
       <div className="max-w-xl mx-auto text-center mb-16">
         <span className="label justify-center">The Society</span>
         <h1 className="section-title mt-2 text-white">Team Members</h1>
-        <p className="mt-4 text-muted text-sm leading-relaxed">
+        <p className="mt-4 text-muted text-base leading-relaxed">
           Meet the dedicated team of students running the Computer Science Society at IIUI. We work together to build workshops, developer sessions, and hackathons.
         </p>
       </div>
@@ -87,14 +87,14 @@ export default function TeamPage() {
                   />
                 </div>
                 <div className="p-8 md:p-12 flex flex-col justify-center bg-surface">
-                  <span className="text-[9px] font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2.5 py-1 inline-block border border-white/10 rounded-none mb-3 w-max">
+                  <span className="text-xs font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2.5 py-1 inline-block border border-white/10 rounded-none mb-3 w-max">
                     {president.designation}
                   </span>
                   <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight mt-1">
                     {president.name}
                   </h3>
                   {president.details && (
-                    <p className="mt-4 text-xs text-muted leading-relaxed">{president.details}</p>
+                    <p className="mt-4 text-sm text-muted leading-relaxed">{president.details}</p>
                   )}
                   {(president.linkedin || president.instagram || president.facebook) && (
                     <div className="flex gap-4 mt-6">
@@ -152,12 +152,12 @@ function TeamCard({ member: m }) {
             />
           </div>
           <div className="p-5 text-center">
-            <span className="text-[9px] font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2 py-0.5 inline-block border border-white/10 rounded-none mb-2">
+            <span className="text-xs font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2 py-0.5 inline-block border border-white/10 rounded-none mb-2">
               {m.designation}
             </span>
             <h3 className="mt-1 text-base font-bold text-white uppercase tracking-tight truncate">{m.name}</h3>
             {m.details && (
-              <p className="mt-2 text-xs text-muted leading-relaxed line-clamp-2 font-medium">{m.details}</p>
+              <p className="mt-2 text-sm text-muted leading-relaxed line-clamp-2 font-medium">{m.details}</p>
             )}
           </div>
         </div>

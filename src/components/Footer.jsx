@@ -38,7 +38,7 @@ export default function Footer() {
         </nav>
 
         <a 
-          className="btn text-[9px] px-10 border-white/20" 
+          className="btn text-xs px-10 border-white/20" 
           href="/contact"
         >
           Contact Us

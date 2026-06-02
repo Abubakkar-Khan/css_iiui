@@ -17,7 +17,6 @@ export default function AdminEventsPage() {
   }, []);
 
   const deleteEvent = async (id) => {
-    if (!confirm('Proceed with deletion?')) return;
     await fetch(`/api/events/${id}`, { method: 'DELETE' });
     setEvents(events.filter(e => e.id !== id));
   };

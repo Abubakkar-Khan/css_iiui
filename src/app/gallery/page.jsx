@@ -42,13 +42,13 @@ export default function GalleryPage() {
       <div className="max-w-2xl mx-auto text-center mb-16">
         <span className="label justify-center">Memories</span>
         <h1 className="section-title mt-2">Society Gallery</h1>
-        <p className="mt-4 text-muted text-sm leading-relaxed">
+        <p className="mt-4 text-muted text-base leading-relaxed">
           A visual showcase of memories, hackathons, and guest speaker sessions at the Computer Science Society.
         </p>
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
+        <div className="text-center py-20 text-sm font-mono text-muted uppercase animate-pulse">
           Loading Gallery...
         </div>
       ) : (
@@ -62,11 +62,11 @@ export default function GalleryPage() {
               />
               <figcaption className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/95 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end items-start h-full">
                 {img.event && (
-                  <span className="text-[8px] font-mono text-white/50 uppercase tracking-wider block mb-1">
+                  <span className="text-xs font-mono text-white/50 uppercase tracking-wider block mb-1">
                     Event: {img.event.title}
                   </span>
                 )}
-                <span className="label text-white text-[10px] mb-3">{img.caption || 'Society Event'}</span>
+                <span className="label text-white text-xs mb-3">{img.caption || 'Society Event'}</span>
                 
                 {/* Cross-origin Secure Download Button */}
                 <button
@@ -74,7 +74,7 @@ export default function GalleryPage() {
                     e.stopPropagation();
                     handleDownload(img.url, `css-iiui-${img.id}.jpg`);
                   }}
-                  className="inline-flex items-center gap-2 text-[9px] tracking-wider font-mono uppercase bg-white text-black px-3 py-1.5 hover:bg-white/90 transition-colors font-bold cursor-pointer"
+                  className="inline-flex items-center gap-2 text-xs tracking-wider font-mono uppercase bg-white text-black px-4 py-2 hover:bg-white/90 transition-colors font-bold cursor-pointer"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

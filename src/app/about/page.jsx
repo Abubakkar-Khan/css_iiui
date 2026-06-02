@@ -1,56 +1,42 @@
 // src/app/about/page.jsx
-import TimelineSection from '@/components/TimelineSection'
+import Link from 'next/link';
 
 export default function AboutPage() {
   return (
-    <div className="section py-12 md:py-20" id="about">
+    <div className="section py-16 md:py-24" id="about">
       <div className="max-w-3xl mx-auto text-center mb-16">
         <span className="label justify-center">The Society</span>
-        <h1 className="section-title mt-2">About CSS IIUI</h1>
-        <p className="mt-6 text-muted text-lg leading-relaxed">
-          The Computer Science Society (CSS) at International Islamic University, Islamabad is the premier student organization 
-          dedicated to fostering a culture of innovation, learning, and community within the Department of Computer Science.
-        </p>
+        <h1 className="section-title mt-2 text-white">About CSS IIUI</h1>
       </div>
 
       {/* Stats/Quick Info */}
-      <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
         {[
-          { label: 'Founded', value: '2014' },
-          { label: 'Members', value: '500+' },
-          { label: 'Events', value: '150+' },
-          { label: 'Alumni', value: '1000+' },
+          { label: 'Founded', value: '1998' },
+          { label: 'Events', value: '50+' },
+          { label: 'Student Reach', value: '1000+' },
         ].map((stat, i) => (
-          <div key={i} className="border-l pl-6 border-border">
-            <div className="text-2xl font-bold">{stat.value}</div>
-            <div className="label mt-1">{stat.label}</div>
+          <div key={i} className="border border-border p-8 bg-surface">
+            <div className="text-4xl md:text-5xl font-black text-white">{stat.value}</div>
+            <div className="text-xs uppercase font-mono tracking-widest text-muted mt-2 font-bold">{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* Content Blocks */}
-      <div className="mt-24 grid md:grid-cols-2 gap-12 lg:gap-24">
-        <div>
-          <h2 className="text-xl font-bold mb-4 uppercase tracking-tight">Our Mission</h2>
-          <p className="text-muted text-sm leading-relaxed">
-            To provide a platform for computer science students to enhance their technical skills, 
-            network with industry professionals, and contribute to the local and global tech community 
-            through collaborative projects and competitive programming.
-          </p>
-        </div>
-        <div>
-          <h2 className="text-xl font-bold mb-4 uppercase tracking-tight">Our Vision</h2>
-          <p className="text-muted text-sm leading-relaxed">
-            To be recognized as a leading student society in the region, producing industry-ready 
-            graduates who are not only technically proficient but also ethically grounded and 
-            socially responsible.
-          </p>
-        </div>
+      <div className="mt-20 max-w-3xl mx-auto text-center space-y-8 text-base md:text-lg leading-relaxed text-muted font-medium">
+        <p>
+          The Computer Science Society (CSS) at International Islamic University Islamabad is a student-led society of the Department of Computer Science, working to promote learning, collaboration, and technical growth among students.
+        </p>
+        <p>
+          Founded in 1998, CSS IIUI has organized 50+ academic, technical, and community-focused events, reaching more than 1000 students through workshops, seminars, competitions, and awareness sessions.
+        </p>
       </div>
 
-      {/* Timeline Section */}
-      <div className="mt-24">
-        <TimelineSection title="Our Journey" subtitle="Key milestones and historical moments." />
+      <div className="text-center mt-12">
+        <Link href="/" className="btn">
+          Back to Portal
+        </Link>
       </div>
     </div>
   )

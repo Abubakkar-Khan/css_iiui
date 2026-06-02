@@ -1,6 +1,7 @@
+// src/components/admin/EventEditor.jsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function EventEditor({ event = null, onSave }) {
   const [title, setTitle] = useState(event?.title || '');
@@ -9,6 +10,19 @@ export default function EventEditor({ event = null, onSave }) {
   const [locationType, setLocationType] = useState(event?.locationType || 'OFFLINE');
   const [venue, setVenue] = useState(event?.venue || '');
   const [eventType, setEventType] = useState(event?.eventType || 'Workshop');
+  const [registrationLink, setRegistrationLink] = useState(event?.registrationLink || '');
+
+  // Keep form fields synced if event data is fetched asynchronously
+  useEffect(() => {
+    if (event) {
+      setTitle(event.title || '');
+      setDescription(event.description || '');
+      setLocationType(event.locationType || 'OFFLINE');
+      setVenue(event.venue || '');
+      setEventType(event.eventType || 'Workshop');
+      setRegistrationLink(event.registrationLink || '');
+    }
+  }, [event]);
 
   const handleSave = async () => {
     if (!title) {
@@ -21,7 +35,8 @@ export default function EventEditor({ event = null, onSave }) {
       featuredImages,
       locationType,
       venue,
-      eventType
+      eventType,
+      registrationLink
     };
     await onSave?.(payload);
   };
@@ -32,7 +47,7 @@ export default function EventEditor({ event = null, onSave }) {
       <div>
         <label className="label mb-3 block">Event Title</label>
         <input
-          className="w-full p-5 bg-surface border border-border text-2xl font-bold transition-colors focus:border-white outline-none text-white"
+          className="w-full p-5 bg-surface border border-border text-2xl font-bold transition-colors focus:border-white outline-none text-white animate-none"
           placeholder="Enter Event Title..."
           value={title}
           onChange={e => setTitle(e.target.value)}
@@ -80,6 +95,18 @@ export default function EventEditor({ event = null, onSave }) {
         </div>
       </div>
 
+      {/* Registration Link */}
+      <div>
+        <label className="label mb-3 block">Registration Link (External)</label>
+        <input
+          type="url"
+          className="w-full p-4 bg-[#0d0d0d] border border-border focus:border-white outline-none text-sm text-white"
+          placeholder="https://forms.gle/example-link"
+          value={registrationLink}
+          onChange={e => setRegistrationLink(e.target.value)}
+        />
+      </div>
+
       {/* Textarea Description Editor */}
       <div>
         <label className="label mb-3 block">Event Description</label>
@@ -102,11 +129,15 @@ export default function EventEditor({ event = null, onSave }) {
             onChange={e => setFeaturedImages(Array.from(e.target.files))} 
             className="text-[10px] font-bold uppercase cursor-pointer file:bg-border file:border-none file:text-white file:px-4 file:py-2 file:mr-4 file:hover:bg-[#333] transition-colors"
           />
-          {featuredImages.length > 0 && (
+          {featuredImages.length > 0 ? (
             <span className="text-[10px] font-mono text-muted mt-2">
               {featuredImages.length} file(s) selected: {featuredImages.map(f => f.name).join(', ')}
             </span>
-          )}
+          ) : event?.images && event.images.length > 0 ? (
+            <span className="text-[10px] font-mono text-muted mt-2">
+              Currently uploaded: {event.images.length} image(s) (Slideshow active)
+            </span>
+          ) : null}
         </div>
       </div>
 

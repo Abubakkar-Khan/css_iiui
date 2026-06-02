@@ -32,7 +32,7 @@ export default function AlumniPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
+        <div className="text-center py-20 text-sm font-mono text-muted uppercase animate-pulse">
           Loading Alumni Network...
         </div>
       ) : (
@@ -52,11 +52,11 @@ export default function AlumniPage() {
 
               <div className="flex-1 flex flex-col justify-between">
                 <div>
-                  <span className="label text-[9px] mb-2">Class of {person.gradYear}</span>
+                  <span className="label text-xs mb-2">Class of {person.gradYear}</span>
                   <h3 className="text-md font-black uppercase tracking-tight text-white transition-colors">
                     {person.name}
                   </h3>
-                  <p className="mt-2 text-xs text-muted leading-relaxed font-medium">
+                  <p className="mt-2 text-sm text-muted leading-relaxed font-medium">
                     {person.role} {person.company && <><span className="text-white/30">@</span> {person.company}</>}
                   </p>
                 </div>
@@ -67,7 +67,7 @@ export default function AlumniPage() {
                       href={person.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-muted hover:text-white transition-colors"
+                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted hover:text-white transition-colors"
                     >
                       <FaLinkedinIn className="text-xs" aria-hidden="true" />
                       Connect Profile

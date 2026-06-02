@@ -37,6 +37,7 @@ export async function POST(req) {
       locationType = 'OFFLINE',
       venue = '',
       eventType = 'Workshop',
+      registrationLink = '',
       imageUrl = '',
       images = []
     } = body;
@@ -46,8 +47,8 @@ export async function POST(req) {
     }
 
     const eventRes = await db.query(
-      'INSERT INTO "Event" ("title", "description", "date", "locationType", "venue", "eventType", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *',
-      [title, description, new Date(date), locationType, venue, eventType]
+      'INSERT INTO "Event" ("title", "description", "date", "locationType", "venue", "eventType", "registrationLink", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING *',
+      [title, description, new Date(date), locationType, venue, eventType, registrationLink]
     );
     const ev = eventRes.rows[0];
 

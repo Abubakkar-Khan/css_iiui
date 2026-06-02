@@ -1,8 +1,10 @@
+// src/app/admin/login/page.jsx
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -38,11 +40,11 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-6">
-      <div className="w-full max-w-md border border-border p-8 md:p-10 bg-black relative">
+      <div className="w-full max-w-md border border-border p-8 md:p-10 bg-surface relative">
         
         <div className="mb-8">
-          <Link href="/" className="label hover:text-white transition-colors text-[9px]">← Public Portal</Link>
-          <h1 className="text-xl font-bold uppercase tracking-tight mt-4">System Verification</h1>
+          <Link href="/" className="text-xs font-mono uppercase tracking-widest text-muted hover:text-white transition-colors">← Public Portal</Link>
+          <h1 className="text-xl font-bold uppercase tracking-tight mt-4 text-white">System Verification</h1>
           <p className="text-muted text-[10px] mt-1 font-mono uppercase tracking-wider">
             CSS IIUI CONTROL PANEL
           </p>
@@ -50,31 +52,31 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-mono tracking-wide">
+            <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono tracking-wide">
               ERROR: {error}
             </div>
           )}
 
           <div>
-            <label className="label mb-2 block text-[10px]">Username</label>
+            <label className="label mb-2 block text-xs">Username</label>
             <input
               type="text"
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-4 bg-transparent border border-border focus:border-white outline-none transition-colors text-sm font-mono text-white"
+              className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm font-mono text-white"
               placeholder="admin"
             />
           </div>
 
           <div>
-            <label className="label mb-2 block text-[10px]">Password</label>
+            <label className="label mb-2 block text-xs">Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-4 bg-transparent border border-border focus:border-white outline-none transition-colors text-sm font-mono text-white"
+              className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm font-mono text-white"
               placeholder="••••••••••••"
             />
           </div>
@@ -88,8 +90,23 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
+        <div className="flex items-center my-6">
+          <div className="flex-grow border-t border-border/60"></div>
+          <span className="mx-4 text-xs font-mono text-muted uppercase">OR</span>
+          <div className="flex-grow border-t border-border/60"></div>
+        </div>
+
+        {/* Google Sign In Option */}
+        <button
+          type="button"
+          onClick={() => signIn('google', { callbackUrl: '/admin' })}
+          className="w-full btn-ghost py-4 flex items-center justify-center gap-3 cursor-pointer text-xs font-bold font-mono tracking-wider uppercase border border-border hover:border-white transition-all duration-300"
+        >
+          Sign In with Google
+        </button>
+
         <div className="mt-8 pt-6 border-t border-border/40 text-center">
-          <span className="text-[9px] font-mono text-muted uppercase tracking-wider">
+          <span className="text-[10px] font-mono text-muted uppercase tracking-wider">
             Default ID: <strong className="text-white">admin</strong> | Key: <strong className="text-white">admin</strong>
           </span>
         </div>

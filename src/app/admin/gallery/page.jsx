@@ -95,8 +95,6 @@ export default function AdminGalleryPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Proceed with purging this photo from database and Cloudinary storage?')) return;
-
     const res = await fetch(`/api/gallery/${id}`, { method: 'DELETE' });
     if (res.ok) {
       setImages(images.filter(img => img.id !== id));

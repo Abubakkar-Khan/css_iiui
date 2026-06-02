@@ -1,5 +1,7 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
+import { optimizeImageUrl } from '@/lib/images'
 
 export default function EventSlideshow({ images = [], title = '' }) {
   const [idx, setIdx] = useState(0)
@@ -35,16 +37,24 @@ export default function EventSlideshow({ images = [], title = '' }) {
       {/* Image Slides */}
       <div className="relative w-full h-full">
         {images.map((imgUrl, i) => (
-          <img
+          <div
             key={i}
-            src={imgUrl}
-            alt={`${title} - Slide ${i + 1}`}
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out"
+            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
             style={{ 
               opacity: i === idx ? 1 : 0,
               zIndex: i === idx ? 10 : 0
             }}
-          />
+          >
+            <Image
+              src={optimizeImageUrl(imgUrl, 800, 500)}
+              alt={`${title} - Slide ${i + 1}`}
+              fill
+              sizes="(max-width: 768px) 100vw, 800px"
+              priority={i === 0}
+              className="object-cover"
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+          </div>
         ))}
       </div>
 
@@ -66,3 +76,4 @@ export default function EventSlideshow({ images = [], title = '' }) {
     </div>
   )
 }
+

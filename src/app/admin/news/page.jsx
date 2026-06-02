@@ -91,8 +91,6 @@ export default function AdminNewsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this news post?')) return;
-
     const res = await fetch(`/api/news/${id}`, { method: 'DELETE' });
     if (res.ok) {
       setNewsList(newsList.filter(item => item.id !== id));
