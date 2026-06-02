@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signIn } from 'next-auth/react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -90,21 +89,6 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <div className="flex items-center my-6">
-          <div className="flex-grow border-t border-border/60"></div>
-          <span className="mx-4 text-xs font-mono text-muted uppercase">OR</span>
-          <div className="flex-grow border-t border-border/60"></div>
-        </div>
-
-        {/* Google Sign In Option */}
-        <button
-          type="button"
-          onClick={() => signIn('google', { callbackUrl: '/admin' })}
-          className="w-full btn-ghost py-4 flex items-center justify-center gap-3 cursor-pointer text-xs font-bold font-mono tracking-wider uppercase border border-border hover:border-white transition-all duration-300"
-        >
-          Sign In with Google
-        </button>
-
         <div className="mt-8 pt-6 border-t border-border/40 text-center">
           <span className="text-[10px] font-mono text-muted uppercase tracking-wider">
             Default ID: <strong className="text-white">admin</strong> | Key: <strong className="text-white">admin</strong>
@@ -114,3 +98,4 @@ export default function AdminLoginPage() {
     </div>
   );
 }
+
