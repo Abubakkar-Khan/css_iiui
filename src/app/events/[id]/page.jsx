@@ -34,8 +34,8 @@ export default async function EventPage({ params }) {
   }
 
   const slideshowImages = ev.images && ev.images.length > 0 
-    ? ev.images.map(i => i.url) 
-    : [ev.imageUrl || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1600'];
+    ? ev.images.map(i => ({ url: i.url, caption: i.caption || '' })) 
+    : [{ url: ev.imageUrl || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1600', caption: '' }];
 
   return (
     <div className="section py-16 md:py-24">

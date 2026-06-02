@@ -52,13 +52,15 @@ export async function POST(req) {
     );
     const ev = eventRes.rows[0];
 
-    const allImages = images && images.length > 0 ? images : (imageUrl ? [imageUrl] : []);
+    const allImages = images && images.length > 0 ? images : (imageUrl ? [{ url: imageUrl, caption: '' }] : []);
     
     const insertedImages = [];
-    for (const url of allImages) {
+    for (const img of allImages) {
+      const url = typeof img === 'string' ? img : img.url;
+      const caption = typeof img === 'object' ? (img.caption || '') : '';
       const imgRes = await db.query(
-        'INSERT INTO "Image" ("url", "eventId", "createdAt") VALUES ($1, $2, NOW()) RETURNING *',
-        [url, ev.id]
+        'INSERT INTO "Image" ("url", "caption", "eventId", "createdAt") VALUES ($1, $2, $3, NOW()) RETURNING *',
+        [url, caption, ev.id]
       );
       insertedImages.push(imgRes.rows[0]);
     }

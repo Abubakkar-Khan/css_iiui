@@ -57,10 +57,12 @@ export async function PUT(req, { params }) {
 
     const insertedImages = [];
     if (images && images.length > 0) {
-      for (const url of images) {
+      for (const img of images) {
+        const url = typeof img === 'string' ? img : img.url;
+        const caption = typeof img === 'object' ? (img.caption || '') : '';
         const imgRes = await db.query(
-          'INSERT INTO "Image" ("url", "eventId", "createdAt") VALUES ($1, $2, NOW()) RETURNING *',
-          [url, id]
+          'INSERT INTO "Image" ("url", "caption", "eventId", "createdAt") VALUES ($1, $2, $3, NOW()) RETURNING *',
+          [url, caption, id]
         );
         insertedImages.push(imgRes.rows[0]);
       }

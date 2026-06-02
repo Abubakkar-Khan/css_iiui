@@ -15,13 +15,13 @@ export default function NewEventPage() {
 
   const handleSave = async (payload) => {
     setSyncing(true);
-    const imageUrls = [];
+    const finalImages = [];
     
-    // Upload multiple slideshow images one by one
-    if (payload.featuredImages && payload.featuredImages.length > 0) {
-      for (const file of payload.featuredImages) {
+    // Upload files in mediaList
+    for (const item of payload.mediaList) {
+      if (item.file) {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', item.file);
 
         try {
           const res = await fetch('/api/upload-url', {
@@ -31,13 +31,16 @@ export default function NewEventPage() {
           
           if (res.ok) {
             const data = await res.json();
-            imageUrls.push(data.url);
+            finalImages.push({ url: data.url, caption: item.caption });
           } else {
-            console.error(`Failed to upload ${file.name}`);
+            console.error(`Failed to upload ${item.file.name}`);
           }
         } catch (err) {
-          console.error(`Error uploading ${file.name}`, err);
+          console.error(`Error uploading ${item.file.name}`, err);
         }
+      } else {
+        // Re-use already uploaded image
+        finalImages.push({ url: item.url, caption: item.caption });
       }
     }
 
@@ -52,7 +55,7 @@ export default function NewEventPage() {
           venue: payload.venue,
           eventType: payload.eventType,
           registrationLink: payload.registrationLink,
-          images: imageUrls
+          images: finalImages
         }),
         headers: { 'Content-Type': 'application/json' },
       });

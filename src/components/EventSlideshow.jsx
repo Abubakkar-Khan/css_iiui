@@ -36,26 +36,36 @@ export default function EventSlideshow({ images = [], title = '' }) {
 
       {/* Image Slides */}
       <div className="relative w-full h-full">
-        {images.map((imgUrl, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 transition-opacity duration-700 ease-in-out"
-            style={{ 
-              opacity: i === idx ? 1 : 0,
-              zIndex: i === idx ? 10 : 0
-            }}
-          >
-            <Image
-              src={optimizeImageUrl(imgUrl, 800, 500)}
-              alt={`${title} - Slide ${i + 1}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 800px"
-              priority={i === 0}
-              className="object-cover"
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-          </div>
-        ))}
+        {images.map((item, i) => {
+          const imgUrl = typeof item === 'string' ? item : item.url;
+          const caption = typeof item === 'object' ? item.caption : '';
+
+          return (
+            <div
+              key={i}
+              className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+              style={{ 
+                opacity: i === idx ? 1 : 0,
+                zIndex: i === idx ? 10 : 0
+              }}
+            >
+              <Image
+                src={optimizeImageUrl(imgUrl, 800, 500)}
+                alt={`${title} - Slide ${i + 1}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 800px"
+                priority={i === 0}
+                className="object-cover"
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+              {caption && i === idx && (
+                <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/85 border border-white/10 px-4.5 py-2.5 font-mono text-[10px] sm:text-xs uppercase tracking-wider text-zinc-100 max-w-max backdrop-blur-sm">
+                  {caption}
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {/* Dots Indicator */}

@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 export default function EventEditor({ event = null, onSave }) {
   const [title, setTitle] = useState(event?.title || '');
   const [description, setDescription] = useState(event?.description || '');
-  const [featuredImages, setFeaturedImages] = useState([]);
+  const [mediaList, setMediaList] = useState([]);
   const [locationType, setLocationType] = useState(event?.locationType || 'OFFLINE');
   const [venue, setVenue] = useState(event?.venue || '');
   const [eventType, setEventType] = useState(event?.eventType || 'Workshop');
@@ -21,8 +21,40 @@ export default function EventEditor({ event = null, onSave }) {
       setVenue(event.venue || '');
       setEventType(event.eventType || 'Workshop');
       setRegistrationLink(event.registrationLink || '');
+      
+      if (event.images && event.images.length > 0) {
+        setMediaList(event.images.map(img => ({
+          id: img.id,
+          url: img.url,
+          caption: img.caption || ''
+        })));
+      } else {
+        setMediaList([]);
+      }
     }
   }, [event]);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newItems = files.map(file => ({
+      file,
+      url: URL.createObjectURL(file),
+      caption: ''
+    }));
+    setMediaList(prev => [...prev, ...newItems]);
+  };
+
+  const updateCaption = (index, text) => {
+    setMediaList(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], caption: text };
+      return updated;
+    });
+  };
+
+  const removeMedia = (index) => {
+    setMediaList(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSave = async () => {
     if (!title) {
@@ -32,7 +64,7 @@ export default function EventEditor({ event = null, onSave }) {
     const payload = { 
       title, 
       description, 
-      featuredImages,
+      mediaList,
       locationType,
       venue,
       eventType,
@@ -118,27 +150,58 @@ export default function EventEditor({ event = null, onSave }) {
         />
       </div>
 
-      {/* Media Upload */}
-      <div className="border border-border p-8 bg-surface">
-        <label className="label mb-4 block">Event Images (Slideshow)</label>
-        <div className="flex flex-col gap-4">
+      {/* Media Upload & Caption Management */}
+      <div className="border border-border p-8 bg-surface space-y-6">
+        <div>
+          <label className="label mb-4 block">Event Images (Slideshow)</label>
           <input 
             type="file" 
             accept="image/*" 
             multiple
-            onChange={e => setFeaturedImages(Array.from(e.target.files))} 
+            onChange={handleFileChange} 
             className="text-[10px] font-bold uppercase cursor-pointer file:bg-border file:border-none file:text-white file:px-4 file:py-2 file:mr-4 file:hover:bg-[#333] transition-colors"
           />
-          {featuredImages.length > 0 ? (
-            <span className="text-[10px] font-mono text-muted mt-2">
-              {featuredImages.length} file(s) selected: {featuredImages.map(f => f.name).join(', ')}
-            </span>
-          ) : event?.images && event.images.length > 0 ? (
-            <span className="text-[10px] font-mono text-muted mt-2">
-              Currently uploaded: {event.images.length} image(s) (Slideshow active)
-            </span>
-          ) : null}
         </div>
+
+        {mediaList.length > 0 && (
+          <div className="space-y-4">
+            <h4 className="text-xs uppercase font-mono tracking-widest text-muted">Manage Images & Captions ({mediaList.length})</h4>
+            <div className="grid gap-4">
+              {mediaList.map((item, index) => (
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-black/40 border border-border">
+                  {/* Thumbnail */}
+                  <div className="w-16 h-16 shrink-0 relative border border-border overflow-hidden bg-black">
+                    <img 
+                      src={item.url} 
+                      alt="Thumbnail" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Caption Input */}
+                  <div className="flex-1 w-full">
+                    <input 
+                      type="text" 
+                      value={item.caption}
+                      placeholder="Add image caption..." 
+                      onChange={e => updateCaption(index, e.target.value)}
+                      className="w-full p-3 bg-black/60 border border-border focus:border-white outline-none text-xs text-white transition-colors"
+                    />
+                  </div>
+
+                  {/* Actions */}
+                  <button 
+                    type="button"
+                    onClick={() => removeMedia(index)}
+                    className="text-[10px] font-mono font-black uppercase tracking-widest text-red-500 hover:text-red-400 transition-colors cursor-pointer sm:px-2 py-1 shrink-0"
+                  >
+                    [ Remove ]
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Final Action */}
