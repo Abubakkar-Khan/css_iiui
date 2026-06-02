@@ -27,7 +27,17 @@ export async function POST(req) {
       });
     }
 
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'CSS Portal <onboarding@resend.dev>';
+    let fromEmailAddress = 'onboarding@resend.dev';
+    const envFrom = process.env.RESEND_FROM_EMAIL;
+    if (envFrom) {
+      const match = envFrom.match(/<([^>]+)>/);
+      if (match) {
+        fromEmailAddress = match[1];
+      } else {
+        fromEmailAddress = envFrom;
+      }
+    }
+    const fromSender = `${name} <${fromEmailAddress}>`;
 
     // Call Resend REST API directly - extremely simple and clean with no dependencies!
     const mailRes = await fetch('https://api.resend.com/emails', {
@@ -37,8 +47,9 @@ export async function POST(req) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: fromEmail,
+        from: fromSender,
         to: recipient,
+        reply_to: email,
         subject: `CSS Contact: ${subject}`,
         html: `
           <div style="font-family: sans-serif; padding: 20px; color: #111;">
