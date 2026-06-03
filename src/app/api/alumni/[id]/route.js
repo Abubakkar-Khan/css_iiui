@@ -13,6 +13,16 @@ export async function PUT(req, { params }) {
     const body = await req.json();
     const { name, gradYear, company, role, imageUrl, linkedin, priority } = body;
 
+    if (linkedin !== undefined) {
+      if (!linkedin) {
+        return new Response(JSON.stringify({ error: 'LinkedIn profile URL cannot be empty' }), { status: 400 });
+      }
+      const linkedinRegex = /^https?:\/\/([a-zA-Z]{2,3}\.)?linkedin\.com\/in\/.+/i;
+      if (!linkedinRegex.test(linkedin)) {
+        return new Response(JSON.stringify({ error: 'Invalid LinkedIn profile URL format' }), { status: 400 });
+      }
+    }
+
     const existingRes = await db.query('SELECT * FROM "Alumni" WHERE "id" = $1', [id]);
     if (existingRes.rows.length === 0) {
       return new Response(JSON.stringify({ error: 'Not Found' }), { status: 404 });

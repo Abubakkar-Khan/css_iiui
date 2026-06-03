@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { FaLinkedinIn } from 'react-icons/fa6';
 
 export default function AdminAlumniPage() {
   const [alumni, setAlumni] = useState([]);
@@ -57,6 +58,15 @@ export default function AdminAlumniPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!linkedin) {
+      alert('LinkedIn profile URL is required.');
+      return;
+    }
+    const linkedinRegex = /^https?:\/\/([a-zA-Z]{2,3}\.)?linkedin\.com\/in\/.+/i;
+    if (!linkedinRegex.test(linkedin)) {
+      alert('Please enter a valid LinkedIn profile URL (e.g. https://www.linkedin.com/in/username).');
+      return;
+    }
     setLoading(true);
 
     let imageUrl = editingAlumni?.imageUrl || '';
@@ -184,11 +194,14 @@ export default function AdminAlumniPage() {
             <div>
               <label className="label mb-2 block">LinkedIn Profile URL</label>
               <input
-                type="text"
+                type="url"
+                required
                 value={linkedin}
                 onChange={e => setLinkedin(e.target.value)}
                 className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-xs font-mono text-white"
                 placeholder="https://linkedin.com/in/..."
+                pattern="https?://([a-zA-Z]{2,3}\.)?linkedin\.com/in/.+"
+                title="Please enter a valid LinkedIn profile URL (e.g. https://www.linkedin.com/in/username)"
               />
             </div>
             <div>
@@ -248,6 +261,17 @@ export default function AdminAlumniPage() {
               <p className="mt-2 text-xs text-muted leading-relaxed font-medium">
                 {al.role} {al.company && <><span className="text-white/30">@</span> {al.company}</>}
               </p>
+              {al.linkedin && (
+                <a 
+                  href={al.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-zinc-400 hover:text-white flex items-center gap-1.5 mt-3 transition-colors"
+                >
+                  <FaLinkedinIn className="text-[10px]" />
+                  LinkedIn Profile
+                </a>
+              )}
             </div>
 
             <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between gap-3 bg-black">

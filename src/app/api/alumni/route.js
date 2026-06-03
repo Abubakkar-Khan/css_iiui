@@ -19,8 +19,13 @@ export async function POST(req) {
     const body = await req.json();
     const { name, gradYear, company = '', role = '', imageUrl = '', linkedin = '', priority = 2 } = body;
 
-    if (!name || !gradYear) {
-      return new Response(JSON.stringify({ error: 'Name and Graduation Year are required' }), { status: 400 });
+    if (!name || !gradYear || !linkedin) {
+      return new Response(JSON.stringify({ error: 'Name, Graduation Year, and LinkedIn URL are required' }), { status: 400 });
+    }
+
+    const linkedinRegex = /^https?:\/\/([a-zA-Z]{2,3}\.)?linkedin\.com\/in\/.+/i;
+    if (!linkedinRegex.test(linkedin)) {
+      return new Response(JSON.stringify({ error: 'Invalid LinkedIn profile URL format' }), { status: 400 });
     }
 
     const priorityVal = typeof priority === 'number' ? priority : Number(priority) || 2;
