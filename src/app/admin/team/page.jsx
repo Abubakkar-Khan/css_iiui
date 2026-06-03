@@ -67,6 +67,30 @@ export default function AdminTeamPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Client-side format checks for optional social links
+    if (instagram) {
+      const instagramRegex = /^https?:\/\/(www\.)?instagram\.com\/.+/i;
+      if (!instagramRegex.test(instagram)) {
+        alert('Please enter a valid Instagram URL (e.g., https://instagram.com/username).');
+        return;
+      }
+    }
+    if (linkedin) {
+      const linkedinRegex = /^https?:\/\/([a-zA-Z]{2,3}\.)?linkedin\.com\/in\/.+/i;
+      if (!linkedinRegex.test(linkedin)) {
+        alert('Please enter a valid LinkedIn profile URL (e.g., https://www.linkedin.com/in/username).');
+        return;
+      }
+    }
+    if (facebook) {
+      const facebookRegex = /^https?:\/\/(www\.)?(facebook|fb)\.com\/.+/i;
+      if (!facebookRegex.test(facebook)) {
+        alert('Please enter a valid Facebook URL (e.g., https://facebook.com/username).');
+        return;
+      }
+    }
+
     setLoading(true);
 
     let imageUrl = editingMember?.imageUrl || '';
@@ -194,33 +218,39 @@ export default function AdminTeamPage() {
           {/* Social Coordinates */}
           <div className="grid md:grid-cols-3 gap-6 pt-4 border-t border-border/40">
             <div>
-              <label className="label mb-2 block">Instagram Handle</label>
+              <label className="label mb-2 block">Instagram URL</label>
               <input
-                type="text"
+                type="url"
                 value={instagram}
                 onChange={e => setInstagram(e.target.value)}
                 className="w-full p-3 bg-black/40 border border-border focus:border-white outline-none transition-colors text-xs font-mono"
-                placeholder="@username"
+                placeholder="https://instagram.com/username"
+                pattern="https?://(www\.)?instagram\.com/.+"
+                title="Please enter a valid Instagram URL (e.g. https://instagram.com/username)"
               />
             </div>
             <div>
               <label className="label mb-2 block">LinkedIn URL</label>
               <input
-                type="text"
+                type="url"
                 value={linkedin}
                 onChange={e => setLinkedin(e.target.value)}
                 className="w-full p-3 bg-black/40 border border-border focus:border-white outline-none transition-colors text-xs font-mono"
-                placeholder="https://linkedin.com/in/..."
+                placeholder="https://linkedin.com/in/username"
+                pattern="https?://([a-zA-Z]{2,3}\.)?linkedin\.com/in/.+"
+                title="Please enter a valid LinkedIn URL (e.g. https://www.linkedin.com/in/username)"
               />
             </div>
             <div>
               <label className="label mb-2 block">Facebook URL</label>
               <input
-                type="text"
+                type="url"
                 value={facebook}
                 onChange={e => setFacebook(e.target.value)}
                 className="w-full p-3 bg-black/40 border border-border focus:border-white outline-none transition-colors text-xs font-mono"
-                placeholder="https://facebook.com/..."
+                placeholder="https://facebook.com/username"
+                pattern="https?://(www\.)?(facebook|fb)\.com/.+"
+                title="Please enter a valid Facebook URL (e.g. https://facebook.com/username)"
               />
             </div>
           </div>
