@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import logoImg from '@/assets/css.png'
 
 const nav = [
@@ -14,26 +14,14 @@ const nav = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 10)
-    h()
-    window.addEventListener('scroll', h, { passive: true })
-    return () => window.removeEventListener('scroll', h)
-  }, [])
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'py-3 border-b'
-          : 'py-5 border-b border-transparent'
-      }`}
+      className="fixed top-0 inset-x-0 z-50 py-3.5 border-b"
       style={{
-        background: scrolled ? 'rgba(10,10,10,0.85)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderColor: scrolled ? 'var(--border)' : 'transparent',
+        background: 'rgba(10, 10, 10, 0.85)',
+        backdropFilter: 'blur(12px)',
+        borderColor: 'var(--border)',
       }}
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between">
@@ -45,9 +33,7 @@ export default function Navbar() {
             width={200}
             height={60}
             priority
-            className={`object-contain transition-all duration-300 invert group-hover:scale-[1.03] ${
-              scrolled ? 'h-9 w-auto' : 'h-12 w-auto'
-            }`}
+            className="object-contain transition-all duration-300 invert group-hover:scale-[1.03] h-9 w-auto"
           />
         </Link>
 

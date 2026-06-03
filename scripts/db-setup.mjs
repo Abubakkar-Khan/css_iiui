@@ -104,7 +104,7 @@ async function seedAdmin() {
     ["admin", "Admin", hashedPassword]
   );
 
-  console.log("Admin account seeded. Default Username: 'admin' | Password: 'admin'");
+  console.log("Admin account seeded. Default Email: 'admin' | Password: 'admin'");
 }
 
 async function setupDatabase() {
