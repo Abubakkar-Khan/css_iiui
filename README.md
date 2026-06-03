@@ -59,7 +59,6 @@ The CS Society portal is a full-stack web application that serves as the digital
 | `cloudinary` | 2.10.0 | Server-side SDK for image upload streams and asset deletion |
 | `next-cloudinary` | 6.17.5 | React component wrappers for Cloudinary browser-side uploads |
 | `react-icons` | 4.12.0 | SVG icon library (FontAwesome, Ionicons) for UI elements |
-| `zod` | 4.1.11 | Runtime schema validation for input sanitization |
 
 ### Styling
 
