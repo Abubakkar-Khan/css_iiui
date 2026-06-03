@@ -185,14 +185,14 @@ export default function AdminGalleryPage() {
               </span>
               <p className="text-xs text-white line-clamp-2 leading-relaxed mb-4">{img.caption || 'No Caption Provided'}</p>
               <button onClick={() => handleDelete(img.id)} className="w-full btn bg-red-600/80 hover:bg-red-600 text-[9px] py-2">
-                Purge Asset
+                Delete Image
               </button>
             </div>
           </div>
         ))}
         {images.length === 0 && (
           <div className="col-span-full border border-border p-20 text-center text-sm text-muted bg-surface">
-            No gallery assets synchronized. Initialize your first upload.
+            No gallery images uploaded yet. Upload your first image.
           </div>
         )}
       </div>

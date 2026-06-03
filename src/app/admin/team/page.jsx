@@ -230,7 +230,7 @@ export default function AdminTeamPage() {
               Cancel
             </button>
             <button type="submit" disabled={loading} className="btn">
-              {loading ? 'SAVING...' : 'SYNC MEMBER'}
+              {loading ? 'SAVING...' : 'SAVE MEMBER'}
             </button>
           </div>
         </form>

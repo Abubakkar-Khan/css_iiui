@@ -11,10 +11,10 @@ const EventEditor = dynamic(() => import("@/components/admin/EventEditor"), {
 
 export default function NewEventPage() {
   const router = useRouter();
-  const [syncing, setSyncing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const handleSave = async (payload) => {
-    setSyncing(true);
+    setSaving(true);
     const finalImages = [];
     
     // Upload files in mediaList
@@ -70,7 +70,7 @@ export default function NewEventPage() {
       console.error("Failed to save event", err);
       alert("Failed to connect to the server.");
     } finally {
-      setSyncing(false);
+      setSaving(false);
     }
   };
 
@@ -83,9 +83,9 @@ export default function NewEventPage() {
         </Link>
       </div>
 
-      {syncing ? (
+      {saving ? (
         <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
-          Uploading images & saving event...
+          Creating event...
         </div>
       ) : (
         <EventEditor onSave={handleSave} />

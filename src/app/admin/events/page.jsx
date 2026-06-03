@@ -30,7 +30,7 @@ export default function AdminEventsPage() {
           <h1 className="section-title mt-4">Manage Events</h1>
         </div>
         <Link href="/admin/events/new" className="btn">
-          + Create Fragment
+          + Add Event
         </Link>
       </div>
 
@@ -47,8 +47,8 @@ export default function AdminEventsPage() {
       </div>
 
       {events.length === 0 && (
-        <div className="border border-border p-20 text-center text-sm text-muted bg-surface mt-8">
-          No event fragments found. Initialize new data.
+        <div className="border border-border p-20 text-center text-sm text-muted bg-surface mt-8 animate-none">
+          No events found. Create a new event.
         </div>
       )}
     </div>

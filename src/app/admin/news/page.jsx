@@ -176,7 +176,7 @@ export default function AdminNewsPage() {
               Cancel
             </button>
             <button type="submit" disabled={loading} className="btn">
-              {loading ? 'SAVING...' : 'PUBLISH NEWS'}
+              {loading ? 'SAVING...' : 'SAVE NEWS'}
             </button>
           </div>
         </form>

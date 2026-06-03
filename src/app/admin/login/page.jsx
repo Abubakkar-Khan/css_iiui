@@ -43,9 +43,9 @@ export default function AdminLoginPage() {
         
         <div className="mb-8">
           <Link href="/" className="text-xs font-mono uppercase tracking-widest text-muted hover:text-white transition-colors">← Public Portal</Link>
-          <h1 className="text-xl font-bold uppercase tracking-tight mt-4 text-white">System Verification</h1>
+          <h1 className="text-xl font-bold uppercase tracking-tight mt-4 text-white">Admin Login</h1>
           <p className="text-muted text-[10px] mt-1 font-mono uppercase tracking-wider">
-            CSS IIUI CONTROL PANEL
+            Control Panel
           </p>
         </div>
 
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
             disabled={loading}
             className="w-full btn py-4"
           >
-            {loading ? 'AUTHENTICATING...' : 'ACCESS CONTROL PANEL'}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 

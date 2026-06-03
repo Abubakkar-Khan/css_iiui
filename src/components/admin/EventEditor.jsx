@@ -61,6 +61,13 @@ export default function EventEditor({ event = null, onSave }) {
       alert('Please enter an event title');
       return;
     }
+    if (registrationLink) {
+      const formRegex = /https?:\/\/.*(form|google|gle|office|type|jot|survey|docs)/i;
+      if (!formRegex.test(registrationLink)) {
+        alert('Please enter a valid Google Form or online registration form URL.');
+        return;
+      }
+    }
     const payload = { 
       title, 
       description, 
@@ -74,7 +81,7 @@ export default function EventEditor({ event = null, onSave }) {
   };
 
   return (
-    <div className="max-w-5xl space-y-8">
+    <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="max-w-5xl space-y-8">
       {/* Title */}
       <div>
         <label className="label mb-3 block">Event Title</label>
@@ -136,6 +143,8 @@ export default function EventEditor({ event = null, onSave }) {
           placeholder="https://forms.gle/example-link"
           value={registrationLink}
           onChange={e => setRegistrationLink(e.target.value)}
+          pattern="https?://.*(form|google|gle|office|type|jot|survey|docs).+"
+          title="Please enter a valid Google Form or online registration form URL."
         />
       </div>
 
@@ -207,12 +216,12 @@ export default function EventEditor({ event = null, onSave }) {
       {/* Final Action */}
       <div className="flex justify-end pt-4">
         <button
-          onClick={handleSave}
+          type="submit"
           className="btn px-16"
         >
           Save Event
         </button>
       </div>
-    </div>
+    </form>
   );
 }

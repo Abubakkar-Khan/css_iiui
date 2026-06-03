@@ -223,7 +223,7 @@ export default function AdminAlumniPage() {
               Cancel
             </button>
             <button type="submit" disabled={loading} className="btn cursor-pointer">
-              {loading ? 'SAVING...' : 'SYNC ALUMNI'}
+              {loading ? 'SAVING...' : 'SAVE ALUMNI'}
             </button>
           </div>
         </form>

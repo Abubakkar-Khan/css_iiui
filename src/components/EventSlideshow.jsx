@@ -4,18 +4,19 @@ import Image from 'next/image'
 import { optimizeImageUrl } from '@/lib/images'
 
 export default function EventSlideshow({ images = [], title = '' }) {
+  const displayedImages = images.slice(0, 3)
   const [idx, setIdx] = useState(0)
 
-  if (!images || images.length === 0) return null
+  if (!displayedImages || displayedImages.length === 0) return null
 
   const go = (dir) => {
-    setIdx((v) => (v + dir + images.length) % images.length)
+    setIdx((v) => (v + dir + displayedImages.length) % displayedImages.length)
   }
 
   return (
     <div className="relative group overflow-hidden border border-border bg-black aspect-video w-full">
       {/* Navigation Buttons - Left & Right (Only if > 1 image) */}
-      {images.length > 1 && (
+      {displayedImages.length > 1 && (
         <>
           <button 
             onClick={() => go(-1)}
@@ -36,7 +37,7 @@ export default function EventSlideshow({ images = [], title = '' }) {
 
       {/* Image Slides */}
       <div className="relative w-full h-full">
-        {images.map((item, i) => {
+        {displayedImages.map((item, i) => {
           const imgUrl = typeof item === 'string' ? item : item.url;
           const caption = typeof item === 'object' ? item.caption : '';
 
@@ -69,9 +70,9 @@ export default function EventSlideshow({ images = [], title = '' }) {
       </div>
 
       {/* Dots Indicator */}
-      {images.length > 1 && (
+      {displayedImages.length > 1 && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {images.map((_, i) => (
+          {displayedImages.map((_, i) => (
             <button
               key={i}
               onClick={() => setIdx(i)}

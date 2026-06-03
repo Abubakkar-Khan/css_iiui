@@ -43,7 +43,7 @@ export default function AdminLayout({ children }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-xs font-mono tracking-widest text-muted uppercase animate-pulse">
-          Authenticating Operator...
+          Verifying login...
         </div>
       </div>
     );

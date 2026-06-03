@@ -17,7 +17,7 @@ export default function EditEventPage() {
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!Number.isFinite(id)) return;
@@ -37,7 +37,7 @@ export default function EditEventPage() {
   }, [id]);
 
   const handleSave = async (payload) => {
-    setSyncing(true);
+    setSaving(true);
     const finalImages = [];
     
     // Upload files in mediaList
@@ -92,7 +92,7 @@ export default function EditEventPage() {
       console.error("Failed to save event", err);
       alert("Failed to connect to the server.");
     } finally {
-      setSyncing(false);
+      setSaving(false);
     }
   };
 
@@ -107,7 +107,7 @@ export default function EditEventPage() {
   if (!event) {
     return (
       <div className="section py-20 text-center">
-        <h1 className="section-title">Event Fragment Not Found</h1>
+        <h1 className="section-title">Event Not Found</h1>
         <Link href="/admin/events" className="btn mt-8">Back to Events</Link>
       </div>
     );
@@ -122,9 +122,9 @@ export default function EditEventPage() {
         </Link>
       </div>
 
-      {syncing ? (
+      {saving ? (
         <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
-          Uploading images & saving changes...
+          Saving changes...
         </div>
       ) : (
         <EventEditor event={event} onSave={handleSave} />

@@ -117,7 +117,7 @@ export default function AdminSettingsPage() {
           disabled={loading}
           className="btn w-full mt-4"
         >
-          {loading ? 'SYNCING...' : 'UPDATE CREDENTIALS'}
+          {loading ? 'SAVING...' : 'UPDATE CREDENTIALS'}
         </button>
       </form>
     </div>

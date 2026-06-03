@@ -62,7 +62,7 @@ export default function CoreTeamSection() {
 
       {loading ? (
         <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
-          Syncing team roster...
+          Loading team members...
         </div>
       ) : !hasPeople ? (
         <div className="text-center py-20 text-xs font-mono text-muted uppercase border border-border/50 bg-[var(--surface)]">

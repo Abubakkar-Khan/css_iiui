@@ -47,6 +47,24 @@ export default function EventsSection() {
 
   useEffect(() => { scrollToCard(index); }, [index]);
 
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const scrollLeft = track.scrollLeft;
+    let closestIndex = 0;
+    let minDiff = Infinity;
+    Array.from(track.children).forEach((child, i) => {
+      const diff = Math.abs(child.offsetLeft - 20 - scrollLeft);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = i;
+      }
+    });
+    if (closestIndex !== index) {
+      setIndex(closestIndex);
+    }
+  };
+
   return (
     <section id="events" className="section pt-16 pb-6 md:pt-24 md:pb-8">
       <div className="section-header text-center mb-12">
@@ -56,19 +74,19 @@ export default function EventsSection() {
 
       {loading ? (
         <div className="text-center py-20 text-xs font-mono text-muted uppercase animate-pulse">
-          Syncing events calendar...
+          Loading events...
         </div>
       ) : events.length === 0 ? (
         <div className="text-center py-20 text-xs font-mono text-muted uppercase border border-border/50 bg-[var(--surface)]">
           No upcoming society events scheduled.
         </div>
       ) : (
-        <div className="relative">
+        <div className="relative px-12 md:px-0">
           {events.length > 1 && (
             <>
               <button 
                 onClick={() => go(-1)}
-                className="slider-nav -left-4 md:-left-6 z-20 hover:bg-white hover:text-black transition-colors"
+                className="slider-nav left-1 md:-left-16 z-20 hover:bg-white hover:text-black transition-all duration-300"
                 disabled={index === 0}
                 aria-label="Prev"
               >
@@ -76,7 +94,7 @@ export default function EventsSection() {
               </button>
               <button 
                 onClick={() => go(1)}
-                className="slider-nav -right-4 md:-right-6 z-20 hover:bg-white hover:text-black transition-colors"
+                className="slider-nav right-1 md:-right-16 z-20 hover:bg-white hover:text-black transition-all duration-300"
                 disabled={index === maxIndex}
                 aria-label="Next"
               >
@@ -87,16 +105,24 @@ export default function EventsSection() {
 
           <ul
             ref={trackRef}
+            onScroll={handleScroll}
             className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth py-4"
           >
-            {events.map((e, idx) => (
-              <li 
-                key={idx} 
-                className="snap-start shrink-0 w-[220px] md:w-[250px] transition-all duration-300"
-              >
-                <EventCard event={e} index={idx} />
-              </li>
-            ))}
+            {events.map((e, idx) => {
+              const isActive = idx === index;
+              return (
+                <li 
+                  key={idx} 
+                  className={`snap-start shrink-0 w-[220px] md:w-[250px] transition-all duration-500 ease-out transform ${
+                    isActive 
+                      ? 'scale-100 opacity-100' 
+                      : 'scale-95 opacity-50'
+                  }`}
+                >
+                  <EventCard event={e} index={idx} />
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
