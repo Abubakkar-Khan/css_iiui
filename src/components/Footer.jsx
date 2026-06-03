@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import logoImg from '@/assets/css.png';
-import { FaInstagram, FaLinkedinIn } from "react-icons/fa6";
+import { FaInstagram, FaLinkedinIn, FaDiscord } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -18,11 +18,12 @@ export default function Footer() {
           />
         </div>
 
-        {/* Dynamic Social Icons (Keeping Instagram and LinkedIn, removing FB & Discord) */}
+        {/* Dynamic Social Icons (Instagram, LinkedIn, and Discord) */}
         <nav className="flex gap-10 text-lg text-muted">
           {[
             { Icon: FaInstagram, href: 'https://www.instagram.com/css.iiui?igsh=cHp5aTk3Z2E0YXhj' },
-            { Icon: FaLinkedinIn, href: 'https://www.linkedin.com/company/computer-science-society-css/' }
+            { Icon: FaLinkedinIn, href: 'https://www.linkedin.com/company/computer-science-society-css/' },
+            { Icon: FaDiscord, href: 'https://discord.com/channels/1217017645514100746/1335112531890405397' }
           ].map(({ Icon, href }, i) => (
             <a 
               key={i} 
