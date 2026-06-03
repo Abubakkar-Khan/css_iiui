@@ -528,7 +528,7 @@ css_iiui/
 │   └── favicon-16x16.png          # Site favicon
 │
 ├── scripts/
-│   └── db-setup.js                # Database schema creation & seeding
+│   └── db-setup.mjs               # Database schema creation & seeding
 │
 ├── src/
 │   ├── app/
@@ -655,7 +655,7 @@ CLOUDINARY_API_SECRET="your_api_secret"
 Initialize the tables and seed the default admin account:
 
 ```bash
-node scripts/db-setup.js
+node scripts/db-setup.mjs
 ```
 
 This script connects to your PostgreSQL instance using the `DATABASE_URL` environment variable, creates all 6 tables if they do not exist, and seeds the default administrator account.

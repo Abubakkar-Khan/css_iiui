@@ -1,7 +1,12 @@
-const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
-const fs = require('fs');
-const path = require('path');
+import pg from 'pg';
+const { Pool } = pg;
+import bcrypt from 'bcrypt';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Helper to load env variables from .env
 function loadEnv() {
