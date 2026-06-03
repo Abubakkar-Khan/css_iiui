@@ -5,13 +5,13 @@ export const runtime = 'nodejs';
 
 export async function POST(req) {
   try {
-    const { username, password } = await req.json();
-    if (!username || !password) {
+    const { email, password } = await req.json();
+    if (!email || !password) {
       return new Response(JSON.stringify({ error: 'Missing credentials' }), { status: 400 });
     }
 
-    // Find admin by email/username
-    const res = await db.query('SELECT * FROM "Admin" WHERE "email" = $1', [username]);
+    // Find admin by email
+    const res = await db.query('SELECT * FROM "Admin" WHERE "email" = $1', [email]);
     
     if (res.rows.length === 0) {
       return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });

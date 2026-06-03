@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
       });
 
       if (res.ok) {
@@ -57,12 +57,12 @@ export default function AdminLoginPage() {
           )}
 
           <div>
-            <label className="label mb-2 block text-xs">Username</label>
+            <label className="label mb-2 block text-xs">Email</label>
             <input
               type="text"
               required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full p-4 bg-black/40 border border-border focus:border-white outline-none transition-colors text-sm font-mono text-white"
               placeholder="admin"
             />
@@ -91,7 +91,7 @@ export default function AdminLoginPage() {
 
         <div className="mt-8 pt-6 border-t border-border/40 text-center">
           <span className="text-[10px] font-mono text-muted uppercase tracking-wider">
-            Default ID: <strong className="text-white">admin</strong> | Key: <strong className="text-white">admin</strong>
+            Default Email: <strong className="text-white">admin</strong> | Key: <strong className="text-white">admin</strong>
           </span>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 export default function AdminSettingsPage() {
-  const [username, setUsername] = useState('admin');
+  const [email, setEmail] = useState('admin');
   const [name, setName] = useState('Admin');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,7 +29,7 @@ export default function AdminSettingsPage() {
       const res = await fetch('/api/auth/change-credentials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, name, password })
+        body: JSON.stringify({ email, name, password })
       });
 
       if (res.ok) {
@@ -53,7 +53,7 @@ export default function AdminSettingsPage() {
         <Link href="/admin" className="label hover:text-white transition-colors">← Dashboard</Link>
         <h1 className="section-title mt-4">Security Settings</h1>
         <p className="mt-4 text-muted text-sm leading-relaxed">
-          Update your administrator username, full profile name, and password securely.
+          Update your administrator email, full profile name, and password securely.
         </p>
       </div>
 
@@ -65,12 +65,12 @@ export default function AdminSettingsPage() {
         )}
 
         <div>
-          <label className="label mb-2 block">Admin Username / Email</label>
+          <label className="label mb-2 block">Admin Email</label>
           <input
             type="text"
             required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-4 bg-surface border border-border focus:border-white outline-none transition-colors text-sm font-mono"
             placeholder="admin"
           />

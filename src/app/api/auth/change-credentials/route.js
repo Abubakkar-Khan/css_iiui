@@ -12,10 +12,10 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { username, name, password } = body;
+    const { email, name, password } = body;
 
-    if (!username || !password) {
-      return new Response(JSON.stringify({ error: 'Username and Password are required' }), { status: 400 });
+    if (!email || !password) {
+      return new Response(JSON.stringify({ error: 'Email and Password are required' }), { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -24,13 +24,13 @@ export async function POST(req) {
     if (checkRes.rows.length === 0) {
       await db.query(
         'INSERT INTO "Admin" ("email", "name", "password", "createdAt", "updatedAt") VALUES ($1, $2, $3, NOW(), NOW())',
-        [username, name || 'Admin', hashedPassword]
+        [email, name || 'Admin', hashedPassword]
       );
     } else {
       const firstAdmin = checkRes.rows[0];
       await db.query(
         'UPDATE "Admin" SET "email" = $1, "name" = $2, "password" = $3, "updatedAt" = NOW() WHERE "id" = $4',
-        [username, name || firstAdmin.name, hashedPassword, firstAdmin.id]
+        [email, name || firstAdmin.name, hashedPassword, firstAdmin.id]
       );
     }
 

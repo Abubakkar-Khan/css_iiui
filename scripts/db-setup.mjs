@@ -1,37 +1,13 @@
-import pg from 'pg';
+import pg from "pg";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const { Pool } = pg;
-import bcrypt from 'bcrypt';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Helper to load env variables from .env
-function loadEnv() {
-  const envPath = path.join(__dirname, '..', '.env');
-  if (fs.existsSync(envPath)) {
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    envContent.split('\n').forEach(line => {
-      const match = line.match(/^\s*([\w.\-]+)\s*=\s*(.*)?\s*$/);
-      if (match) {
-        const key = match[1];
-        let value = match[2] || '';
-        if (value.startsWith('"') && value.endsWith('"')) {
-          value = value.substring(1, value.length - 1);
-        } else if (value.startsWith("'") && value.endsWith("'")) {
-          value = value.substring(1, value.length - 1);
-        }
-        process.env[key] = value;
-      }
-    });
-  }
-}
-
-loadEnv();
 
 const connectionString = process.env.DATABASE_URL;
+
 if (!connectionString) {
   console.error("ERROR: DATABASE_URL environment variable is missing.");
   process.exit(1);
@@ -39,11 +15,10 @@ if (!connectionString) {
 
 const pool = new Pool({
   connectionString,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
 });
 
 const schemaSql = `
--- Create Admin Table
 CREATE TABLE IF NOT EXISTS "Admin" (
   "id" SERIAL PRIMARY KEY,
   "email" VARCHAR(255) UNIQUE NOT NULL,
@@ -53,7 +28,6 @@ CREATE TABLE IF NOT EXISTS "Admin" (
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Event Table
 CREATE TABLE IF NOT EXISTS "Event" (
   "id" SERIAL PRIMARY KEY,
   "title" VARCHAR(255) NOT NULL,
@@ -67,7 +41,6 @@ CREATE TABLE IF NOT EXISTS "Event" (
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Image Table
 CREATE TABLE IF NOT EXISTS "Image" (
   "id" SERIAL PRIMARY KEY,
   "url" TEXT NOT NULL,
@@ -76,7 +49,6 @@ CREATE TABLE IF NOT EXISTS "Image" (
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create News Table
 CREATE TABLE IF NOT EXISTS "News" (
   "id" SERIAL PRIMARY KEY,
   "title" VARCHAR(255) NOT NULL,
@@ -87,7 +59,6 @@ CREATE TABLE IF NOT EXISTS "News" (
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create TeamMember Table
 CREATE TABLE IF NOT EXISTS "TeamMember" (
   "id" SERIAL PRIMARY KEY,
   "name" VARCHAR(255) NOT NULL,
@@ -101,7 +72,6 @@ CREATE TABLE IF NOT EXISTS "TeamMember" (
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Alumni Table
 CREATE TABLE IF NOT EXISTS "Alumni" (
   "id" SERIAL PRIMARY KEY,
   "name" VARCHAR(255) NOT NULL,
@@ -116,35 +86,44 @@ CREATE TABLE IF NOT EXISTS "Alumni" (
 );
 `;
 
-async function setup() {
-  console.log("Connecting to PostgreSQL database...");
-  await pool.query(schemaSql);
-  console.log("Database schema initialized successfully.");
+async function seedAdmin() {
+  const result = await pool.query('SELECT COUNT(*) FROM "Admin";');
+  const adminCount = Number(result.rows[0].count);
 
-  // Check if admin table has entries, if not seed default admin
-  const res = await pool.query('SELECT count(*) FROM "Admin";');
-  const count = parseInt(res.rows[0].count, 10);
-  if (count === 0) {
-    console.log("No administrators found. Seeding default admin account...");
-    const hashedPassword = await bcrypt.hash('admin', 10);
-    await pool.query(
-      'INSERT INTO "Admin" ("email", "name", "password") VALUES ($1, $2, $3);',
-      ['admin', 'Admin', hashedPassword]
-    );
-    console.log("Admin account seeded. Default Username: 'admin' | Password: 'admin'");
-  } else {
+  if (adminCount > 0) {
     console.log("Admin account already exists. Skipping seed.");
+    return;
+  }
+
+  console.log("No administrators found. Seeding default admin account...");
+
+  const hashedPassword = await bcrypt.hash("admin", 10);
+
+  await pool.query(
+    'INSERT INTO "Admin" ("email", "name", "password") VALUES ($1, $2, $3);',
+    ["admin", "Admin", hashedPassword]
+  );
+
+  console.log("Admin account seeded. Default Username: 'admin' | Password: 'admin'");
+}
+
+async function setupDatabase() {
+  try {
+    console.log("Connecting to PostgreSQL database...");
+
+    await pool.query(schemaSql);
+    console.log("Database schema initialized successfully.");
+
+    await seedAdmin();
+
+    console.log("Database setup successfully completed.");
+    process.exit(0);
+  } catch (error) {
+    console.error("Database setup failed:", error);
+    process.exit(1);
+  } finally {
+    await pool.end();
   }
 }
 
-setup()
-  .then(async () => {
-    console.log("Database setup successfully completed.");
-    await pool.end();
-    process.exit(0);
-  })
-  .catch(async (err) => {
-    console.error("Database setup failed:", err);
-    await pool.end();
-    process.exit(1);
-  });
+setupDatabase();

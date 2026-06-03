@@ -60,7 +60,7 @@ export default function AdminPage() {
         />
         <AdminCard 
           title="Account Security" 
-          description="Change your login username or update password." 
+          description="Change your login email or update password." 
           href="/admin/settings" 
         />
       </div>
