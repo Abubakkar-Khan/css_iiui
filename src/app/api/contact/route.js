@@ -20,7 +20,7 @@ export async function POST(req) {
       console.log(`From: ${name} <${email}>`);
       console.log(`Subject: ${subject}`);
       console.log(`Message: ${message}`);
-      console.log(`[Set RESEND_API_KEY in your .env to send real emails]\n`);
+      console.log(`[no RESEND_API_KEY]\n`);
       
       return new Response(JSON.stringify({ ok: true, simulated: true }), { 
         status: 200, 
@@ -50,7 +50,7 @@ export async function POST(req) {
       subject: `CSS Contact: ${subject}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #111;">
-          <h2>New Message for CS Society Lead</h2>
+          <h2>Message for CSS Lead</h2>
           <hr style="border: 0; border-top: 1px solid #eee;" />
           <p><strong>From:</strong> ${name} (<a href="mailto:${email}">${email}</a>)</p>
           <p><strong>Subject:</strong> ${subject}</p>
