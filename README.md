@@ -315,22 +315,28 @@ sequenceDiagram
     participant A as Admin Browser
     participant Login as /api/auth/login
     participant Me as /api/auth/me
+    participant Logout as /api/auth/logout
     participant DB as PostgreSQL
 
     A->>Login: POST { username, password }
     Login->>DB: SELECT * FROM "Admin" WHERE "email" = $1
     DB-->>Login: Admin row
     Login->>Login: bcrypt.compare(password, hash)
-    Login-->>A: Set-Cookie: admin=1 (HttpOnly, 24h)
+    Login-->>A: Set-Cookie: admin=1 (HttpOnly, SameSite=Strict, 24h)
     A->>A: Redirect to /admin
 
-    Note over A,Me: On every admin page load
+    Note over A,Me: On every admin page load / route change
     A->>Me: GET /api/auth/me
     Me->>Me: Parse cookie header for "admin=1"
     Me-->>A: { admin: true/false }
     alt Not authenticated
         A->>A: Redirect to /admin/login
     end
+
+    Note over A,Logout: On admin logout click
+    A->>Logout: POST /api/auth/logout
+    Logout-->>A: Set-Cookie: admin=; Max-Age=0 (deletes cookie)
+    A->>A: Redirect to /admin/login
 ```
 
 ---
