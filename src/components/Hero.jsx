@@ -12,9 +12,9 @@ export default function Hero({ initialNews = [] }) {
         id: item.id,
         title: item.title,
         body: item.details,
-        img: item.imageUrl,
+        img: item.imageUrl || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop',
         tag: new Date(item.date).toLocaleDateString(undefined, { dateStyle: 'medium' }),
-      })).filter(s => s.img) // Only slide images that exist
+      }))
     }
     return []
   }

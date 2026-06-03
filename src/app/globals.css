@@ -4,12 +4,12 @@
 
 /* ── Design System: Soft Obsidian Zinc (Eye-Soothing Black & White) ── */
 :root {
-  --bg: #0b0b0d;            /* Softer obsidian charcoal background */
+  --bg: #070709;            /* Softer obsidian charcoal background */
   --fg: #e4e4e7;            /* Soothing light zinc text (no pure white glare) */
   --muted: #94949e;         /* Legible medium zinc grey */
-  --border: #222227;        /* Softer border color */
-  --surface: #121215;       /* Elevated dark-zinc card surface */
-  --surface-hover: #18181c; /* Soft hover feedback surface */
+  --border: #16161b;        /* Subtle sleek border color */
+  --surface: #0e0e12;       /* Elevated dark-zinc card surface */
+  --surface-hover: #121217; /* Soft hover feedback surface */
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
@@ -76,12 +76,16 @@ body {
 
 /* ── Cards ── */
 .card {
-  @apply bg-surface border border-border rounded-md; /* Softer rounded corners */
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(180deg, #0e0e12 0%, #08080a 100%);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card:hover {
-  border-color: #444;
-  background: var(--surface-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, #121217 0%, #0a0a0d 100%);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  transform: translateY(-2px);
 }
 
 /* ── Buttons ── */

@@ -7,7 +7,6 @@ export const metadata = {
 }
 import './globals.css'
 import Navbar from '@/components/Navbar'
-import InteractiveGrid from '@/components/InteractiveGrid'
 import Footer from '@/components/Footer'
 
 export default function RootLayout({ children }) {
@@ -21,7 +20,6 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-screen antialiased bg-[var(--bg)] selection:bg-white selection:text-black">
-        <InteractiveGrid />
         <div className="fixed inset-0 pointer-events-none tech-grid opacity-20" />
         <Navbar />
         <main className="relative z-10 pt-20">{children}</main>

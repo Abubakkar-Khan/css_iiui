@@ -471,16 +471,14 @@ Result: public_id = "css_iiui/abc123"
 | Component | Type | Data Source | Description |
 |---|---|---|---|
 | `Navbar.jsx` | Client | None | Sticky header with scroll-aware glassmorphism, mobile hamburger |
-| `Hero.jsx` | Client | `GET /api/news` | Auto-rotating slideshow (8s interval) using latest news |
+| `Hero.jsx` | Client | `GET /api/news` | Consolidated landing and news auto-rotating slideshow (8s interval) using latest news |
 | `EventsSection.jsx` | Client | `GET /api/events` | Horizontal snap-scroll carousel of event cards |
 | `EventCard.jsx` | Shared | Props | Reusable event card with image, metadata, and detail link |
-| `CoreTeamSection.jsx` | Client | `GET /api/team` | 2–4 column team grid with social badges |
+| `CoreTeamSection.jsx` | Client | `GET /api/team` | Core team section showcasing president and team leads |
+| `TeamCard.jsx` | Shared | Props | Reusable team member profile card with socials |
 | `FAQSection.jsx` | Client | Hardcoded | Accordion with 4 Q&A items |
-| `NewsSection.jsx` | Client | `GET /api/news` | 3-column news grid (available, not currently used on homepage) |
-| `TimelineSection.jsx` | Client | Props | Horizontal scrolling timeline with milestone cards |
 | `EventSlideshow.jsx` | Client | Props | Image carousel with dots and crossfade transitions |
-| `Footer.jsx` | Server | None | Logo, Instagram, LinkedIn, contact link |
-| `InteractiveGrid.jsx` | Client | None | Disabled (returns null), background handled by layout |
+| `Footer.jsx` | Server | None | Logo, Instagram, LinkedIn, Discord channel link, contact link |
 
 ---
 
@@ -596,11 +594,9 @@ css_iiui/
 │   │   ├── EventsSection.jsx
 │   │   ├── EventCard.jsx
 │   │   ├── CoreTeamSection.jsx
+│   │   ├── TeamCard.jsx
 │   │   ├── FAQSection.jsx
-│   │   ├── NewsSection.jsx
-│   │   ├── TimelineSection.jsx
 │   │   ├── EventSlideshow.jsx
-│   │   ├── InteractiveGrid.jsx
 │   │   ├── Footer.jsx
 │   │   └── admin/
 │   │       ├── EventEditor.jsx

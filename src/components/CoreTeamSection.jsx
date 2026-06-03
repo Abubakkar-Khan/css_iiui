@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FaLinkedinIn, FaInstagram, FaFacebookF } from 'react-icons/fa6'
+import TeamCard from '@/components/TeamCard'
 
 const getDesignationPriority = (designation) => {
   const desc = (designation || '').toLowerCase();
@@ -81,7 +82,7 @@ export default function CoreTeamSection() {
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                 </div>
-                <div className="p-8 md:p-12 flex flex-col justify-center bg-surface">
+                <div className="p-8 md:p-12 flex flex-col justify-center bg-transparent">
                   <span className="text-[9px] font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2.5 py-1 inline-block border border-white/10 rounded-none mb-3 w-max">
                     {president.designation}
                   </span>
@@ -122,7 +123,7 @@ export default function CoreTeamSection() {
           {leads.length > 0 && (
             <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {leads.map((m, idx) => (
-                <MemberCard key={m.id || idx} member={m} />
+                <TeamCard key={m.id || idx} member={m} />
               ))}
             </div>
           )}
@@ -136,57 +137,5 @@ export default function CoreTeamSection() {
         </>
       )}
     </section>
-  )
-}
-
-function MemberCard({ member: m }) {
-  return (
-    <article className="card p-0 group overflow-hidden bg-[var(--surface)] border border-border hover:border-white/20 transition-all duration-300 flex flex-col justify-between h-full">
-      <div className="flex flex-col h-full justify-between">
-        <div>
-          <div className="overflow-hidden relative aspect-square border-b border-border">
-            <img
-              src={m.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400'}
-              alt={m.name}
-              className="w-full h-full object-cover brightness-90 transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-          <div className="p-4 bg-surface text-center">
-            <span className="text-[9px] font-mono font-black uppercase tracking-widest text-white bg-white/10 px-2 py-0.5 inline-block border border-white/10 rounded-none mb-2">
-              {m.designation}
-            </span>
-            <h3 className="text-xs font-black text-white uppercase tracking-tight truncate">
-              {m.name}
-            </h3>
-            {m.details && (
-              <p className="mt-2 text-[10px] text-muted leading-relaxed line-clamp-2 font-medium">
-                {m.details}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Social Icons */}
-        {(m.linkedin || m.instagram || m.facebook) && (
-          <div className="flex justify-center gap-4 py-3 border-t border-border bg-[#0d0f14]/50">
-            {m.linkedin && (
-              <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-white transition-colors" aria-label="LinkedIn">
-                <FaLinkedinIn size={12} />
-              </a>
-            )}
-            {m.instagram && (
-              <a href={m.instagram} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-white transition-colors" aria-label="Instagram">
-                <FaInstagram size={12} />
-              </a>
-            )}
-            {m.facebook && (
-              <a href={m.facebook} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-white transition-colors" aria-label="Facebook">
-                <FaFacebookF size={12} />
-              </a>
-            )}
-          </div>
-        )}
-      </div>
-    </article>
   )
 }

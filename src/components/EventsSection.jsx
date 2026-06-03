@@ -108,21 +108,14 @@ export default function EventsSection() {
             onScroll={handleScroll}
             className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth py-4"
           >
-            {events.map((e, idx) => {
-              const isActive = idx === index;
-              return (
-                <li 
-                  key={idx} 
-                  className={`snap-start shrink-0 w-[220px] md:w-[250px] transition-all duration-500 ease-out transform ${
-                    isActive 
-                      ? 'scale-100 opacity-100' 
-                      : 'scale-95 opacity-50'
-                  }`}
-                >
-                  <EventCard event={e} index={idx} />
-                </li>
-              );
-            })}
+            {events.map((e, idx) => (
+              <li 
+                key={idx} 
+                className="snap-start shrink-0 w-[220px] md:w-[250px]"
+              >
+                <EventCard event={e} index={idx} />
+              </li>
+            ))}
           </ul>
         </div>
       )}
