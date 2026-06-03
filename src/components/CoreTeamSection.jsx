@@ -121,9 +121,11 @@ export default function CoreTeamSection() {
 
           {/* Leads Grid */}
           {leads.length > 0 && (
-            <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {leads.map((m, idx) => (
-                <TeamCard key={m.id || idx} member={m} />
+            <div className="flex flex-row flex-nowrap md:justify-center gap-6 overflow-x-auto no-scrollbar py-4 max-w-full">
+              {leads.slice(0, 8).map((m, idx) => (
+                <div key={m.id || idx} className="shrink-0 w-[180px] sm:w-[200px] md:w-[220px]">
+                  <TeamCard member={m} />
+                </div>
               ))}
             </div>
           )}
