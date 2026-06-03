@@ -48,7 +48,6 @@ The CS Society portal is a full-stack web application that serves as the digital
 |---|---|
 | PostgreSQL (Neon) | Cloud relational database |
 | pg (node-postgres) | Raw SQL query driver via connection pool |
-| Prisma | Schema definition and migrations only (no runtime ORM) |
 | Cloudinary | Media storage and CDN delivery |
 
 ### Libraries
@@ -61,7 +60,6 @@ The CS Society portal is a full-stack web application that serves as the digital
 | `next-cloudinary` | 6.17.5 | React component wrappers for Cloudinary browser-side uploads |
 | `react-icons` | 4.12.0 | SVG icon library (FontAwesome, Ionicons) for UI elements |
 | `zod` | 4.1.11 | Runtime schema validation for input sanitization |
-| `next-auth` | 4.24.11 | Authentication framework (installed, reserved for future use) |
 
 ### Styling
 
@@ -105,7 +103,7 @@ graph TD
 
 ### Key Decisions
 
-1. **Raw SQL over ORM** — Prisma is used only for schema definition and migrations (`prisma db push`, `prisma generate`). All runtime queries use the `pg` driver directly for full control and transparency.
+1. **Pure Raw SQL** — The project runs purely on raw SQL queries using the connection pool from the Node Postgres `pg` driver. There is no runtime ORM (no Prisma, no Sequelize) to ensure maximum database performance, full control, and query transparency.
 
 2. **Server-side API boundaries** — API routes execute on the server, keeping environment credentials (database URLs, API secrets) out of client bundles.
 
@@ -113,7 +111,7 @@ graph TD
 
 4. **Client-side rendering for data pages** — Most public pages use `'use client'` with `useEffect` + `fetch` to load data on mount. This keeps the initial page shell fast while data hydrates.
 
-5. **PostgreSQL case sensitivity** — Since Prisma generates PascalCase table names and camelCase columns, all raw SQL queries use double-quoted identifiers (e.g., `"TeamMember"`, `"gradYear"`) to match exactly.
+5. **PostgreSQL case sensitivity** — The database uses PascalCase table names and camelCase columns. All raw SQL queries use double-quoted identifiers (e.g., `"TeamMember"`, `"gradYear"`) to match the PostgreSQL case-sensitive system correctly.
 
 ---
 
@@ -140,6 +138,7 @@ erDiagram
         string locationType "OFFLINE | ONLINE"
         string venue "Physical address or URL"
         string eventType "Workshop | Seminar | Hackathon | Speaker Session | Other"
+        string registrationLink "External registration link"
         datetime createdAt
         datetime updatedAt
     }
@@ -525,12 +524,11 @@ The visual identity uses an obsidian-zinc dark theme defined through CSS custom 
 
 ```
 css_iiui/
-├── prisma/
-│   ├── schema.prisma              # Database schema (6 models)
-│   └── seed.js                    # Seeds default admin account
-│
 ├── public/
 │   └── favicon-16x16.png          # Site favicon
+│
+├── scripts/
+│   └── db-setup.js                # Database schema creation & seeding
 │
 ├── src/
 │   ├── app/
@@ -654,18 +652,13 @@ CLOUDINARY_API_SECRET="your_api_secret"
 
 ### Step 3 — Database Setup
 
-Push the Prisma schema to your database and generate the client:
+Initialize the tables and seed the default admin account:
 
 ```bash
-npx prisma db push
-npx prisma generate
+node scripts/db-setup.js
 ```
 
-Seed the default admin account:
-
-```bash
-node prisma/seed.js
-```
+This script connects to your PostgreSQL instance using the `DATABASE_URL` environment variable, creates all 6 tables if they do not exist, and seeds the default administrator account.
 
 ### Step 4 — Run Development Server
 
@@ -684,12 +677,7 @@ npm start
 
 ### Database Management
 
-| Command | Description |
-|---|---|
-| `npx prisma db push` | Sync schema to database |
-| `npx prisma generate` | Regenerate Prisma client types |
-| `npx prisma studio` | Launch visual database browser at `localhost:5555` |
-| `npx prisma migrate dev --name <name>` | Create a versioned migration |
+All schema changes are handled via standard SQL operations (such as executing `ALTER TABLE` statements directly). You can use Node.js scripts using the `pg` pool driver to apply schema updates or migrations.
 
 ---
 
