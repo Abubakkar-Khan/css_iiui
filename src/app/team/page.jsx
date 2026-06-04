@@ -115,7 +115,7 @@ export default function TeamPage() {
               <h2 className="text-lg font-bold uppercase tracking-tight mb-6 text-center">Team Leads</h2>
               <div className="flex flex-wrap justify-center gap-6">
                 {leads.map(p => (
-                  <div key={p.id} className="w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] max-w-[270px] flex flex-col">
+                  <div key={p.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] max-w-[270px] flex flex-col">
                     <TeamCard member={p} />
                   </div>
                 ))}
@@ -129,7 +129,7 @@ export default function TeamPage() {
               <h2 className="text-lg font-bold uppercase tracking-tight mb-6 text-center">Members</h2>
               <div className="flex flex-wrap justify-center gap-6">
                 {others.map(p => (
-                  <div key={p.id} className="w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] max-w-[270px] flex flex-col">
+                  <div key={p.id} className="w-full sm:w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] max-w-[270px] flex flex-col">
                     <TeamCard member={p} />
                   </div>
                 ))}
