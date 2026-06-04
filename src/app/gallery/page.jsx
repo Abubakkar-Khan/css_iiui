@@ -19,22 +19,17 @@ export default function GalleryPage() {
 
   const handleDownload = async (url, filename) => {
     try {
-      const res = await fetch(url)
-      const blob = await res.blob()
-      const blobUrl = window.URL.createObjectURL(blob)
+      const blob = await fetch(url).then(res => res.blob());
+      const blobUrl = URL.createObjectURL(blob);
       
-      const a = document.createElement('a')
-      a.href = blobUrl
-      a.download = filename || 'gallery-image.jpg'
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename || 'gallery-image.jpg';
+      a.click();
       
-      window.URL.revokeObjectURL(blobUrl)
+      URL.revokeObjectURL(blobUrl);
     } catch (err) {
-      console.error("Failed to download image", err)
-      // Fallback: Open in new tab
-      window.open(url, '_blank')
+      window.open(url, '_blank');
     }
   }
 

@@ -1,5 +1,4 @@
 import { Resend } from 'resend';
-import db from '@/lib/db';
 
 export const runtime = 'nodejs';
 
