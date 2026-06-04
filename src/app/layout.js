@@ -21,7 +21,6 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-screen antialiased bg-[var(--bg)] selection:bg-white selection:text-black">
-        <div className="fixed inset-0 pointer-events-none tech-grid opacity-20" />
         <Navbar />
         <main className="relative z-10 pt-20">{children}</main>
         <Footer />
