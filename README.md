@@ -404,7 +404,6 @@ Base URL: `/api`
 |---|---|---|
 | POST | `/upload-url` | Upload a file to Cloudinary. Body: `FormData { file }`. Returns `{ url }`. |
 | POST | `/contact` | Send a contact inquiry. Body: `{ name, email, subject, message }`. |
-| GET | `/hello` | Health check. Returns `{ message: "Hello from test API 🚀" }`. |
 
 ---
 
@@ -585,8 +584,7 @@ css_iiui/
 │   │       │   ├── route.js
 │   │       │   └── [id]/route.js
 │   │       ├── upload-url/route.js
-│   │       ├── contact/route.js
-│   │       └── hello/route.js
+│   │       └── contact/route.js
 │   │
 │   ├── assets/
 │   │   └── css.png                # Society logo
