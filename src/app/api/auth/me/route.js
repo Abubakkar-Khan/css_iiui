@@ -1,7 +1,7 @@
 // src/app/api/auth/me/route.js
 
 export async function GET(req) {
-  // Check legacy/custom cookie
+  // Check  coookie
   const cookie = req.headers.get('cookie') || '';
   const admin = cookie.split(';').map(s => s.trim()).includes('admin=1');
 
