@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
-import { optimizeImageUrl } from '@/lib/images'
 
 export default function EventSlideshow({ images = [], title = '' }) {
   const displayedImages = images.slice(0, 3)
@@ -51,7 +50,7 @@ export default function EventSlideshow({ images = [], title = '' }) {
               }}
             >
               <Image
-                src={optimizeImageUrl(imgUrl, 800, 500)}
+                src={imgUrl}
                 alt={`${title} - Slide ${i + 1}`}
                 fill
                 sizes="(max-width: 768px) 100vw, 800px"

@@ -1,7 +1,6 @@
 // src/components/EventCard.jsx
 import Link from 'next/link';
 import Image from 'next/image';
-import { optimizeImageUrl } from '@/lib/images';
 
 export default function EventCard({ event, index, onEdit, onDelete }) {
   const imageUrl = event.images?.[0]?.url || event.img || 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop';
@@ -26,7 +25,7 @@ export default function EventCard({ event, index, onEdit, onDelete }) {
         {/* Aspect Ratio Image Container */}
         <div className="overflow-hidden aspect-square border-b border-border relative bg-black/20">
           <Image
-            src={optimizeImageUrl(imageUrl, 500, 500)}
+            src={imageUrl}
             alt={event.title}
             width={500}
             height={500}

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { optimizeImageUrl } from '@/lib/images'
 
 export default function Hero({ initialNews = [] }) {
   const formatNews = (data) => {
@@ -106,7 +105,7 @@ export default function Hero({ initialNews = [] }) {
           {slides.map((slide, i) => (
             <Image
               key={i}
-              src={optimizeImageUrl(slide.img, 1200)}
+              src={slide.img}
               alt="Slide backdrop"
               fill
               priority={i === 0}
