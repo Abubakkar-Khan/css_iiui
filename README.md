@@ -600,9 +600,7 @@ css_iiui/
 │   │   ├── EventSlideshow.jsx
 │   │   ├── Footer.jsx
 │   │   └── admin/
-│   │       ├── EventEditor.jsx
-│   │       ├── AdminDashboard.jsx
-│   │       └── EventsManager.jsx
+│   │       └── EventEditor.jsx
 │   │
 │   └── lib/
 │       ├── db.js                  # PostgreSQL connection pool
