@@ -113,8 +113,12 @@ export default function TeamPage() {
           {leads.length > 0 && (
             <div className="mb-14">
               <h2 className="text-lg font-bold uppercase tracking-tight mb-6 text-center">Team Leads</h2>
-              <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {leads.map(p => <TeamCard key={p.id} member={p} />)}
+              <div className="flex flex-wrap justify-center gap-6">
+                {leads.map(p => (
+                  <div key={p.id} className="w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] max-w-[270px] flex flex-col">
+                    <TeamCard member={p} />
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -123,8 +127,12 @@ export default function TeamPage() {
           {others.length > 0 && (
             <div>
               <h2 className="text-lg font-bold uppercase tracking-tight mb-6 text-center">Members</h2>
-              <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {others.map(p => <TeamCard key={p.id} member={p} />)}
+              <div className="flex flex-wrap justify-center gap-6">
+                {others.map(p => (
+                  <div key={p.id} className="w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] max-w-[270px] flex flex-col">
+                    <TeamCard member={p} />
+                  </div>
+                ))}
               </div>
             </div>
           )}
